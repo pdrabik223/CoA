@@ -4,7 +4,7 @@
 
 #ifndef COA_SAMPLE_ALGORITHM_CELL_H_
 #define COA_SAMPLE_ALGORITHM_CELL_H_
-#include "../plane/cell.h"
+#include "../plane/cell_type.h"
 
 struct Cell {
 

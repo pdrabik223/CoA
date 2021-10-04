@@ -11,7 +11,7 @@ set(utility_dir
 
 set(sample_dir
         sample_algorithm/sample.h sample_algorithm/sample.cpp
-        sample_algorithm/cell.h sample_algorithm/cell.cpp)
+        sample_algorithm/cell.h sample_algorithm/cell_type.cpp)
 
 add_executable(CoA
         CoA_main.cpp

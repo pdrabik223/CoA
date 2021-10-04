@@ -5,9 +5,9 @@
 #ifndef COA_PLANE_H
 #define COA_PLANE_H
 #include "../utility/coord.h"
+#include "cell_type.h"
 #include <ciso646>
 #include <vector>
-#include "cell.h"
 
 class Plane {
  public:
