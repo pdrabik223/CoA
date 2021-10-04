@@ -8,9 +8,9 @@ int main() {
 
   Plane sic(10, 10);
 
-  sic.SetCell({2, 2}, Cell::FINISH);
+  sic.SetCell({2, 2}, CellType::FINISH);
 
-  sic.SetCell({6, 6}, Cell::START);
+  sic.SetCell({6, 6}, CellType::START);
 
   sic.AddBorder();
 

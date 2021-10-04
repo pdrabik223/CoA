@@ -7,13 +7,7 @@
 #include "../utility/coord.h"
 #include <ciso646>
 #include <vector>
-
-enum class CellType {
-  EMPTY,
-  WALL,
-  START,
-  FINISH
-};
+#include "cell.h"
 
 class Plane {
  public:

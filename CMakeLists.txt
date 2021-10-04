@@ -9,11 +9,15 @@ set(plane_dir
 set(utility_dir
         utility/coord.h utility/coord.cpp)
 
+set(sample_dir
+        sample_algorithm/sample.h sample_algorithm/sample.cpp
+        sample_algorithm/cell.h sample_algorithm/cell.cpp)
 
 add_executable(CoA
         CoA_main.cpp
         ${plane_dir}
-        ${utility_dir})
+        ${utility_dir}
+        ${sample_dir})
 
 add_subdirectory(SFML)
 

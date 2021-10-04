@@ -4,14 +4,9 @@
 
 #ifndef COA_SAMPLE_ALGORITHM_CELL_H_
 #define COA_SAMPLE_ALGORITHM_CELL_H_
+#include "../plane/cell.h"
 
 struct Cell {
-  enum class CellType {
-    EMPTY,
-    WALL,
-    START,
-    FINISH
-  };
 
   Cell(CellType cell_type):cell_type(cell_type),distance(0){};
   Cell(const Cell& other) = default;
