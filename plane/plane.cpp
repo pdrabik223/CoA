@@ -20,10 +20,10 @@ Plane &Plane::operator=(const Plane &other) {
 
   return *this;
 }
-Cell Plane::GetCell(const Coord &position) const {
+CellType Plane::GetCell(const Coord &position) const {
   return plane_[position.ToInt(width_)];
 }
-void Plane::SetCell(const Coord &position, const Cell value) {
+void Plane::SetCell(const Coord &position, const CellType value) {
   plane_[position.ToInt(width_)] = value;
 }
 unsigned int Plane::GetWidth() const {
@@ -38,24 +38,24 @@ Plane::Plane(unsigned int width, unsigned int height) : width_(width), height_(h
 
   for (int i = 0; i < width * height; i++)
     if (rand() % 100 < threshold)
-      plane_.emplace_back(Cell::WALL);
+      plane_.emplace_back(CellType::WALL);
     else
-      plane_.emplace_back(Cell::EMPTY);
+      plane_.emplace_back(CellType::EMPTY);
 }
 void Plane::AddBorder() {
   //vertical top
   for (int x = 0; x < GetWidth(); x++)
-    SetCell({x, 0}, Cell::WALL);
+    SetCell({x, 0}, CellType::WALL);
 
   //vertical bottom
   for (int x = 0; x < GetWidth(); x++)
-    SetCell({x, (int) GetHeight() - 1}, Cell::WALL);
+    SetCell({x, (int) GetHeight() - 1}, CellType::WALL);
 
   // left edge
   for (int y = 0; y < GetHeight(); y++)
-    SetCell({0, y}, Cell::WALL);
+    SetCell({0, y}, CellType::WALL);
 
   // right ege
   for (int y = 0; y < GetHeight(); y++)
-    SetCell({(int)GetWidth()-1, y}, Cell::WALL);
+    SetCell({(int)GetWidth()-1, y}, CellType::WALL);
 }

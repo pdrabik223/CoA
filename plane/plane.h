@@ -8,7 +8,7 @@
 #include <ciso646>
 #include <vector>
 
-enum class Cell {
+enum class CellType {
   EMPTY,
   WALL,
   START,
@@ -22,8 +22,8 @@ class Plane {
   Plane(const Plane &other);
   Plane &operator=(const Plane &other);
 
-  Cell GetCell(const Coord &position) const;
-  void SetCell(const Coord &position, Cell value);
+  CellType GetCell(const Coord &position) const;
+  void SetCell(const Coord &position, CellType value);
 
   unsigned int GetWidth() const;
   unsigned int GetHeight() const;
@@ -37,7 +37,7 @@ class Plane {
   /// y axis
   unsigned height_;
 
-  std::vector<Cell> plane_;
+  std::vector<CellType> plane_;
 };
 static void ConsoleDisplay(const Plane &target) {
   if (target.GetWidth() > 30 or target.GetHeight() > 30) {
@@ -51,16 +51,16 @@ static void ConsoleDisplay(const Plane &target) {
     for (int x = 0; x < target.GetWidth(); x++)
 
       switch (target.GetCell({x, y})) {
-        case Cell::EMPTY:
+        case CellType::EMPTY:
           printf("  ");
           break;
-        case Cell::WALL:
+        case CellType::WALL:
           printf(" #");
           break;
-        case Cell::START:
+        case CellType::START:
           printf(" S");
           break;
-        case Cell::FINISH:
+        case CellType::FINISH:
           printf(" F");
           break;
       }
