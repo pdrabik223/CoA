@@ -1,11 +1,12 @@
 //
 // Created by piotr on 04/10/2021.
 //
+#include "plane/plane.h"
 #include <iostream>
 
-int main(){
+int main() {
 
-    std::cout<<"hello world";
 
-    return 0;
+
+  return 0;
 }

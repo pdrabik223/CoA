@@ -27,3 +27,9 @@ target_link_libraries(CoA
         sfml-graphics
         sfml-system
         sfml-window)
+
+
+add_executable(plane_example
+        plane/plane_example.cpp
+        ${plane_dir}
+        ${utility_dir})
