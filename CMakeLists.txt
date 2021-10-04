@@ -1,33 +1,29 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.19)
 project(CoA)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(plane_dir
+        plane/plane.h plane/plane.cpp)
+
+set(utility_dir
+        utility/coord.h utility/coord.cpp)
+
+
 add_executable(CoA
-        CoA_main.cpp)
+        CoA_main.cpp
+        ${plane_dir}
+        ${utility_dir})
 
 add_subdirectory(SFML)
-add_subdirectory(plane)
-add_subdirectory(utility)
-
 
 target_include_directories(CoA
-        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include
-        PUBLIC ${PROJECT_SOURCE_DIR}/plane
-        PUBLIC ${PROJECT_SOURCE_DIR}/utility
-
-        )
+        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include)
 
 target_link_directories(CoA
-        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src
-        PUBLIC ${PROJECT_SOURCE_DIR}/plane
-        PUBLIC ${PROJECT_SOURCE_DIR}/utility
-        )
+        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src)
 
 target_link_libraries(CoA
         sfml-graphics
         sfml-system
-        sfml-window
-        plane_lib
-        utility_lib
-       )
+        sfml-window)
