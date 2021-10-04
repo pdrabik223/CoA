@@ -1,2 +1,3 @@
 # CoA
-Some path finding algorythms
+Some path finding algorithms
+
