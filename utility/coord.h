@@ -10,14 +10,16 @@
 #include <ostream>
 
 struct Coord {
+
   Coord();
   Coord(int x, int y);
   Coord(const Coord &other);
+
   Coord &operator=(const Coord &other);
 
   bool operator==(const Coord &rhs) const;
   bool operator!=(const Coord &rhs) const;
-  /// output to console, fore debug purposes
+  /// output to console, for debug purposes
   friend std::ostream &operator<<(std::ostream &os, const Coord &coord);
 
   /// 2c point to 1d conversion

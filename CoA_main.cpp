@@ -14,8 +14,12 @@ int main() {
 
   sic.AddBorder();
 
-
   Sample sample(sic);
+
+  ConsoleDisplay(sic);
+
+  ConsoleDisplay(sample.FindPath());
+
 
 
   return 0;

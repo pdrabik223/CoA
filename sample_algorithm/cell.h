@@ -11,7 +11,18 @@ struct Cell {
   Cell(CellType cell_type):cell_type(cell_type),distance(0){};
   Cell(const Cell& other) = default;
   Cell& operator=(const Cell& other) = default;
-
+  bool operator<(const Cell &rhs) const {
+    return distance < rhs.distance;
+  }
+  bool operator>(const Cell &rhs) const {
+    return rhs < *this;
+  }
+  bool operator<=(const Cell &rhs) const {
+    return !(rhs < *this);
+  }
+  bool operator>=(const Cell &rhs) const {
+    return !(*this < rhs);
+  }
 
   size_t distance;
   CellType cell_type;

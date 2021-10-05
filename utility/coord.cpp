@@ -28,3 +28,4 @@ std::ostream &operator<<(std::ostream &os, const Coord &coord) {
   os << "x: " << coord.x << " y: " << coord.y;
   return os;
 }
+
