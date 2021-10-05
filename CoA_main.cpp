@@ -15,19 +15,8 @@ int main() {
 
   sic.AddBorder();
 
-
-
-  printf("original maze:\n");
-
-  ConsoleDisplay(sic);
-
-  Sample sample(sic);
-
-  printf("\nsolved maze:\n");
-
-  ConsoleDisplay(sample.FindPath());
-
   WindowPlane cos(sic);
+
 
 
   return 0;

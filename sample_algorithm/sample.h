@@ -59,9 +59,10 @@ static void ConsoleDisplay(const std::vector<Coord> &path) {
     printf("there's no path\n");
     return;
   }
-  for (int i = 0; i < path.size(); i++)
-
+  for (int i = 0; i < path.size() -1 ; i++)
     printf("(%d,%d) -> ", path[i].x, path[i].y);
+  printf("(%d,%d)\n", path[path.size() -1].x, path[path.size() -1].y);
+
 }
 
 #endif//COA_SAMPLE_ALGORITHM_SAMPLE_H_

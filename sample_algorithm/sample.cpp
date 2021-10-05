@@ -6,10 +6,9 @@
 #include <algorithm>
 #define FUCK false
 #include <assert.h>
-#include <conio.h>
-#include <iostream>
+
 Sample::Sample(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
-  //  copy_plane_.reserve(other.GetHeight() * other.GetWidth());
+    copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   bool is_there_starting_point = false;
   bool is_there_destination_point = false;

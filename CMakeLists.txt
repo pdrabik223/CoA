@@ -17,7 +17,7 @@ set(sample_dir
 set(random_walk_dir
         random_walk/random_walk_algorithm.h random_walk/random_walk_algorithm.cpp)
 
-set(sfm_window_dir
+set(sfml_window_dir
         sfml_window/window.h sfml_window/window.cpp
         sfml_window/window_plane.h sfml_window/window_plane.cpp)
 
@@ -26,9 +26,11 @@ add_executable(CoA
         CoA_main.cpp
         ${plane_dir}
         ${utility_dir}
-        ${sfml_window_dir}
         ${sample_dir}
-        ${random_walk_dir})
+
+
+        ${random_walk_dir}
+        ${sfml_window_dir})
 
 add_subdirectory(SFML)
 
@@ -48,3 +50,9 @@ add_executable(plane_example
         plane/plane_example.cpp
         ${plane_dir}
         ${utility_dir})
+
+add_executable(sample_example
+        sample_algorithm/sample_example.cpp
+        ${plane_dir}
+        ${utility_dir}
+        ${sample_dir})
