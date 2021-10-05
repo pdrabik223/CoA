@@ -4,6 +4,7 @@
 #include "plane/plane.h"
 #include <iostream>
 #include "sample_algorithm/sample.h"
+#include "sfml_window/window_plane.h"
 int main() {
 
   Plane sic(10, 10);
@@ -26,6 +27,7 @@ int main() {
 
   ConsoleDisplay(sample.FindPath());
 
+  WindowPlane cos(sic);
 
 
   return 0;
