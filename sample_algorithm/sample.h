@@ -14,6 +14,7 @@ class Sample {
 
 
 
+
   protected:
    /// x axis
    unsigned width_;
