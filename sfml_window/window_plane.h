@@ -26,7 +26,7 @@ class WindowPlane {
   WindowPlane(const WindowPlane &other) = default;
   WindowPlane &operator=(const WindowPlane &other) = default;
 
-  void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(  174,175,235));
+  void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(  253,139,13));
   void DrawToWindow(sf::RenderWindow &window);
 
  protected:

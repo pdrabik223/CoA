@@ -57,18 +57,18 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height) 
         case CellType::EMPTY:
 
           if(plane[x*width+y].distance == CELL_MAX)
-          grid_.emplace_back(38 , 39, 41);
+          grid_.emplace_back(32 , 247, 236);
           else
-            grid_.emplace_back(168, 89, 201);
+            grid_.emplace_back(150, 252, 58);
           break;
         case CellType::WALL:
-          grid_.emplace_back(241 , 139, 34);
+          grid_.emplace_back(63 , 72, 204);
           break;
         case CellType::START:
-          grid_.emplace_back(0, 0, 0);
+          grid_.emplace_back(sf::Color::Red);
           break;
         case CellType::FINISH:
-          grid_.emplace_back(255, 178, 71);
+          grid_.emplace_back(sf::Color::Yellow);
           break;
       }
     }
