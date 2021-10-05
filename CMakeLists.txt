@@ -27,8 +27,6 @@ add_executable(CoA
         ${plane_dir}
         ${utility_dir}
         ${sample_dir}
-
-
         ${random_walk_dir}
         ${sfml_window_dir})
 

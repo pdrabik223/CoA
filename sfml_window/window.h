@@ -7,25 +7,27 @@
 
 #include "window_plane.h"
 #include <SFML/Window/Event.hpp>
+//#include <SFML/Window/Clock.hpp>
+#include <mutex>
+#include <queue>
 #include <vector>
 class Window {
  public:
   Window() = delete;
   Window(int width, int height);
 
-
-
-
   WindowPlane PopFrame();
-  void PushFrame(const WindowPlane& new_frame);
-
+  void PushFrame(const WindowPlane &new_frame);
 
   /// main window loop
-  void ThMainLoop();
+  void MainLoop();
+
+  int width_;
+  int height_;
 
 
-
-  std::vector<WindowPlane> frame_queue_;
+  std::mutex event_queue_mutex_;
+  std::queue<WindowPlane> frame_queue_;
   int display_refresh_rate_ = 15;
   sf::Event event_;
 };

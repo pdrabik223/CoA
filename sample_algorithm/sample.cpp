@@ -8,7 +8,7 @@
 #include <assert.h>
 
 Sample::Sample(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
-    copy_plane_.reserve(other.GetHeight() * other.GetWidth());
+  copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   bool is_there_starting_point = false;
   bool is_there_destination_point = false;
@@ -56,17 +56,20 @@ bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, const Coord &
   if (possible_routs.size() > 1) return false;
 
   // check if this is the end of path
-  if (possible_routs.size() == 1)
+  if (possible_routs.size() == 1) {
     if (possible_routs.front() == final_point) {
       path_has_been_found = true;
       return true;
     }
 
-  // check if there even is a path to final point
-  if (possible_routs.empty()) {
-    path_has_been_found = false;
-    return true;
+    // check if there even is a path to final point
+  } else {
+    if (possible_routs.empty()) {
+      path_has_been_found = false;
+      return true;
+    };
   }
+  return false;
 }
 
 std::vector<Coord> Sample::FindPath() {
