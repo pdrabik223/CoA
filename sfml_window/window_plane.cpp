@@ -50,3 +50,32 @@ void WindowPlane::DrawToWindow(sf::RenderWindow &window) {
       window.draw(square);
     }
 }
+WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height) : width_(width), height_(height) {
+  for (int x = 0; x < width_; x++)
+    for (int y = 0; y < height_; y++) {
+      switch (plane[x*width+y].cell_type){
+        case CellType::EMPTY:
+
+          if(plane[x*width+y].distance == CELL_MAX)
+          grid_.emplace_back(38 , 39, 41);
+          else
+            grid_.emplace_back(168, 89, 201);
+          break;
+        case CellType::WALL:
+          grid_.emplace_back(241 , 139, 34);
+          break;
+        case CellType::START:
+          grid_.emplace_back(0, 0, 0);
+          break;
+        case CellType::FINISH:
+          grid_.emplace_back(255, 178, 71);
+          break;
+      }
+    }
+
+}
+void WindowPlane::HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color) {
+  for (auto &c :plane) {
+    grid_[c.ToInt(width_)] = highlight_color;
+  }
+}

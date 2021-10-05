@@ -5,6 +5,7 @@
 #include "sample.h"
 #include <algorithm>
 #define FUCK false
+#include <algorithm>
 #include <assert.h>
 
 Sample::Sample(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
@@ -92,7 +93,6 @@ std::vector<Coord> Sample::FindPath() {
   while (1 < 2) {
 
     // check Neighbours
-    CheckNeighbours(currently_analyzed_cells_buffer);
 
     if (SearchBreakingPoint(currently_analyzed_cells_buffer, final_point, path_has_been_found)) break;
 
@@ -127,47 +127,33 @@ std::vector<Coord> Sample::FindPath() {
 std::vector<Coord> Sample::GenNeighbours(const Coord &position) {
   // TODO test neighbours generation function
 
+  std::vector<Coord> potential_neighbours;
+
+  potential_neighbours.emplace_back(position.x, position.y - 1);
+  potential_neighbours.emplace_back(position.x, position.y + 1);
+  potential_neighbours.emplace_back(position.x - 1, position.y);
+  potential_neighbours.emplace_back(position.x + 1, position.y);
+
   std::vector<Coord> neighbours;
-  neighbours.reserve(8);
-  neighbours.emplace_back(position.x - 1, position.y - 1);
-  neighbours.emplace_back(position.x, position.y - 1);
-  neighbours.emplace_back(position.x + 1, position.y - 1);
-
-  neighbours.emplace_back(position.x - 1, position.y);
-  neighbours.emplace_back(position.x + 1, position.y);
-
-  neighbours.emplace_back(position.x - 1, position.y + 1);
-  neighbours.emplace_back(position.x, position.y + 1);
-  neighbours.emplace_back(position.x + 1, position.y + 1);
-
-  for (int i = 7; i >= 0; i--)
-    if (neighbours[i].x < 0 or neighbours[i].y < 0 or neighbours[i].y >= height_ or neighbours[i].x >= width_)
-      neighbours.erase(neighbours.begin() + i);
+  for (const auto &pn : potential_neighbours)
+    if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
+      switch (copy_plane_[pn.ToInt(width_)].cell_type) {
+        case CellType::EMPTY:
+          if (copy_plane_[pn.ToInt(width_)].distance == CELL_MAX) {
+            neighbours.push_back(pn);
+          }
+          break;
+        case CellType::FINISH:
+          return std::vector<Coord>({pn});
+        default:
+          break;
+      }
+    }
 
   return neighbours;
 }
 
-std::vector<Coord> Sample::CheckNeighbours(std::vector<Coord> &neighbours) {
-  for (int i = neighbours.size() - 1; i >= 0; i--) {
-    if (i < 0) {
-      assert(FUCK);
-    }
-    switch (copy_plane_[neighbours[i].ToInt(width_)].cell_type) {
 
-      case CellType::EMPTY:
-        if (copy_plane_[neighbours[i].ToInt(width_)].distance == CELL_MAX) break;
-
-      case CellType::START:
-      case CellType::WALL: neighbours.erase(neighbours.begin() + i); break;
-      case CellType::FINISH:
-        Coord final_cell = neighbours[i];
-        neighbours.clear();
-        neighbours.emplace_back(final_cell);
-        return neighbours;
-    }
-  }
-  return neighbours;
-}
 void Sample::ApplyIteration(std::vector<Coord> &cells, unsigned int iteration) {
   for (auto &c : cells)
     copy_plane_[c.ToInt(width_)].distance = iteration;
@@ -175,15 +161,30 @@ void Sample::ApplyIteration(std::vector<Coord> &cells, unsigned int iteration) {
 
 std::vector<Coord> Sample::GenNeighbours(const std::vector<Coord> &positions) {
   std::vector<Coord> solution;
-  for (auto &c : positions)
+  for (auto &c : positions) {
+    //   if(copy_plane_[c.ToInt(width_)].distance == CELL_MAX)
     for (auto &gc : GenNeighbours(c))
-      solution.emplace_back(gc);
+      solution.push_back(gc);
+  }
+  //
+  //  solutioooon.reserve(solution.size() - positions.size());
+  //  for (int i = positions.size(); i < solution.size(); i++) {
+  //    solutioooon.push_back(solution[i]);
+  //  }
+
+  std::sort(solution.begin(), solution.end());// {1 1 2 3 4 4 5}
+
+  auto last = std::unique(solution.begin(), solution.end());
+
+  solution.erase(last, solution.end());
   return solution;
 }
 
-Coord Sample::GetBestCell(const std::vector<Coord> &positions) {
+Coord Sample::GetBestCell(std::vector<Coord> &positions) {
   Coord minimal_cell_position;
   Cell minimal_cell;
+
+  std::reverse(positions.begin(), positions.end());
 
   int i = 0;
   while (1 < 2) {
@@ -203,4 +204,100 @@ Coord Sample::GetBestCell(const std::vector<Coord> &positions) {
     }
 
   return minimal_cell_position;
+}
+std::vector<Coord> Sample::FindPath(Window &window_handle) {
+  std::vector<Coord> solution;
+  std::vector<Coord> currently_analyzed_cells_buffer;
+
+  Coord starting_point;
+  Coord final_point;
+  GetStartAndFinish(starting_point, final_point);
+
+  // both of points will get populated that's Winger guarantee
+  // and also constructor would scream if plane object was incorrect
+
+  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_));
+
+  unsigned iteration = 0;
+  // gen first batch of cells
+  currently_analyzed_cells_buffer = GenNeighbours(starting_point);
+
+  bool path_has_been_found = false;
+
+  while (1 < 2) {
+
+    // check Neighbours
+    //   CheckNeighbours(currently_analyzed_cells_buffer);
+
+    if (SearchBreakingPoint(currently_analyzed_cells_buffer, final_point, path_has_been_found)) break;
+
+
+
+    // if not apply weights witch basically represent distance from origin point
+    ApplyIteration(currently_analyzed_cells_buffer, ++iteration);
+
+    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_));
+
+    // gen new bach of points, based on previously visited
+
+    currently_analyzed_cells_buffer = GenNeighbours(currently_analyzed_cells_buffer);
+
+    WindowPlane highlights(copy_plane_, width_, height_);
+
+    printf("(1) iteration: %d, size: %u\n ", iteration, currently_analyzed_cells_buffer.size());
+
+    highlights.HighlightCells(currently_analyzed_cells_buffer);
+    window_handle.PushFrame(highlights);
+  }
+
+  // if path has been found than work your way backwards from final point to starting point, but only visit cells with the lowest distance, so the path generated is optimal
+  if (path_has_been_found) {
+
+    solution.emplace_back(final_point);
+
+    WindowPlane highlights(copy_plane_, width_, height_);
+    highlights.HighlightCells(solution);
+    window_handle.PushFrame(highlights);
+
+    currently_analyzed_cells_buffer = GenNeighboursButIgnoreDistance(final_point);
+    while (1 < 2) {
+
+      solution.emplace_back(GetBestCell(currently_analyzed_cells_buffer));
+      highlights.HighlightCells(solution);
+      window_handle.PushFrame(highlights);
+
+      if (solution.back() == starting_point)
+        break;
+      else
+        currently_analyzed_cells_buffer = GenNeighboursButIgnoreDistance(solution.back());
+    }
+    std::reverse(solution.begin(), solution.end());
+  }
+
+  // else return empty path object
+  return solution;
+}
+std::vector<Coord> Sample::GenNeighboursButIgnoreDistance(const Coord& position) {
+  std::vector<Coord> potential_neighbours;
+
+  potential_neighbours.emplace_back(position.x, position.y - 1);
+  potential_neighbours.emplace_back(position.x, position.y + 1);
+  potential_neighbours.emplace_back(position.x - 1, position.y);
+  potential_neighbours.emplace_back(position.x + 1, position.y);
+
+  std::vector<Coord> neighbours;
+  for (const auto &pn : potential_neighbours)
+    if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
+      switch (copy_plane_[pn.ToInt(width_)].cell_type) {
+        case CellType::EMPTY:
+        case CellType::START:
+          neighbours.push_back(pn);
+
+
+        default:
+          break;
+      }
+    }
+
+  return neighbours;
 }

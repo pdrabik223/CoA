@@ -27,6 +27,10 @@ struct Coord {
     assert(x < width);
     return y * width + x;
   }
+  bool operator<(const Coord &rhs) const;
+  bool operator>(const Coord &rhs) const;
+  bool operator<=(const Coord &rhs) const;
+  bool operator>=(const Coord &rhs) const;
 
   int x;
   int y;

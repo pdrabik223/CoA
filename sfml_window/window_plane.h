@@ -22,11 +22,11 @@ class WindowPlane {
   WindowPlane() = delete;
   WindowPlane(const Plane &plane);
   WindowPlane(int width, int height) : width_(width), height_(height) { grid_.reserve(height_ * width_); }
-  WindowPlane(const std::vector<Cell> &plane);
+  WindowPlane(const std::vector<Cell> &plane, int width, int height);
   WindowPlane(const WindowPlane &other) = default;
   WindowPlane &operator=(const WindowPlane &other) = default;
 
-  void HighlightCells(const std::vector<Cell> &plane, sf::Color highlight_color = sf::Color(33, 255, 211));
+  void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(  174,175,235));
   void DrawToWindow(sf::RenderWindow &window);
 
  protected:

@@ -6,12 +6,12 @@
 
 void Window::MainLoop() {
   sf::ContextSettings settings;
-  settings.antialiasingLevel = 8;
+  settings.antialiasingLevel = 10;
 
   sf::RenderWindow window(sf::VideoMode(width_, height_), "CoA",
                           sf::Style::Default, settings);
 
-  window.setPosition(sf::Vector2i(600, 600));
+  window.setPosition(sf::Vector2i(0, 0));
 
   window.display();
   sf::Clock clock;
@@ -25,8 +25,8 @@ void Window::MainLoop() {
         window.close();
     }
 
-    if(clock.getElapsedTime().asMilliseconds()<30) continue;
-    clock.restart();
+//    if(clock.getElapsedTime().asMilliseconds()<2) continue;
+//    clock.restart();
 
     if(frame_queue_.empty())continue;
 

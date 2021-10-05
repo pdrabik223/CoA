@@ -28,4 +28,19 @@ std::ostream &operator<<(std::ostream &os, const Coord &coord) {
   os << "x: " << coord.x << " y: " << coord.y;
   return os;
 }
-
+bool Coord::operator<(const Coord &rhs) const {
+  if (x < rhs.x)
+    return true;
+  if (rhs.x < x)
+    return false;
+  return y < rhs.y;
+}
+bool Coord::operator>(const Coord &rhs) const {
+  return rhs < *this;
+}
+bool Coord::operator<=(const Coord &rhs) const {
+  return !(rhs < *this);
+}
+bool Coord::operator>=(const Coord &rhs) const {
+  return !(*this < rhs);
+}
