@@ -23,6 +23,7 @@ class Sample {
   std::vector<Coord> CheckNeighbours(std::vector<Coord> &neighbours);
   void ApplyIteration(std::vector<Coord> &cells, unsigned iteration);
   Coord GetBestCell(const std::vector<Coord> &positions);
+  void GetStartAndFinish(Coord& start_point,Coord& finish_point);
 
  protected:
   /// x axis
@@ -41,7 +42,8 @@ static void ConsoleDisplay(const std::vector<Coord> &path) {
     printf("there's no path\n");
     return;
   }
-  for (int i = path.size() - 1; i >= 0; i--)
+  for (int i = 0; i < path.size(); i++)
+
     printf("(%d,%d) -> ", path[i].x, path[i].y);
 }
 

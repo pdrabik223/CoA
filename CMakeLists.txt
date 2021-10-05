@@ -4,14 +4,15 @@ project(CoA)
 set(CMAKE_CXX_STANDARD 14)
 
 set(plane_dir
-        plane/plane.h plane/plane.cpp)
+        plane/plane.h plane/plane.cpp
+        plane/cell_type.h)
 
 set(utility_dir
         utility/coord.h utility/coord.cpp)
 
 set(sample_dir
         sample_algorithm/sample.h sample_algorithm/sample.cpp
-        sample_algorithm/cell.h sample_algorithm/cell_type.cpp)
+        sample_algorithm/cell.h sample_algorithm/cell.cpp)
 
 add_executable(CoA
         CoA_main.cpp

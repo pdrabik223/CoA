@@ -6,8 +6,10 @@
 #include <algorithm>
 #define FUCK false
 #include <assert.h>
+#include <conio.h>
+#include <iostream>
 Sample::Sample(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
-//  copy_plane_.reserve(other.GetHeight() * other.GetWidth());
+  //  copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   bool is_there_starting_point = false;
   bool is_there_destination_point = false;
@@ -40,23 +42,42 @@ Sample &Sample::operator=(const Sample &other) {
 
   return *this;
 }
+void Sample::GetStartAndFinish(Coord &start_point, Coord &finish_point) {
+  for (int i = 0; i < width_ * height_; i++)
+    if (copy_plane_[i].cell_type == CellType::START) {
+
+      start_point = {(int) (i % width_), (int) (i / width_)};
+
+    } else if (copy_plane_[i].cell_type == CellType::FINISH) {
+      finish_point = {(int) (i % width_), (int) (i / width_)};
+    }
+}
+bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, const Coord &final_point, bool &path_has_been_found) {
+  path_has_been_found = false;
+  if (possible_routs.size() > 1) return false;
+
+  // check if this is the end of path
+  if (possible_routs.size() == 1)
+    if (possible_routs.front() == final_point) {
+      path_has_been_found = true;
+      return true;
+    }
+
+  // check if there even is a path to final point
+  if (possible_routs.empty()) {
+    path_has_been_found = false;
+    return true;
+  }
+}
 
 std::vector<Coord> Sample::FindPath() {
   std::vector<Coord> solution;
-  std::vector<Coord> next_step_cells_buffer;
   std::vector<Coord> currently_analyzed_cells_buffer;
 
   Coord starting_point;
   Coord final_point;
+  GetStartAndFinish(starting_point, final_point);
 
-  for (int i = 0; i < width_ * height_; i++)
-    if (copy_plane_[i].cell_type == CellType::START) {
-      starting_point = {(int) (i / width_), (int) (i % width_)};
-      break;
-    } else if (copy_plane_[i].cell_type == CellType::FINISH) {
-      final_point = {(int) (i / width_), (int) (i % width_)};
-      break;
-    }
   // both of points will get populated that's Winger guarantee
   // and also constructor would scream if plane object was incorrect
 
@@ -71,19 +92,8 @@ std::vector<Coord> Sample::FindPath() {
     // check Neighbours
     CheckNeighbours(currently_analyzed_cells_buffer);
 
-    // check if this is the end of path
-    if (currently_analyzed_cells_buffer.size() == 1)
-      if (currently_analyzed_cells_buffer.front() == final_point) {
-        path_has_been_found = true;
-        break;
-      }
+    if (SearchBreakingPoint(currently_analyzed_cells_buffer, final_point, path_has_been_found)) break;
 
-
-    // check if there even is a path to final point
-    if (currently_analyzed_cells_buffer.empty()) {
-      path_has_been_found = false;
-      break;
-    }
     // if not apply weights witch basically represent distance from origin point
     ApplyIteration(currently_analyzed_cells_buffer, ++iteration);
 
@@ -94,12 +104,18 @@ std::vector<Coord> Sample::FindPath() {
   // if path has been found than work your way backwards from final point to starting point, but only visit cells with the lowest distance, so the path generated is optimal
   if (path_has_been_found) {
 
+    solution.emplace_back(final_point);
     currently_analyzed_cells_buffer = GenNeighbours(final_point);
     while (1 < 2) {
+
       solution.emplace_back(GetBestCell(currently_analyzed_cells_buffer));
-      if (solution.back() == starting_point) break;
-      else currently_analyzed_cells_buffer = GenNeighbours(solution.back());
+
+      if (solution.back() == starting_point)
+        break;
+      else
+        currently_analyzed_cells_buffer = GenNeighbours(solution.back());
     }
+    std::reverse(solution.begin(), solution.end());
   }
 
   // else return empty path object
@@ -131,20 +147,22 @@ std::vector<Coord> Sample::GenNeighbours(const Coord &position) {
 
 std::vector<Coord> Sample::CheckNeighbours(std::vector<Coord> &neighbours) {
   for (int i = neighbours.size() - 1; i >= 0; i--) {
-    if(i<0){
+    if (i < 0) {
       assert(FUCK);
     }
-    if (copy_plane_[neighbours[i].ToInt(width_)].cell_type == CellType::WALL) neighbours.erase(neighbours.begin() + i);
+    switch (copy_plane_[neighbours[i].ToInt(width_)].cell_type) {
 
-    if (copy_plane_[neighbours[i].ToInt(width_)].cell_type == CellType::START) neighbours.erase(neighbours.begin() + i);
-    if (copy_plane_[neighbours[i].ToInt(width_)].cell_type == CellType::FINISH) {
-      Coord final_cell = neighbours[i];
-      neighbours.clear();
-      neighbours.emplace_back(final_cell);
-      return neighbours;
+      case CellType::EMPTY:
+        if (copy_plane_[neighbours[i].ToInt(width_)].distance == CELL_MAX) break;
+
+      case CellType::START:
+      case CellType::WALL: neighbours.erase(neighbours.begin() + i); break;
+      case CellType::FINISH:
+        Coord final_cell = neighbours[i];
+        neighbours.clear();
+        neighbours.emplace_back(final_cell);
+        return neighbours;
     }
-
-    if (copy_plane_[neighbours[i].ToInt(width_)].distance != 0) neighbours.erase(neighbours.begin() + i);
   }
   return neighbours;
 }
@@ -156,14 +174,26 @@ std::vector<Coord> Sample::GenNeighbours(const std::vector<Coord> &positions) {
   std::vector<Coord> solution;
   for (auto &c : positions)
     for (auto &gc : GenNeighbours(c))
-    solution.emplace_back(gc);
+      solution.emplace_back(gc);
   return solution;
 }
 Coord Sample::GetBestCell(const std::vector<Coord> &positions) {
-  Coord minimal_cell_position = positions.front();
-  Cell minimal_cell = copy_plane_[minimal_cell_position.ToInt(width_)];
-  for(int i =1 ; i<positions.size();i++)
-    if(copy_plane_[positions[i].ToInt(width_)] < minimal_cell){
+  Coord minimal_cell_position;
+  Cell minimal_cell;
+
+  int i = 0;
+  while (1 < 2) {
+    minimal_cell_position = positions[i];
+    minimal_cell = copy_plane_[minimal_cell_position.ToInt(width_)];
+
+    if (minimal_cell.distance != CELL_MAX) break;
+    i++;
+  }
+
+  for (; i < positions.size(); i++)
+
+    if (copy_plane_[positions[i].ToInt(width_)].distance == CELL_MAX) continue;
+    else if (copy_plane_[positions[i].ToInt(width_)].distance < minimal_cell.distance) {
       minimal_cell_position = positions[i];
       minimal_cell = copy_plane_[minimal_cell_position.ToInt(width_)];
     }

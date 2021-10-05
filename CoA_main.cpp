@@ -14,9 +14,15 @@ int main() {
 
   sic.AddBorder();
 
-  Sample sample(sic);
+
+
+  printf("original maze:\n");
 
   ConsoleDisplay(sic);
+
+  Sample sample(sic);
+
+  printf("\nsolved maze:\n");
 
   ConsoleDisplay(sample.FindPath());
 
