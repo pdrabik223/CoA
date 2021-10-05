@@ -93,21 +93,27 @@ std::vector<Coord> Sample::FindPath() {
   while (1 < 2) {
 
     // check Neighbours
+    //   CheckNeighbours(currently_analyzed_cells_buffer);
 
     if (SearchBreakingPoint(currently_analyzed_cells_buffer, final_point, path_has_been_found)) break;
+
+
 
     // if not apply weights witch basically represent distance from origin point
     ApplyIteration(currently_analyzed_cells_buffer, ++iteration);
 
+
     // gen new bach of points, based on previously visited
     currently_analyzed_cells_buffer = GenNeighbours(currently_analyzed_cells_buffer);
+
   }
 
   // if path has been found than work your way backwards from final point to starting point, but only visit cells with the lowest distance, so the path generated is optimal
   if (path_has_been_found) {
 
     solution.emplace_back(final_point);
-    currently_analyzed_cells_buffer = GenNeighbours(final_point);
+
+    currently_analyzed_cells_buffer = GenNeighboursButIgnoreDistance(final_point);
     while (1 < 2) {
 
       solution.emplace_back(GetBestCell(currently_analyzed_cells_buffer));
@@ -115,7 +121,7 @@ std::vector<Coord> Sample::FindPath() {
       if (solution.back() == starting_point)
         break;
       else
-        currently_analyzed_cells_buffer = GenNeighbours(solution.back());
+        currently_analyzed_cells_buffer = GenNeighboursButIgnoreDistance(solution.back());
     }
     std::reverse(solution.begin(), solution.end());
   }
@@ -162,17 +168,13 @@ void Sample::ApplyIteration(std::vector<Coord> &cells, unsigned int iteration) {
 std::vector<Coord> Sample::GenNeighbours(const std::vector<Coord> &positions) {
   std::vector<Coord> solution;
   for (auto &c : positions) {
-    //   if(copy_plane_[c.ToInt(width_)].distance == CELL_MAX)
+
     for (auto &gc : GenNeighbours(c))
       solution.push_back(gc);
   }
-  //
-  //  solutioooon.reserve(solution.size() - positions.size());
-  //  for (int i = positions.size(); i < solution.size(); i++) {
-  //    solutioooon.push_back(solution[i]);
-  //  }
 
-  std::sort(solution.begin(), solution.end());// {1 1 2 3 4 4 5}
+
+  std::sort(solution.begin(), solution.end());
 
   auto last = std::unique(solution.begin(), solution.end());
 

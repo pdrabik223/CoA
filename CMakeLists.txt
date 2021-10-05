@@ -53,4 +53,18 @@ add_executable(sample_example
         sample_algorithm/sample_example.cpp
         ${plane_dir}
         ${utility_dir}
-        ${sample_dir})
+        ${sample_dir}
+        ${random_walk_dir}
+        ${sfml_window_dir}
+        )
+
+target_include_directories(sample_example
+        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include)
+
+target_link_directories(sample_example
+        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src)
+
+target_link_libraries(sample_example
+        sfml-graphics
+        sfml-system
+        sfml-window)
