@@ -170,6 +170,7 @@ void Sample::ApplyIteration(std::vector<Coord> &cells, unsigned int iteration) {
   for (auto &c : cells)
     copy_plane_[c.ToInt(width_)].distance = iteration;
 }
+
 std::vector<Coord> Sample::GenNeighbours(const std::vector<Coord> &positions) {
   std::vector<Coord> solution;
   for (auto &c : positions)
@@ -177,6 +178,7 @@ std::vector<Coord> Sample::GenNeighbours(const std::vector<Coord> &positions) {
       solution.emplace_back(gc);
   return solution;
 }
+
 Coord Sample::GetBestCell(const std::vector<Coord> &positions) {
   Coord minimal_cell_position;
   Cell minimal_cell;
