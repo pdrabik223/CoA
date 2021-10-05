@@ -10,7 +10,7 @@
 
 #include "../plane/plane.h"
 #include "../sample_algorithm/cell.h"
-
+#include "SFML/Graphics/RectangleShape.hpp"
 
 /// glorified pixel array
 /// those pixels can be huge basically, and multi-colored
@@ -19,7 +19,7 @@
 /// also this class is a simple way to communicate between window and all those different plane objects
 class WindowPlane {
  public:
-  explicit WindowPlane(const Plane & plane);
+  WindowPlane(const Plane & plane);
   WindowPlane(const std::vector<Cell> & plane);
   WindowPlane(const WindowPlane& other);
   WindowPlane& operator=(const WindowPlane& other);
