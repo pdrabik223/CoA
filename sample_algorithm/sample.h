@@ -34,8 +34,8 @@ class Sample {
   /// \param position center of returned "square"
   /// \return neighbouring cells to cell under specified position
   std::vector<Coord> GenNeighbours(const Coord &position);
-  /// run GenNeighbours function for every point passed in positions param
-  std::vector<Coord> GenNeighbours(const std::vector<Coord> &positions);
+  /// run GenNeighboursForAllPositions function for every point passed in positions param
+  std::vector<Coord> GenNeighboursForAllPositions(const std::vector<Coord> &positions);
 
   std::vector<Coord> GenNeighboursButIgnoreDistance(const Coord& position);
 
@@ -45,7 +45,7 @@ class Sample {
   /// searches for lowest distance in positions
   Coord GetBestCell(std::vector<Coord> &positions);
   /// populate start point pram and finish point param with coordinates of start and finish
-  void GetStartAndFinish(Coord& start_point,Coord& finish_point);
+  void GetStartAndFinish(std::vector<Coord> &start_points, std::vector<Coord> &finish_points);
 
  protected:
   /// x axis

@@ -27,6 +27,13 @@ return 420;
      sic.SetCell({0, 0}, CellType::FINISH);
      sic.SetCell({160, 160}, CellType::START);
 
+
+
+     sic.SetCell({0, 160}, CellType::START);
+
+     sic.SetCell({160, 0}, CellType::START);
+
+
      Sample cos(sic);
      ConsoleDisplay(cos.FindPath(window));
 
