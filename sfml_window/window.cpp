@@ -23,6 +23,12 @@ void Window::MainLoop() {
     while (window.pollEvent(event_)) {
       if (event_.type == sf::Event::Closed)
         window.close();
+      else if(event_.type == sf::Event::KeyPressed){
+        if(event_.key.code == sf::Keyboard::Space){
+          for(int i=0;i<10;i++)
+            PopFrame();
+        }
+      }
     }
 
 //    if(clock.getElapsedTime().asMilliseconds()<2) continue;
