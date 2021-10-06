@@ -7,7 +7,7 @@
 
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"
-
+#include "color_scheme.h"
 #include "../plane/plane.h"
 #include "../sample_algorithm/cell.h"
 #include "SFML/Graphics/RectangleShape.hpp"
@@ -23,10 +23,11 @@ class WindowPlane {
   WindowPlane(const Plane &plane);
   WindowPlane(int width, int height) : width_(width), height_(height) { grid_.reserve(height_ * width_); }
   WindowPlane(const std::vector<Cell> &plane, int width, int height);
+  WindowPlane(const std::vector<Cell> &plane, int width, int height,const ColorScheme& color_scheme);
   WindowPlane(const WindowPlane &other) = default;
   WindowPlane &operator=(const WindowPlane &other) = default;
 
-  void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(  253,139,13));
+  void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(0,0,0));
   void DrawToWindow(sf::RenderWindow &window);
 
  protected:
@@ -36,6 +37,9 @@ class WindowPlane {
   unsigned height_;
 
   std::vector<sf::Color> grid_;
+
+  ColorScheme colorscheme_;
+
 };
 
 #endif//COA_SFML_WINDOW_WINDOW_PLANE_H_

@@ -19,6 +19,8 @@ class Window {
   WindowPlane PopFrame();
   void PushFrame(const WindowPlane &new_frame);
 
+  int GetQueueSize();
+
   /// main window loop
   void MainLoop();
 

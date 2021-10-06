@@ -53,29 +53,58 @@ void WindowPlane::DrawToWindow(sf::RenderWindow &window) {
 WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height) : width_(width), height_(height) {
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {
-      switch (plane[x*width+y].cell_type){
+      switch (plane[x * width + y].cell_type) {
         case CellType::EMPTY:
 
-          if(plane[x*width+y].distance == CELL_MAX)
-          grid_.emplace_back(32 , 247, 236);
+          if (plane[x * width + y].distance == CELL_MAX)
+            grid_.emplace_back(colorscheme_.background);
           else
-            grid_.emplace_back(150, 252, 58);
+            grid_.emplace_back(colorscheme_.discovered);
           break;
         case CellType::WALL:
-          grid_.emplace_back(63 , 72, 204);
+
+          grid_.emplace_back(colorscheme_.wall);
           break;
         case CellType::START:
-          grid_.emplace_back(sf::Color::Red);
+          grid_.emplace_back(colorscheme_.start);
           break;
         case CellType::FINISH:
-          grid_.emplace_back(sf::Color::Yellow);
+          grid_.emplace_back(colorscheme_.finish);
           break;
       }
     }
-
 }
 void WindowPlane::HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color) {
-  for (auto &c :plane) {
+  if (highlight_color == sf::Color(0, 0, 0))
+
+    highlight_color = colorscheme_.point_of_interest;
+
+  for (auto &c : plane) {
     grid_[c.ToInt(width_)] = highlight_color;
   }
+}
+WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, const ColorScheme& color_scheme) : width_(width), height_(height),colorscheme_(color_scheme) {
+
+  for (int x = 0; x < width_; x++)
+    for (int y = 0; y < height_; y++) {
+      switch (plane[x * width + y].cell_type) {
+        case CellType::EMPTY:
+
+          if (plane[x * width + y].distance == CELL_MAX)
+            grid_.emplace_back(colorscheme_.background);
+          else
+            grid_.emplace_back(colorscheme_.discovered);
+          break;
+        case CellType::WALL:
+
+          grid_.emplace_back(colorscheme_.wall);
+          break;
+        case CellType::START:
+          grid_.emplace_back(colorscheme_.start);
+          break;
+        case CellType::FINISH:
+          grid_.emplace_back(colorscheme_.finish);
+          break;
+      }
+    }
 }

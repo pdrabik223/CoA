@@ -31,15 +31,13 @@ void Window::MainLoop() {
       }
     }
 
-//    if(clock.getElapsedTime().asMilliseconds()<2) continue;
-//    clock.restart();
+    if(clock.getElapsedTime().asMilliseconds()<150) continue;
+    clock.restart();
 
     if(frame_queue_.empty())continue;
 
       PopFrame().DrawToWindow(window);
       window.display();
-
-
 
     }
 }
@@ -58,4 +56,7 @@ WindowPlane Window::PopFrame() {
 void Window::PushFrame(const WindowPlane &new_frame) {
   const std::lock_guard<std::mutex> lock(event_queue_mutex_);
   frame_queue_.push(new_frame);
+}
+int Window::GetQueueSize() {
+  return frame_queue_.size();
 }

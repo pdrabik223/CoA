@@ -19,7 +19,8 @@ set(random_walk_dir
 
 set(sfml_window_dir
         sfml_window/window.h sfml_window/window.cpp
-        sfml_window/window_plane.h sfml_window/window_plane.cpp)
+        sfml_window/window_plane.h sfml_window/window_plane.cpp
+        sfml_window/color_scheme.h sfml_window/color_scheme.cpp)
 
 
 add_executable(CoA

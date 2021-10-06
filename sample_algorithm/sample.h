@@ -9,6 +9,7 @@
 #include "../sfml_window/window_plane.h"
 #include "cell.h"
 
+
 static void ConsoleDisplay(const std::vector<Coord> &path);
 
 /// for now there only can be one start and one finish cell
@@ -28,7 +29,7 @@ class Sample {
   /// find path from start to finish
   /// \return list of connected coordinates
   /// if returned list is empty the path does not exist
-  std::vector<Coord> FindPath(Window &window_handle);
+  std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
  private:
   /// \param position center of returned "square"
