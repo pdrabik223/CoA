@@ -21,12 +21,17 @@ class Window {
 
   int GetQueueSize();
 
+  void SetWindowLabel(const std::string &label);
+
   /// main window loop
   void MainLoop();
 
   int width_;
   int height_;
 
+
+  std::string current_window_title_ = "CoA";
+  bool update_title_ = false;
 
   std::mutex event_queue_mutex_;
   std::queue<WindowPlane> frame_queue_;

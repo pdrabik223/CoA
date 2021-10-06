@@ -31,8 +31,14 @@ void Window::MainLoop() {
       }
     }
 
+
     if(clock.getElapsedTime().asMilliseconds()<150) continue;
     clock.restart();
+
+    if(update_title_){
+      update_title_ = false;
+      window.setTitle(current_window_title_);
+    }
 
     if(frame_queue_.empty())continue;
 
@@ -59,4 +65,8 @@ void Window::PushFrame(const WindowPlane &new_frame) {
 }
 int Window::GetQueueSize() {
   return frame_queue_.size();
+}
+void Window::SetWindowLabel(const std::string &label) {
+  current_window_title_ = label;
+  update_title_ = true;
 }

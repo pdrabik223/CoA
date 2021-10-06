@@ -33,7 +33,10 @@ int GenVisuals(Window &window) {
     Sample cos(sic);
     ColorScheme color_scheme;
     color_scheme.LoadCyanSet();
-    ConsoleDisplay(cos.FindPath(window,color_scheme));
+    auto path = cos.FindPath(window,color_scheme);
+
+    if(not path.empty()) window.SetWindowLabel("CoA - path found :)");
+    window.SetWindowLabel("CoA - no path found :c");
 
 
     while (window.GetQueueSize() > 30)

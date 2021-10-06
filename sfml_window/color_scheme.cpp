@@ -12,6 +12,15 @@ void ColorScheme::LoadCyanSet() {
   point_of_interest = sf::Color(255,215,0);
   start = sf::Color(255,0,0);
   finish = sf::Color(255,255,255);
+}
+void ColorScheme::LoadRedSet() {
+  background = sf::Color(50,48,49);
+  wall = sf::Color(24,126,138);
 
+  discovered = sf::Color(219,57,52);
 
+  point_of_interest = sf::Color(255,200,87);
+
+  start = sf::Color(255,0,0);
+  finish = sf::Color(255,255,255);
 }

@@ -14,6 +14,7 @@ struct ColorScheme {
   ColorScheme(const sf::Color &background, const sf::Color &wall, const sf::Color &discovered, const sf::Color &point_of_interest, const sf::Color &start, const sf::Color &finish);
 
   void LoadCyanSet();
+  void LoadRedSet();
 
   sf::Color background;
   sf::Color wall;
