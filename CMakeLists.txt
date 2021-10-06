@@ -14,6 +14,11 @@ set(sample_dir
         sample_algorithm/sample.h sample_algorithm/sample.cpp
         sample_algorithm/cell.h sample_algorithm/cell.cpp)
 
+set(a_star_dir
+        a_star/a_star.h a_star/a_star.cpp
+        a_star/cell.h a_star/cell.cpp
+        )
+
 set(random_walk_dir
         random_walk/random_walk_algorithm.h random_walk/random_walk_algorithm.cpp)
 
@@ -29,7 +34,8 @@ add_executable(CoA
         ${utility_dir}
         ${sample_dir}
         ${random_walk_dir}
-        ${sfml_window_dir})
+        ${sfml_window_dir}
+        ${a_star_dir})
 
 add_subdirectory(SFML)
 
