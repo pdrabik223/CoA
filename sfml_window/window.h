@@ -7,7 +7,7 @@
 
 #include "window_plane.h"
 #include <SFML/Window/Event.hpp>
-//#include <SFML/Window/Clock.hpp>
+
 #include <mutex>
 #include <queue>
 #include <vector>
