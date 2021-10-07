@@ -9,9 +9,9 @@
 #define CELL_MAX 100'000'000
 
 struct Cell {
-  Cell() : cell_type(CellType::EMPTY), distance(CELL_MAX){};
-  Cell(CellType cell_type) : cell_type(cell_type), distance(CELL_MAX) {
-    if (cell_type == CellType::START) distance = 0;
+  Cell() : cell_type(CellState::EMPTY), distance(CELL_MAX){};
+  Cell(CellState cell_type) : cell_type(cell_type), distance(CELL_MAX) {
+    if (cell_type == CellState::START) distance = 0;
   };
 
   Cell(const Cell &other) = default;
@@ -23,7 +23,7 @@ struct Cell {
   friend std::ostream &operator<<(std::ostream &os, const Cell &cell);
 
   size_t distance;
-  CellType cell_type;
+  CellState cell_type;
 };
 
 #endif//COA_SAMPLE_ALGORITHM_CELL_H_
