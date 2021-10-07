@@ -4,7 +4,6 @@
 
 #include "cell.h"
 bool a_star::Cell::operator<(const a_star::Cell &rhs) const {
-
   return distance < rhs.distance;
 }
 bool a_star::Cell::operator>(const a_star::Cell &rhs) const {
@@ -19,7 +18,7 @@ bool a_star::Cell::operator>=(const a_star::Cell &rhs) const {
 std::ostream &a_star::operator<<(std::ostream &os, const a_star::Cell &cell) {
   switch (cell.cell_type) {
 
-    case CellType::EMPTY: {
+    case CellState::EMPTY: {
       if (cell.distance == CELL_MAX) {
         os << "  ";
       } else if (cell.distance < 10) {
@@ -30,12 +29,21 @@ std::ostream &a_star::operator<<(std::ostream &os, const a_star::Cell &cell) {
         os << "--";
       }
     } break;
-    case CellType::WALL: os << " #"; break;
-    case CellType::START: os << " S"; break;
-    case CellType::FINISH:
+    case CellState::WALL: os << " #"; break;
+    case CellState::START: os << " S"; break;
+    case CellState::FINISH:
       os << " F";
       break;
   }
 
   return os;
+}
+unsigned int a_star::Cell::GetG() const {
+  return g;
+}
+unsigned int a_star::Cell::GetH() const {
+  return h;
+}
+void a_star::Cell::SetFatherPtr(a_star::Cell *father_ptr) {
+  Cell::father_ptr = father_ptr;
 }

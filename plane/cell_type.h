@@ -4,8 +4,9 @@
 
 #ifndef COA_PLANE_CELL_TYPE_H_
 #define COA_PLANE_CELL_TYPE_H_
-enum class CellType {
+enum class CellState {
   EMPTY,
+  // VISITED,
   WALL,
   START,
   FINISH

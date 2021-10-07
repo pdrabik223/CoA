@@ -14,7 +14,7 @@ int GenRandomVisuals(Window &window) {
 
   for (int i = 0; i < 2200; ++i) {
     std::this_thread::sleep_for(std::chrono::milliseconds(30));
-    window.PushFrame(Plane(200, 200));
+    window.PushFrame(Plane(100, 100));
   }
   return 420;
 }
@@ -22,21 +22,18 @@ int GenRandomVisuals(Window &window) {
 int GenVisuals(Window &window) {
 
   for (int i = 0; i < 10; ++i) {
-    Plane sic(200, 200);
+    Plane sic(100, 100);
 
-    sic.SetCell({0, 0}, CellType::FINISH);
-    sic.SetCell({160, 160}, CellType::START);
+    sic.SetCell({0, 0}, CellState::FINISH);
+    sic.SetCell({90, 90}, CellState::START);
 
-    sic.SetCell({0, 160}, CellType::START);
-    sic.SetCell({160, 0}, CellType::START);
+    sic.SetCell({0, 90}, CellState::START);
+    sic.SetCell({90, 0}, CellState::START);
 
     Sample cos(sic);
     ColorScheme color_scheme;
-    color_scheme.LoadCyanSet();
+    color_scheme.LoadRedSet();
     auto path = cos.FindPath(window,color_scheme);
-
-    if(not path.empty()) window.SetWindowLabel("CoA - path found :)");
-    window.SetWindowLabel("CoA - no path found :c");
 
 
     while (window.GetQueueSize() > 30)

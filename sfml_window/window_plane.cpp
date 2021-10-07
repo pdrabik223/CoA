@@ -9,16 +9,16 @@ WindowPlane::WindowPlane(const Plane &plane) : width_(plane.GetWidth()), height_
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {
       switch (plane.GetCell({x, y})) {
-        case CellType::EMPTY:
+        case CellState::EMPTY:
           grid_.emplace_back(58, 58, 58);
           break;
-        case CellType::WALL:
+        case CellState::WALL:
           grid_.emplace_back(21, 5, 78);
           break;
-        case CellType::START:
+        case CellState::START:
           grid_.emplace_back(0, 0, 0);
           break;
-        case CellType::FINISH:
+        case CellState::FINISH:
           grid_.emplace_back(255, 178, 71);
           break;
       }
@@ -54,21 +54,21 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height) 
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {
-        case CellType::EMPTY:
+        case CellState::EMPTY:
 
           if (plane[x * width + y].distance == CELL_MAX)
             grid_.emplace_back(colorscheme_.background);
           else
             grid_.emplace_back(colorscheme_.discovered);
           break;
-        case CellType::WALL:
+        case CellState::WALL:
 
           grid_.emplace_back(colorscheme_.wall);
           break;
-        case CellType::START:
+        case CellState::START:
           grid_.emplace_back(colorscheme_.start);
           break;
-        case CellType::FINISH:
+        case CellState::FINISH:
           grid_.emplace_back(colorscheme_.finish);
           break;
       }
@@ -88,21 +88,21 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, 
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {
-        case CellType::EMPTY:
+        case CellState::EMPTY:
 
           if (plane[x * width + y].distance == CELL_MAX)
             grid_.emplace_back(colorscheme_.background);
           else
             grid_.emplace_back(colorscheme_.discovered);
           break;
-        case CellType::WALL:
+        case CellState::WALL:
 
           grid_.emplace_back(colorscheme_.wall);
           break;
-        case CellType::START:
+        case CellState::START:
           grid_.emplace_back(colorscheme_.start);
           break;
-        case CellType::FINISH:
+        case CellState::FINISH:
           grid_.emplace_back(colorscheme_.finish);
           break;
       }

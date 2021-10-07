@@ -18,7 +18,7 @@ bool Cell::operator>=(const Cell &rhs) const {
 std::ostream &operator<<(std::ostream &os, const Cell &cell) {
   switch (cell.cell_type) {
 
-    case CellType::EMPTY: {
+    case CellState::EMPTY: {
       if (cell.distance == CELL_MAX) {
         os << "  ";
       } else if (cell.distance < 10) {
@@ -29,9 +29,9 @@ std::ostream &operator<<(std::ostream &os, const Cell &cell) {
         os << "--";
       }
     } break;
-    case CellType::WALL: os << " #"; break;
-    case CellType::START: os << " S"; break;
-    case CellType::FINISH:
+    case CellState::WALL: os << " #"; break;
+    case CellState::START: os << " S"; break;
+    case CellState::FINISH:
       os << " F";
       break;
   }
