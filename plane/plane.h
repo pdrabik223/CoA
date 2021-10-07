@@ -16,8 +16,8 @@ class Plane {
   Plane(const Plane &other);
   Plane &operator=(const Plane &other);
 
-  CellType GetCell(const Coord &position) const;
-  void SetCell(const Coord &position, CellType value);
+  CellState GetCell(const Coord &position) const;
+  void SetCell(const Coord &position, CellState value);
 
   unsigned int GetWidth() const;
   unsigned int GetHeight() const;
@@ -31,7 +31,7 @@ class Plane {
   /// y axis
   unsigned height_;
 
-  std::vector<CellType> plane_;
+  std::vector<CellState> plane_;
 };
 static void ConsoleDisplay(const Plane &target) {
   if (target.GetWidth() > 30 or target.GetHeight() > 30) {
@@ -45,16 +45,16 @@ static void ConsoleDisplay(const Plane &target) {
     for (int x = 0; x < target.GetWidth(); x++)
 
       switch (target.GetCell({x, y})) {
-        case CellType::EMPTY:
+        case CellState::EMPTY:
           printf("  ");
           break;
-        case CellType::WALL:
+        case CellState::WALL:
           printf(" #");
           break;
-        case CellType::START:
+        case CellState::START:
           printf(" S");
           break;
-        case CellType::FINISH:
+        case CellState::FINISH:
           printf(" F");
           break;
       }
