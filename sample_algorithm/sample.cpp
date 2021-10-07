@@ -17,8 +17,8 @@ Sample::Sample(const Plane &other) : width_(other.GetWidth()), height_(other.Get
   for (int y = 0; y < other.GetHeight(); y++)
     for (int x = 0; x < other.GetWidth(); x++) {
       copy_plane_.emplace_back(other.GetCell({x, y}));
-      if (other.GetCell({x, y}) == CellType::START) is_there_starting_point = true;
-      if (other.GetCell({x, y}) == CellType::FINISH) is_there_destination_point = true;
+      if (other.GetCell({x, y}) == CellState::START) is_there_starting_point = true;
+      if (other.GetCell({x, y}) == CellState::FINISH) is_there_destination_point = true;
     }
 
   if (not is_there_starting_point or not is_there_destination_point) throw "bad plane error";
@@ -44,11 +44,11 @@ Sample &Sample::operator=(const Sample &other) {
 }
 void Sample::GetStartAndFinish(std::vector<Coord> &start_points, std::vector<Coord> &finish_points) {
   for (int i = 0; i < width_ * height_; i++)
-    if (copy_plane_[i].cell_type == CellType::START) {
+    if (copy_plane_[i].cell_type == CellState::START) {
 
       start_points.emplace_back((int) (i % width_), (int) (i / width_));
 
-    } else if (copy_plane_[i].cell_type == CellType::FINISH) {
+    } else if (copy_plane_[i].cell_type == CellState::FINISH) {
       finish_points.emplace_back((int) (i % width_), (int) (i / width_));
     }
 }
@@ -93,9 +93,6 @@ std::vector<Coord> Sample::FindPath() {
 
   while (1 < 2) {
 
-    // check Neighbours
-    //   CheckNeighbours(currently_analyzed_cells_buffer);
-
     if (SearchBreakingPoint(currently_analyzed_cells_buffer, final_points, path_has_been_found)) break;
 
     // if not apply weights witch basically represent distance from origin point
@@ -130,7 +127,6 @@ std::vector<Coord> Sample::FindPath() {
 }
 
 std::vector<Coord> Sample::GenNeighbours(const Coord &position) {
-  // TODO test neighbours generation function
 
   std::vector<Coord> potential_neighbours;
 
@@ -143,12 +139,12 @@ std::vector<Coord> Sample::GenNeighbours(const Coord &position) {
   for (const auto &pn : potential_neighbours)
     if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
       switch (copy_plane_[pn.ToInt(width_)].cell_type) {
-        case CellType::EMPTY:
+        case CellState::EMPTY:
           if (copy_plane_[pn.ToInt(width_)].distance == CELL_MAX) {
             neighbours.push_back(pn);
           }
           break;
-        case CellType::FINISH:
+        case CellState::FINISH:
           return std::vector<Coord>({pn});
         default:
           break;
@@ -288,8 +284,8 @@ std::vector<Coord> Sample::GenNeighboursButIgnoreDistance(const Coord &position)
   for (const auto &pn : potential_neighbours)
     if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
       switch (copy_plane_[pn.ToInt(width_)].cell_type) {
-        case CellType::EMPTY:
-        case CellType::START:
+        case CellState::EMPTY:
+        case CellState::START:
           neighbours.push_back(pn);
 
         default:
