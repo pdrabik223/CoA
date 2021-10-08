@@ -108,3 +108,27 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, 
       }
     }
 }
+WindowPlane::WindowPlane(const std::vector<a_star::Cell> &plane, int width, int height, const ColorScheme &color_scheme) {
+  for (int x = 0; x < width_; x++)
+    for (int y = 0; y < height_; y++) {
+      switch (plane[x * width + y].cell_type) {
+        case CellState::EMPTY:
+
+          if (not plane[x * width + y].father_ptr)
+            grid_.emplace_back(colorscheme_.background);
+          else
+            grid_.emplace_back(colorscheme_.discovered);
+          break;
+        case CellState::WALL:
+
+          grid_.emplace_back(colorscheme_.wall);
+          break;
+        case CellState::START:
+          grid_.emplace_back(colorscheme_.start);
+          break;
+        case CellState::FINISH:
+          grid_.emplace_back(colorscheme_.finish);
+          break;
+      }
+    }
+}
