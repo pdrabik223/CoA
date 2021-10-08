@@ -24,6 +24,7 @@ class Plane {
 
   void AddBorder();
 
+  void DisplayText(const std::string &text, const Coord &position, unsigned size);
  protected:
   /// x axis
   unsigned width_;
@@ -74,7 +75,7 @@ static void ConsoleDisplay(const Plane &target, const std::vector<Coord> &path) 
 
       bool belongs_to_path = false;
       for (const auto &p : path)
-        if (Coord(x, y) == p) {
+        if (Coord(x, y) == p and target.GetCell({x, y}) == CellState::EMPTY) {
           printf(" @");
           belongs_to_path = true;
         }

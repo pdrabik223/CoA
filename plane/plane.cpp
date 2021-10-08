@@ -59,3 +59,8 @@ void Plane::AddBorder() {
   for (int y = 0; y < GetHeight(); y++)
     SetCell({(int)GetWidth()-1, y}, CellState::WALL);
 }
+void Plane::DisplayText(const std::string &text, const Coord &position, unsigned size) {
+
+
+
+}
