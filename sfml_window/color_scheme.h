@@ -15,6 +15,7 @@ struct ColorScheme {
 
   void LoadCyanSet();
   void LoadRedSet();
+  void LoadOrangeSet();
 
   sf::Color background;
   sf::Color wall;

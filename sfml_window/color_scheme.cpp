@@ -14,13 +14,22 @@ void ColorScheme::LoadCyanSet() {
   finish = sf::Color(255,255,255);
 }
 void ColorScheme::LoadRedSet() {
-  background = sf::Color(50,48,49);
-  wall = sf::Color(24,126,138);
+  background = sf::Color(0x323031);
+  wall = sf::Color(0x187e8a);
 
-  discovered = sf::Color(219,57,52);
+  discovered = sf::Color(0xdb3934);
 
-  point_of_interest = sf::Color(255,200,87);
+  point_of_interest = sf::Color(0xdb3934);
 
-  start = sf::Color(255,0,0);
-  finish = sf::Color(255,255,255);
+  start = sf::Color(0xff0000);
+  finish = sf::Color(0xffffff);
+}
+void ColorScheme::LoadOrangeSet() {
+  background = sf::Color(0x323031);
+  discovered = sf::Color(0xF9A32A);
+  wall = sf::Color(0x842af9);
+  point_of_interest = sf::Color(0x77ef21);
+  start = sf::Color(0xff0000);
+  finish = sf::Color(0xffffff);
+
 }
