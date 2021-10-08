@@ -7,14 +7,12 @@
 #include "a_star.h"
 int main() {
 
-  Plane sic(7, 7);
-
-  sic.SetCell({1, 1}, CellState::FINISH);
-
-  sic.SetCell({4, 4}, CellState::START);
+  Plane sic(20, 20);
 
   sic.AddBorder();
+  sic.SetCell({1, 1}, CellState::FINISH);
 
+  sic.SetCell({18, 18}, CellState::START);
 
   printf("original maze:\n");
 
@@ -24,8 +22,11 @@ int main() {
 
   printf("\nsolution:\n");
 
+
+  ConsoleDisplay(sic,sample.FindPath());
+
+
   ConsoleDisplay(sample.FindPath());
-  char p;
-  std::cin>>p;
+
   return 0;
 }

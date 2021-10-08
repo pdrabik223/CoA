@@ -12,27 +12,30 @@
 namespace a_star {
 struct Cell {
   Cell() : cell_type(CellState::EMPTY){};
-  Cell(CellState cell_type, const Coord& position) : cell_type(cell_type),placement (position){
+  Cell(CellState cell_type, const Coord &position) : cell_type(cell_type), placement(position) {
     if (cell_type == CellState::START) {
 
       father_ptr = nullptr;
       g = 0;
     }
   };
-  Cell(const Cell &other) ;
-  Cell &operator=(const Cell &other) ;
+  Cell(const Cell &other);
+  Cell &operator=(const Cell &other);
 
-  void SetH( unsigned h){this->h = h;}
+  void SetH(unsigned h) { this->h = h; }
 
   unsigned int GetH() const;
 
-  unsigned GetF(){return g+h;}
+  unsigned GetF() { return g + h; }
 
-  void SetFatherPtr( Cell &father);
+  void SetFatherPtr(Cell &father);
 
-  Cell* GetFatherPtr() const{return father_ptr;};
+  Cell *GetFatherPtr() const { return father_ptr; };
 
-  ~Cell(){delete father_ptr;}
+  ~Cell() {
+  delete father_ptr;
+
+  }
 
   /// distance from cell to finish
   unsigned h = 0;
@@ -40,13 +43,11 @@ struct Cell {
   /// distance from cell to start
   unsigned g = 0;
 
-
-  Cell* father_ptr = nullptr;
+  Cell *father_ptr = nullptr;
 
   Coord placement;
 
   CellState cell_type;
-
-  };
-}
+};
+}// namespace a_star
 #endif//COA_A_STAR_CELL_H_

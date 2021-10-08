@@ -28,6 +28,8 @@ class AStar {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
+  virtual ~AStar();
+
  private:
   bool GenerateGraph();
   void GeneratePath();
@@ -51,6 +53,9 @@ class AStar {
   unsigned ManhattanDistance(const Coord &position);
 
   Cell& GetCell(const Coord& position){return copy_plane_[position.ToInt(width_)];};
+
+  void ClearGraph();
+
 
  protected:
   /// x axis

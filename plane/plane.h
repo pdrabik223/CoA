@@ -24,7 +24,6 @@ class Plane {
 
   void AddBorder();
 
-
  protected:
   /// x axis
   unsigned width_;
@@ -39,7 +38,6 @@ static void ConsoleDisplay(const Plane &target) {
     printf("to big plane\n");
     return;
   }
-
 
   for (int y = 0; y < target.GetHeight(); y++) {
     for (int x = 0; x < target.GetWidth(); x++)
@@ -58,6 +56,44 @@ static void ConsoleDisplay(const Plane &target) {
           printf(" F");
           break;
       }
+
+    printf("\n");
+  }
+}
+
+static void ConsoleDisplay(const Plane &target, const std::vector<Coord> &path) {
+
+  if (target.GetWidth() > 30 or target.GetHeight() > 30) {
+
+    printf("to big plane\n");
+    return;
+  }
+
+  for (int y = 0; y < target.GetHeight(); y++) {
+    for (int x = 0; x < target.GetWidth(); x++) {
+
+      bool belongs_to_path = false;
+      for (const auto &p : path)
+        if (Coord(x, y) == p) {
+          printf(" @");
+          belongs_to_path = true;
+        }
+      if (not belongs_to_path)
+        switch (target.GetCell({x, y})) {
+          case CellState::EMPTY:
+            printf("  ");
+            break;
+          case CellState::WALL:
+            printf(" #");
+            break;
+          case CellState::START:
+            printf(" S");
+            break;
+          case CellState::FINISH:
+            printf(" F");
+            break;
+        }
+    }
 
     printf("\n");
   }

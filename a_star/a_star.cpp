@@ -116,6 +116,8 @@ Coord a_star::AStar::PopBestFCell(std::vector<Coord> &positions) {
 
 std::vector<Coord> a_star::AStar::FindPath() {
 
+  ClearGraph();
+
   // convert cell grid to proper graph
   // if connection between any start and any finish won't be found GenerateGraph will return false, and we end the FindPath function
   if (not GenerateGraph()) return {};
@@ -194,6 +196,15 @@ std::vector<Coord> a_star::AStar::FindPath(Window &window_handle, const ColorSch
   GeneratePath();
 
   return shortest_path_;
+}
+void a_star::AStar::ClearGraph() {
+  for (auto& g :copy_plane_) {
+    g.father_ptr = nullptr;
+  }
+  shortest_path_.clear();
+}
+a_star::AStar::~AStar() {
+  ClearGraph();
 }
 //bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
 //  bool path_has_been_found = false;

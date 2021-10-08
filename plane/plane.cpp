@@ -33,7 +33,7 @@ unsigned int Plane::GetHeight() const {
   return height_;
 }
 Plane::Plane(unsigned int width, unsigned int height) : width_(width), height_(height) {
-  int threshold = 20;
+  int threshold = 10;
   plane_.reserve(width * height);
 
   for (int i = 0; i < width * height; i++)
