@@ -199,7 +199,7 @@ Coord Sample::GetBestCell(std::vector<Coord> &positions) {
 
   return minimal_cell_position;
 }
-std::vector<Coord> Sample::FindPath(Window &window_handle,const ColorScheme& color_scheme) {
+std::vector<Coord> Sample::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
   std::vector<Coord> solution;
   std::vector<Coord> currently_analyzed_cells_buffer;
 
@@ -210,7 +210,7 @@ std::vector<Coord> Sample::FindPath(Window &window_handle,const ColorScheme& col
   // both of points will get populated that's Winger guarantee
   // and also constructor would scream if plane object was incorrect
 
-  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_,color_scheme));
+  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
   unsigned iteration = 0;
   // gen first batch of cells
@@ -228,13 +228,13 @@ std::vector<Coord> Sample::FindPath(Window &window_handle,const ColorScheme& col
     // if not apply weights witch basically represent distance from origin point
     ApplyIteration(currently_analyzed_cells_buffer, ++iteration);
 
-    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_,color_scheme));
+    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
     // gen new bach of points, based on previously visited
 
     currently_analyzed_cells_buffer = GenNeighboursForAllPositions(currently_analyzed_cells_buffer);
 
-    WindowPlane highlights(copy_plane_, width_, height_,color_scheme);
+    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
 
     printf("(1) iteration: %d, size: %u\n ", iteration, currently_analyzed_cells_buffer.size());
 
@@ -247,7 +247,7 @@ std::vector<Coord> Sample::FindPath(Window &window_handle,const ColorScheme& col
 
     solution.push_back(currently_analyzed_cells_buffer.front());
 
-    WindowPlane highlights(copy_plane_, width_, height_,color_scheme);
+    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
     highlights.HighlightCells(solution);
     window_handle.PushFrame(highlights);
 
