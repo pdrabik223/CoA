@@ -50,7 +50,7 @@ class AStar {
   Coord PopBestFCell(std::vector<Coord> &positions);
 
   /// finds Manhattan distance between position and closest finish point
-  double  ManhattanDistance(const Coord &position);
+  double EuclideanDistance(const Coord &position);
 
   Cell& GetCell(const Coord& position){return copy_plane_[position.ToInt(width_)];};
 

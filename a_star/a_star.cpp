@@ -65,7 +65,6 @@ std::vector<Coord> a_star::AStar::GenNeighbours(const Coord &position) {
         case CellState::EMPTY:
 
           if (not GetCell(pn).father_ptr) {
-
             neighbours.push_back(pn);
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
           }
@@ -83,11 +82,11 @@ std::vector<Coord> a_star::AStar::GenNeighbours(const Coord &position) {
 }
 void a_star::AStar::ApplyHDistance(std::vector<Coord> &cells) {
   for (auto &c : cells) {
-    GetCell(c).SetH(ManhattanDistance(c));
+    GetCell(c).SetH(EuclideanDistance(c));
   }
 }
 
-double a_star::AStar::ManhattanDistance(const Coord &position) {
+double a_star::AStar::EuclideanDistance(const Coord &position) {
 
   double smallest_distance = UINT32_MAX;
   double distance_to_f = 0;
@@ -107,11 +106,9 @@ Coord a_star::AStar::PopBestFCell(std::vector<Coord> &positions) {
 
   int smallest_f_id = 0;
 
-  for (int p = 1; p < positions.size(); ++p) {
-    if (GetCell(positions[p]).GetF() < GetCell(positions[smallest_f_id]).GetF()) {
+  for (int p = 1; p < positions.size(); ++p)
+    if (GetCell(positions[p]).GetF() < GetCell(positions[smallest_f_id]).GetF())
       smallest_f_id = p;
-    }
-  }
 
   auto temp = positions[smallest_f_id];
   positions.erase(positions.begin() + smallest_f_id);
@@ -146,7 +143,7 @@ bool a_star::AStar::GenerateGraph() {
     q = PopBestFCell(open);
 
     successors = GenNeighbours(q);
-      if (SearchBreakingPoint(successors, path_has_been_found)) break;
+    if (SearchBreakingPoint(successors, path_has_been_found)) break;
 
     ApplyHDistance(successors);
 
@@ -172,22 +169,21 @@ void a_star::AStar::GeneratePath() {
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
+
 bool a_star::AStar::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
   path_has_been_found = false;
 
   // check if this is the end of path
   if (possible_routs.size() == 1) {
     for (auto &p : final_points_)
-      if (possible_routs.front() == p){
+      if (possible_routs.front() == p) {
         path_has_been_found = true;
         return true;
       }
-
-    // check if there even is a path to final point
   }
-
   return false;
 }
+
 std::vector<Coord> a_star::AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
   ClearGraph();
 
@@ -222,25 +218,21 @@ bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &colo
 
   while (not open.empty()) {
     q = PopBestFCell(open);
+    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
     successors = GenNeighbours(q);
 
-    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
-
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-
     highlights.HighlightCells(successors);
     window_handle.PushFrame(highlights);
 
-    //    for (const auto &s : successors)
-
     if (SearchBreakingPoint(successors, path_has_been_found)) break;
-
 
     ApplyHDistance(successors);
 
     for (const auto &s : successors)
-      open.push_back(s);
+
+        open.push_back(s);
   }
 
   return path_has_been_found;
