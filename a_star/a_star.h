@@ -29,36 +29,28 @@ class AStar {
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
  private:
+  bool GenerateGraph();
+  void GeneratePath();
+
+  bool GenerateGraph(Window &window_handle, const ColorScheme &color_scheme);
+  void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
+
+  bool SearchBreakingPoint(const std::vector<Coord>& possible_routs, bool& path_has_been_found);
+
   /// \param position center of returned "square"
   /// \return neighbouring cells to cell under specified position
   std::vector<Coord> GenNeighbours(const Coord &position);
-  /// run GenNeighboursForAllPositions function for every point passed in positions param
-  std::vector<Coord> GenNeighboursForAllPositions(const std::vector<Coord> &positions);
 
-  std::vector<Coord> GenNeighboursButIgnoreDistance(const Coord& position);
-
-  /// applies distance from starting cell
-  void ApplyIteration(std::vector<Coord> &cells, const std::vector<Coord>& start_points);
-
-  /// applies Manhattan distance to finish points
-  void ApplyDistance(std::vector<Coord> &cells, const std::vector<Coord> &finish_points);
-
-  /// searches for lowest distance in positions
-  Coord GetBestCell(std::vector<Coord> &positions);
+  /// applies distance from cell to finish
+  void ApplyHDistance(std::vector<Coord> &cells);
 
   /// searches for lowest g distance  in positions
-  Coord GetBestGCell(std::vector<Coord> &positions);
-
-
-  /// populate start point pram and finish point param with coordinates of start and finish
-  void GetStartAndFinish(std::vector<Coord> &start_points, std::vector<Coord> &finish_points);
+  Coord PopBestFCell(std::vector<Coord> &positions);
 
   /// finds Manhattan distance between position and closest finish point
-  unsigned ManhattanDistance(const Coord& position,const std::vector<Coord> &finish_points);
+  unsigned ManhattanDistance(const Coord &position);
 
-
-
-
+  Cell& GetCell(const Coord& position){return copy_plane_[position.ToInt(width_)];};
 
  protected:
   /// x axis
@@ -68,6 +60,12 @@ class AStar {
 
   std::vector<Cell> copy_plane_;
 
+
+  std::vector<Coord> starting_points_;
+  std::vector<Coord> final_points_;
+  std::vector<Coord> shortest_path_;
+
+
 };
-}
+}// namespace a_star
 #endif//COA_A_STAR_A_STAR_H_

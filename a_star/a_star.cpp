@@ -1,38 +1,32 @@
-//
-// Created by piotr on 06/10/2021.
-//
-
 #include "a_star.h"
+#define INT(x) x.ToInt(width_)
 
-a_star::AStar::AStar(const a_star::AStar &other) {
-
-}
-unsigned a_star::AStar::ManhattanDistance(const Coord &position, const std::vector<Coord> &finish_points) {
-  std::vector<unsigned> distances(finish_points.size());
-
-  unsigned lowest_distance = CELL_MAX;
-  unsigned distance;
-  for (const auto &p : finish_points) {
-    distance = abs(position.x - p.x) + abs(position.y - p.y);
-    if(distance < lowest_distance) lowest_distance = distance;
-  }
-  return lowest_distance;
-
-}
 a_star::AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
-  bool is_there_starting_point = false;
-  bool is_there_destination_point = false;
-
   for (int y = 0; y < other.GetHeight(); y++)
     for (int x = 0; x < other.GetWidth(); x++) {
-      copy_plane_.emplace_back(other.GetCell({x, y}));
-      if (other.GetCell({x, y}) == CellState::START) is_there_starting_point = true;
-      if (other.GetCell({x, y}) == CellState::FINISH) is_there_destination_point = true;
+      copy_plane_.push_back({other.GetCell({x, y}), {x, y}});
+      if (other.GetCell({x, y}) == CellState::START) starting_points_.emplace_back(x, y);
+      if (other.GetCell({x, y}) == CellState::FINISH) final_points_.emplace_back(x, y);
     }
 
-  if (not is_there_starting_point or not is_there_destination_point) throw "bad plane error";
+  if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
+}
+a_star::AStar::AStar(const a_star::AStar &other) : width_(other.width_), height_(other.height_) {
+  copy_plane_.reserve(width_ * height_);
+
+  for (int i = 0; i < width_ * height_; i++)
+    copy_plane_.emplace_back(other.copy_plane_[i]);
+
+  for (const auto &f : other.starting_points_)
+    starting_points_ = other.starting_points_;
+
+  for (const auto &f : other.final_points_)
+    final_points_ = other.final_points_;
+
+  for (const auto &f : other.shortest_path_)
+    shortest_path_ = other.shortest_path_;
 }
 a_star::AStar &a_star::AStar::operator=(const a_star::AStar &other) {
   if (&other == this) return *this;
@@ -44,61 +38,19 @@ a_star::AStar &a_star::AStar::operator=(const a_star::AStar &other) {
   for (int i = 0; i < width_ * height_; i++)
     copy_plane_.emplace_back(other.copy_plane_[i]);
 
+  for (const auto &f : other.starting_points_)
+    starting_points_ = other.starting_points_;
+
+  for (const auto &f : other.final_points_)
+    final_points_ = other.final_points_;
+
+  for (const auto &f : other.shortest_path_)
+    shortest_path_ = other.shortest_path_;
+
   return *this;
 }
-std::vector<Coord> a_star::AStar::FindPath() {
-  std::vector<Coord> open;
-  std::vector<Coord> closed;
-
-  std::vector<Coord> starting_points;
-  std::vector<Coord> final_points;
-  GetStartAndFinish(starting_points, final_points);
-
-  unsigned iteration = 0;
-
-  bool path_has_been_found = false;
-
-  open = GenNeighboursForAllPositions(starting_points);
-  ApplyDistance(open,final_points);
-
-  Coord q;
-    while (!open.empty()) {
-      q = GetBestGCell(open);
-      open.erase(std::find(open.begin(), open.end(),q));
-      
-
-
-
-    ApplyIteration(open, starting_points);
-    open = GenNeighboursForAllPositions(closed);
-
-    }
-
-  // if path has been found than work your way backwards from final point to starting point, but only visit cells with the lowest distance, so the path generated is optimal
-  if (path_has_been_found) {
-
-    open.push_back(closed.front());
-
-    closed = GenNeighboursButIgnoreDistance(closed.front());
-    while (1 < 2) {
-
-      open.emplace_back(GetBestCell(closed));
-
-      for (auto &p : starting_points) {
-        if (open.back() == p) {
-          std::reverse(open.begin(), open.end());
-          return open;
-        } else
-          closed = GenNeighboursButIgnoreDistance(open.back());
-      }
-    }
-  }
-
-  // else return empty path object
-  return open;
-
-}
 std::vector<Coord> a_star::AStar::GenNeighbours(const Coord &position) {
+
   std::vector<Coord> potential_neighbours;
 
   potential_neighbours.emplace_back(position.x, position.y - 1);
@@ -107,114 +59,194 @@ std::vector<Coord> a_star::AStar::GenNeighbours(const Coord &position) {
   potential_neighbours.emplace_back(position.x + 1, position.y);
 
   std::vector<Coord> neighbours;
-  for (const auto &pn : potential_neighbours)
+  for (const auto &pn : potential_neighbours) {
     if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
-      switch (copy_plane_[pn.ToInt(width_)].cell_type) {
+      switch (GetCell(pn).cell_type) {
         case CellState::EMPTY:
-          if (copy_plane_[pn.ToInt(width_)].distance == CELL_MAX) {
+
+          if (not GetCell(pn).father_ptr) {
+
             neighbours.push_back(pn);
+            GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
           }
           break;
+
         case CellState::FINISH:
+          GetCell(pn).SetFatherPtr(GetCell(position));
           return std::vector<Coord>({pn});
         default:
           break;
       }
     }
-
+  }
   return neighbours;
 }
-std::vector<Coord> a_star::AStar::GenNeighboursForAllPositions(const std::vector<Coord> &positions) {
-  std::vector<Coord> solution;
-  for (auto &c : positions) {
-    for (auto &gc : GenNeighbours(c))
-      solution.push_back(gc);
+void a_star::AStar::ApplyHDistance(std::vector<Coord> &cells) {
+  for (auto &c : cells) {
+    GetCell(c).SetH(ManhattanDistance(c));
   }
-
-  std::sort(solution.begin(), solution.end());
-
-  auto last = std::unique(solution.begin(), solution.end());
-
-  solution.erase(last, solution.end());
-  return solution;
 }
-std::vector<Coord> a_star::AStar::GenNeighboursButIgnoreDistance(const Coord &position) {
-  std::vector<Coord> potential_neighbours;
 
-  potential_neighbours.emplace_back(position.x, position.y - 1);
-  potential_neighbours.emplace_back(position.x, position.y + 1);
-  potential_neighbours.emplace_back(position.x - 1, position.y);
-  potential_neighbours.emplace_back(position.x + 1, position.y);
+unsigned a_star::AStar::ManhattanDistance(const Coord &position) {
 
-  std::vector<Coord> neighbours;
-  for (const auto &pn : potential_neighbours)
-    if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
-      switch (copy_plane_[pn.ToInt(width_)].cell_type) {
-        case CellState::EMPTY:
-        case CellState::START:
-          neighbours.push_back(pn);
+  unsigned smallest_distance = -1;
+  unsigned distance_to_f = 0;
+  for (const auto &f : final_points_) {
+    distance_to_f = abs(position.x - f.x) + abs(position.y - f.y);
+    if (distance_to_f < smallest_distance) smallest_distance = distance_to_f;
+  }
+  return smallest_distance;
+}
 
-        default:
-          break;
+Coord a_star::AStar::PopBestFCell(std::vector<Coord> &positions) {
+
+  int smallest_f_id = 0;
+
+  for (int p = 1; p < positions.size(); ++p) {
+    if (not GetCell(positions[p]).father_ptr)
+      if (GetCell(positions[p]).GetF() < GetCell(positions[smallest_f_id]).GetF()) {
+        smallest_f_id = p;
       }
-    }
-
-  return neighbours;
-}
-void a_star::AStar::ApplyIteration(std::vector<Coord> &cells, const std::vector<Coord>& start_points) {
-  for (auto &c : cells)
-    copy_plane_[c.ToInt(width_)].distance = ManhattanDistance(c,start_points);
-}
-Coord a_star::AStar::GetBestCell(std::vector<Coord> &positions) {
-  Coord minimal_cell_position;
-  Cell minimal_cell;
-
-  std::reverse(positions.begin(), positions.end());
-
-  int i = 0;
-  while (1 < 2) {
-    minimal_cell_position = positions[i];
-    minimal_cell = copy_plane_[minimal_cell_position.ToInt(width_)];
-
-    if (minimal_cell.distance != CELL_MAX) break;
-    i++;
   }
 
-  for (; i < positions.size(); i++)
+  auto temp = positions[smallest_f_id];
+  positions.erase(positions.begin() + smallest_f_id);
+  return temp;
+}
 
-    if (copy_plane_[positions[i].ToInt(width_)].distance == CELL_MAX) continue;
-    else if (copy_plane_[positions[i].ToInt(width_)].distance < minimal_cell.distance) {
-      minimal_cell_position = positions[i];
-      minimal_cell = copy_plane_[minimal_cell_position.ToInt(width_)];
+std::vector<Coord> a_star::AStar::FindPath() {
+
+  // convert cell grid to proper graph
+  // if connection between any start and any finish won't be found GenerateGraph will return false, and we end the FindPath function
+  if (not GenerateGraph()) return {};
+
+  GeneratePath();
+
+  return shortest_path_;
+}
+bool a_star::AStar::GenerateGraph() {
+  bool path_has_been_found = false;
+
+  std::vector<Coord> open;
+  std::vector<Coord> closed;
+
+  open = starting_points_;
+
+  Coord q;
+  std::vector<Coord> successors;
+
+  while (not open.empty()) {
+    q = PopBestFCell(open);
+
+    successors = GenNeighbours(q);
+    for (const auto &s : successors)
+
+       if (SearchBreakingPoint(successors,path_has_been_found)) break;
+
+    ApplyHDistance(successors);
+
+    for (const auto &s : successors)
+      open.push_back(s);
+  }
+
+  return path_has_been_found;
+}
+void a_star::AStar::GeneratePath() {
+
+  Coord final_point;
+  for (const auto &s : final_points_)
+    if (GetCell(s).father_ptr) {
+      final_point = s;
+      break;
     }
 
-  return minimal_cell_position;
+  shortest_path_.push_back(final_point);
+  while (true) {
+    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
+    shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
+  }
+  std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
+bool a_star::AStar::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
+  path_has_been_found = false;
+  if (possible_routs.size() > 1) return false;
 
-void a_star::AStar::GetStartAndFinish(std::vector<Coord> &start_points, std::vector<Coord> &finish_points) {
-  for (int i = 0; i < width_ * height_; i++)
-    if (copy_plane_[i].cell_type == CellState::START) {
+  // check if this is the end of path
+  if (possible_routs.size() == 1) {
+    for (auto &p : final_points_)
+      if (possible_routs.front() == p) {
+        path_has_been_found = true;
+        return true;
+      }
 
-      start_points.emplace_back((int) (i % width_), (int) (i / width_));
-
-    } else if (copy_plane_[i].cell_type == CellState::FINISH) {
-      finish_points.emplace_back((int) (i % width_), (int) (i / width_));
-    }
-
+    // check if there even is a path to final point
+  } else {
+    if (possible_routs.empty()) {
+      path_has_been_found = false;
+      return true;
+    };
+  }
+  return false;
 }
+std::vector<Coord> a_star::AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+  if (not GenerateGraph()) return {};
 
-void a_star::AStar::ApplyDistance(std::vector<Coord> &cells, const std::vector<Coord> &finish_points) {
-  for(auto& c:cells)
-    copy_plane_[c.ToInt(width_)].SetG(ManhattanDistance(c,finish_points));
+  GeneratePath();
 
+  return shortest_path_;
 }
-Coord a_star::AStar::GetBestGCell(std::vector<Coord> &positions) {
-  Coord lowest_g = positions.front();
-
-  for(const auto &p:positions)
-    if(copy_plane_[p.ToInt(width_)].GetG() < copy_plane_[lowest_g.ToInt(width_)].GetG()) lowest_g = p;
-
-
-  return lowest_g;
-
-}
+//bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
+//  bool path_has_been_found = false;
+//
+//  std::vector<Coord> open;
+//  std::vector<Coord> closed;
+//
+//  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_,color_scheme));
+//
+//  open = starting_points_;
+//
+//  Coord q;
+//  std::vector<Coord> successors;
+//
+//  while (not open.empty()) {
+//    q = PopBestFCell(open);
+//
+//    successors = GenNeighbours(q);
+//
+//    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_,color_scheme));
+//
+//
+//    WindowPlane highlights(copy_plane_, width_, height_,color_scheme);
+//
+//    printf("size: %u\n ", successors.size());
+//
+//    highlights.HighlightCells(successors);
+//    window_handle.PushFrame(highlights);
+//
+//
+//
+//    for (const auto &s : successors)
+//
+//      if (SearchBreakingPoint(successors,path_has_been_found)) break;
+//
+//    ApplyHDistance(successors);
+//
+//    for (const auto &s : successors)
+//      open.push_back(s);
+//  }
+//
+//  return path_has_been_found;
+//}
+//void a_star::AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
+//  Coord final_point;
+//  for (const auto &s : final_points_)
+//    if (GetCell(s).father_ptr) {
+//      final_point = s;
+//      break;
+//    }
+//  shortest_path_.push_back(final_point);
+//  while (true) {
+//    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
+//    shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
+//  }
+//}

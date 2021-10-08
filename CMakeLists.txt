@@ -65,6 +65,7 @@ add_executable(sample_example
         ${sfml_window_dir}
         )
 
+
 target_include_directories(sample_example
         PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include)
 
@@ -72,6 +73,27 @@ target_link_directories(sample_example
         PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src)
 
 target_link_libraries(sample_example
+        sfml-graphics
+        sfml-system
+        sfml-window)
+
+
+add_executable(a_star_example
+        a_star/a_star_example.cpp
+        ${plane_dir}
+        ${utility_dir}
+        ${sample_dir}
+        ${random_walk_dir}
+        ${sfml_window_dir}
+        ${a_star_dir})
+
+target_include_directories(a_star_example
+        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include)
+
+target_link_directories(a_star_example
+        PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src)
+
+target_link_libraries(a_star_example
         sfml-graphics
         sfml-system
         sfml-window)
