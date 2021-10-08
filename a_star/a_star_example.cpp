@@ -22,11 +22,11 @@ int main() {
 
   printf("\nsolution:\n");
 
-
   ConsoleDisplay(sic,sample.FindPath());
 
-
   ConsoleDisplay(sample.FindPath());
+
+  getchar();
 
   return 0;
 }
