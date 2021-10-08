@@ -1,4 +1,5 @@
 #include "a_star.h"
+#include <iostream>
 #define INT(x) x.ToInt(width_)
 
 a_star::AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
@@ -67,7 +68,12 @@ std::vector<Coord> a_star::AStar::GenNeighbours(const Coord &position) {
           if (not GetCell(pn).father_ptr) {
             neighbours.push_back(pn);
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
+
+          } else if((GetCell(position).GetG() + 1) < GetCell(pn).GetG()) {
+            GetCell(pn).SetFatherPtr(GetCell(position));
+
           }
+
           break;
 
         case CellState::FINISH:
@@ -112,6 +118,8 @@ Coord a_star::AStar::PopBestFCell(std::vector<Coord> &positions) {
 
   auto temp = positions[smallest_f_id];
   positions.erase(positions.begin() + smallest_f_id);
+
+
   return temp;
 }
 
@@ -149,6 +157,7 @@ bool a_star::AStar::GenerateGraph() {
 
     for (const auto &s : successors)
       open.push_back(s);
+
   }
 
   return path_has_been_found;
@@ -194,9 +203,9 @@ std::vector<Coord> a_star::AStar::FindPath(Window &window_handle, const ColorSch
   return shortest_path_;
 }
 void a_star::AStar::ClearGraph() {
-  for (auto &g : copy_plane_) {
+  for (auto &g : copy_plane_)
     g.father_ptr = nullptr;
-  }
+
   shortest_path_.clear();
 }
 a_star::AStar::~AStar() {
@@ -212,6 +221,7 @@ bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &colo
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
   open = starting_points_;
+  ApplyHDistance(open);
 
   Coord q;
   std::vector<Coord> successors;
@@ -231,8 +241,8 @@ bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &colo
     ApplyHDistance(successors);
 
     for (const auto &s : successors)
-
         open.push_back(s);
+
   }
 
   return path_has_been_found;

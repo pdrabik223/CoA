@@ -34,3 +34,6 @@ a_star::Cell &a_star::Cell::operator=(const a_star::Cell &other) {
 
   return *this;
 }
+unsigned a_star::Cell::GetG() const {
+  return g;
+}
