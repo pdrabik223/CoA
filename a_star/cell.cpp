@@ -4,9 +4,8 @@
 
 #include "cell.h"
 
-
-unsigned int a_star::Cell::GetH() const {
-  return h;
+double a_star::Cell::GetH() const {
+  return h + g;
 }
 
 void a_star::Cell::SetFatherPtr(Cell &father) {

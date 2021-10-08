@@ -87,14 +87,19 @@ void a_star::AStar::ApplyHDistance(std::vector<Coord> &cells) {
   }
 }
 
-unsigned a_star::AStar::ManhattanDistance(const Coord &position) {
+double a_star::AStar::ManhattanDistance(const Coord &position) {
 
-  unsigned smallest_distance = -1;
-  unsigned distance_to_f = 0;
+  double smallest_distance = UINT32_MAX;
+  double distance_to_f = 0;
+
   for (const auto &f : final_points_) {
-    distance_to_f = abs(position.x - f.x) + abs(position.y - f.y);
-    if (distance_to_f < smallest_distance) smallest_distance = distance_to_f;
+
+    distance_to_f = sqrt(pow((position.x - f.x), 2) + pow((position.y - f.y), 2));
+
+    if (distance_to_f < smallest_distance)
+      smallest_distance = distance_to_f;
   }
+
   return smallest_distance;
 }
 
@@ -103,10 +108,9 @@ Coord a_star::AStar::PopBestFCell(std::vector<Coord> &positions) {
   int smallest_f_id = 0;
 
   for (int p = 1; p < positions.size(); ++p) {
-    if (not GetCell(positions[p]).father_ptr)
-      if (GetCell(positions[p]).GetF() < GetCell(positions[smallest_f_id]).GetF()) {
-        smallest_f_id = p;
-      }
+    if (GetCell(positions[p]).GetF() < GetCell(positions[smallest_f_id]).GetF()) {
+      smallest_f_id = p;
+    }
   }
 
   auto temp = positions[smallest_f_id];
@@ -126,6 +130,7 @@ std::vector<Coord> a_star::AStar::FindPath() {
 
   return shortest_path_;
 }
+
 bool a_star::AStar::GenerateGraph() {
   bool path_has_been_found = false;
 
@@ -141,9 +146,7 @@ bool a_star::AStar::GenerateGraph() {
     q = PopBestFCell(open);
 
     successors = GenNeighbours(q);
-    for (const auto &s : successors)
-
-       if (SearchBreakingPoint(successors,path_has_been_found)) break;
+      if (SearchBreakingPoint(successors, path_has_been_found)) break;
 
     ApplyHDistance(successors);
 
@@ -171,34 +174,31 @@ void a_star::AStar::GeneratePath() {
 }
 bool a_star::AStar::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
   path_has_been_found = false;
-  if (possible_routs.size() > 1) return false;
 
   // check if this is the end of path
   if (possible_routs.size() == 1) {
     for (auto &p : final_points_)
-      if (possible_routs.front() == p) {
+      if (possible_routs.front() == p){
         path_has_been_found = true;
         return true;
       }
 
     // check if there even is a path to final point
-  } else {
-    if (possible_routs.empty()) {
-      path_has_been_found = false;
-      return true;
-    };
   }
+
   return false;
 }
 std::vector<Coord> a_star::AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
-  if (not GenerateGraph()) return {};
+  ClearGraph();
 
-  GeneratePath();
+  if (not GenerateGraph(window_handle, color_scheme)) return {};
+
+  GeneratePath(window_handle, color_scheme);
 
   return shortest_path_;
 }
 void a_star::AStar::ClearGraph() {
-  for (auto& g :copy_plane_) {
+  for (auto &g : copy_plane_) {
     g.father_ptr = nullptr;
   }
   shortest_path_.clear();
@@ -206,58 +206,63 @@ void a_star::AStar::ClearGraph() {
 a_star::AStar::~AStar() {
   ClearGraph();
 }
-//bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
-//  bool path_has_been_found = false;
-//
-//  std::vector<Coord> open;
-//  std::vector<Coord> closed;
-//
-//  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_,color_scheme));
-//
-//  open = starting_points_;
-//
-//  Coord q;
-//  std::vector<Coord> successors;
-//
-//  while (not open.empty()) {
-//    q = PopBestFCell(open);
-//
-//    successors = GenNeighbours(q);
-//
-//    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_,color_scheme));
-//
-//
-//    WindowPlane highlights(copy_plane_, width_, height_,color_scheme);
-//
-//    printf("size: %u\n ", successors.size());
-//
-//    highlights.HighlightCells(successors);
-//    window_handle.PushFrame(highlights);
-//
-//
-//
-//    for (const auto &s : successors)
-//
-//      if (SearchBreakingPoint(successors,path_has_been_found)) break;
-//
-//    ApplyHDistance(successors);
-//
-//    for (const auto &s : successors)
-//      open.push_back(s);
-//  }
-//
-//  return path_has_been_found;
-//}
-//void a_star::AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
-//  Coord final_point;
-//  for (const auto &s : final_points_)
-//    if (GetCell(s).father_ptr) {
-//      final_point = s;
-//      break;
-//    }
-//  shortest_path_.push_back(final_point);
-//  while (true) {
-//    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-//    shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
-//  }
-//}
+
+bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
+  bool path_has_been_found = false;
+
+  std::vector<Coord> open;
+  std::vector<Coord> closed;
+
+  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
+
+  open = starting_points_;
+
+  Coord q;
+  std::vector<Coord> successors;
+
+  while (not open.empty()) {
+    q = PopBestFCell(open);
+
+    successors = GenNeighbours(q);
+
+    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
+
+    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+
+    highlights.HighlightCells(successors);
+    window_handle.PushFrame(highlights);
+
+    //    for (const auto &s : successors)
+
+    if (SearchBreakingPoint(successors, path_has_been_found)) break;
+
+
+    ApplyHDistance(successors);
+
+    for (const auto &s : successors)
+      open.push_back(s);
+  }
+
+  return path_has_been_found;
+}
+
+void a_star::AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
+  Coord final_point;
+  for (const auto &s : final_points_)
+    if (GetCell(s).father_ptr) {
+      final_point = s;
+      break;
+    }
+  shortest_path_.push_back(final_point);
+  while (true) {
+
+    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+
+    highlights.HighlightCells(shortest_path_);
+    window_handle.PushFrame(highlights);
+
+    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
+    shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
+  }
+  std::reverse(shortest_path_.begin(), shortest_path_.end());
+}

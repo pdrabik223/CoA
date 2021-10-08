@@ -22,11 +22,11 @@ struct Cell {
   Cell(const Cell &other);
   Cell &operator=(const Cell &other);
 
-  void SetH(unsigned h) { this->h = h; }
+  void SetH(double h) { this->h = h; }
 
-  unsigned int GetH() const;
+  double GetH() const;
 
-  unsigned GetF() { return g + h; }
+  double GetF() { return  g + h; }
 
   void SetFatherPtr(Cell &father);
 
@@ -38,7 +38,7 @@ struct Cell {
   }
 
   /// distance from cell to finish
-  unsigned h = 0;
+  double h = 0;
 
   /// distance from cell to start
   unsigned g = 0;
