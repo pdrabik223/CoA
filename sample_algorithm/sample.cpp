@@ -236,8 +236,6 @@ std::vector<Coord> Sample::FindPath(Window &window_handle, const ColorScheme &co
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
 
-    printf("(1) iteration: %d, size: %u\n ", iteration, currently_analyzed_cells_buffer.size());
-
     highlights.HighlightCells(currently_analyzed_cells_buffer);
     window_handle.PushFrame(highlights);
   }

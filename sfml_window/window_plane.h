@@ -32,6 +32,8 @@ class WindowPlane {
   void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(0,0,0));
   void DrawToWindow(sf::RenderWindow &window);
 
+
+
  protected:
   /// x axis
   unsigned width_;
