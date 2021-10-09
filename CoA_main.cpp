@@ -99,13 +99,15 @@ int main() {
   std::thread generator_3(GenAStarVisuals, std::ref(screen_3), color_scheme);
 
 
-  window_thread_1.join();
+
   generator_1.join();
-
-  window_thread_2.join();
   generator_2.join();
-
-  window_thread_3.join();
   generator_3.join();
+
+  window_thread_1.join();
+  window_thread_2.join();
+  window_thread_3.join();
+
+
   return 0;
 }
