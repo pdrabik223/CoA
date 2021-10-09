@@ -5,7 +5,7 @@
 #ifndef COA_RANDOM_WALK_RANDOW_WALK_ALGORITHM_H_
 #define COA_RANDOM_WALK_RANDOW_WALK_ALGORITHM_H_
 #include "../plane/plane.h"
-#include "../sample_algorithm/cell.h"
+#include "../brute_force/cell.h"
 #include "../sfml_window/window.h"
 #include "../sfml_window/window_plane.h"
 
@@ -48,7 +48,7 @@ class RandomWalkAlgorithm {
   bool SearchBreakingPoint(const std::vector<Coord>& possible_routs, bool& path_has_been_found);
 
 
-  a_star::Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
+  dijkstra::Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
   void ClearGraph();
 
@@ -59,7 +59,7 @@ class RandomWalkAlgorithm {
     /// y axis
     unsigned height_;
 
-    std::vector<a_star::Cell> copy_plane_;
+    std::vector<dijkstra::Cell> copy_plane_;
 
     std::vector<Coord> starting_points_;
     std::vector<Coord> final_points_;

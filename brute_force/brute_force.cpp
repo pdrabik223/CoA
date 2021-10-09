@@ -2,13 +2,13 @@
 // Created by piotr on 05/10/2021.
 //
 
-#include "sample.h"
+#include "brute_force.h"
 #include <algorithm>
 #define FUCK false
 #include <algorithm>
 #include <assert.h>
 
-Sample::Sample(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+BruteForce::BruteForce(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   bool is_there_starting_point = false;
@@ -24,12 +24,12 @@ Sample::Sample(const Plane &other) : width_(other.GetWidth()), height_(other.Get
   if (not is_there_starting_point or not is_there_destination_point) throw "bad plane error";
 }
 
-Sample::Sample(const Sample &other) : width_(other.width_), height_(other.height_) {
+BruteForce::BruteForce(const BruteForce &other) : width_(other.width_), height_(other.height_) {
   copy_plane_.reserve(width_ * height_);
   for (int i = 0; i < width_ * height_; i++)
     copy_plane_.emplace_back(other.copy_plane_[i]);
 }
-Sample &Sample::operator=(const Sample &other) {
+BruteForce &BruteForce::operator=(const BruteForce &other) {
 
   if (&other == this) return *this;
 
@@ -42,7 +42,7 @@ Sample &Sample::operator=(const Sample &other) {
 
   return *this;
 }
-void Sample::GetStartAndFinish(std::vector<Coord> &start_points, std::vector<Coord> &finish_points) {
+void BruteForce::GetStartAndFinish(std::vector<Coord> &start_points, std::vector<Coord> &finish_points) {
   for (int i = 0; i < width_ * height_; i++)
     if (copy_plane_[i].cell_type == CellState::START) {
 
@@ -74,7 +74,7 @@ bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, const std::ve
   return false;
 }
 
-std::vector<Coord> Sample::FindPath() {
+std::vector<Coord> BruteForce::FindPath() {
   std::vector<Coord> solution;
   std::vector<Coord> currently_analyzed_cells_buffer;
 
@@ -126,7 +126,7 @@ std::vector<Coord> Sample::FindPath() {
   return solution;
 }
 
-std::vector<Coord> Sample::GenNeighbours(const Coord &position) {
+std::vector<Coord> BruteForce::GenNeighbours(const Coord &position) {
 
   std::vector<Coord> potential_neighbours;
 
@@ -154,12 +154,12 @@ std::vector<Coord> Sample::GenNeighbours(const Coord &position) {
   return neighbours;
 }
 
-void Sample::ApplyIteration(std::vector<Coord> &cells, unsigned int iteration) {
+void BruteForce::ApplyIteration(std::vector<Coord> &cells, unsigned int iteration) {
   for (auto &c : cells)
     copy_plane_[c.ToInt(width_)].distance = iteration;
 }
 
-std::vector<Coord> Sample::GenNeighboursForAllPositions(const std::vector<Coord> &positions) {
+std::vector<Coord> BruteForce::GenNeighboursForAllPositions(const std::vector<Coord> &positions) {
   std::vector<Coord> solution;
   for (auto &c : positions) {
     for (auto &gc : GenNeighbours(c))
@@ -174,7 +174,7 @@ std::vector<Coord> Sample::GenNeighboursForAllPositions(const std::vector<Coord>
   return solution;
 }
 
-Coord Sample::GetBestCell(std::vector<Coord> &positions) {
+Coord BruteForce::GetBestCell(std::vector<Coord> &positions) {
   Coord minimal_cell_position;
   Cell minimal_cell;
 
@@ -199,7 +199,7 @@ Coord Sample::GetBestCell(std::vector<Coord> &positions) {
 
   return minimal_cell_position;
 }
-std::vector<Coord> Sample::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
   std::vector<Coord> solution;
   std::vector<Coord> currently_analyzed_cells_buffer;
 
@@ -270,7 +270,7 @@ std::vector<Coord> Sample::FindPath(Window &window_handle, const ColorScheme &co
   return solution;
 }
 
-std::vector<Coord> Sample::GenNeighboursButIgnoreDistance(const Coord &position) {
+std::vector<Coord> BruteForce::GenNeighboursButIgnoreDistance(const Coord &position) {
   std::vector<Coord> potential_neighbours;
 
   potential_neighbours.emplace_back(position.x, position.y - 1);

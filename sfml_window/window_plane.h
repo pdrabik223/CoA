@@ -5,9 +5,9 @@
 #ifndef COA_SFML_WINDOW_WINDOW_PLANE_H_
 #define COA_SFML_WINDOW_WINDOW_PLANE_H_
 
-#include "../a_star/cell.h"
+#include "../dijkstra/cell.h"
 #include "../plane/plane.h"
-#include "../sample_algorithm/cell.h"
+#include "../brute_force/cell.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"
@@ -28,7 +28,7 @@ class WindowPlane {
   WindowPlane(const std::vector<Cell> &plane, int width, int height);
   WindowPlane(const std::vector<Cell> &plane, int width, int height, const ColorScheme& color_scheme);
 
-  WindowPlane(const std::vector<a_star::Cell> &plane, int width, int height,const ColorScheme& color_scheme);
+  WindowPlane(const std::vector<dijkstra::Cell> &plane, int width, int height,const ColorScheme& color_scheme);
   WindowPlane(const WindowPlane &other) = default;
   WindowPlane &operator=(const WindowPlane &other) = default;
 

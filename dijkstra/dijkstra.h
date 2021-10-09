@@ -9,14 +9,14 @@
 #include "cell.h"
 #include <vector>
 
-namespace a_star {
-class AStar {
+namespace dijkstra {
+class Dijkstra {
  public:
-  AStar() = delete;
+  Dijkstra() = delete;
   /// constructs Sample object based of Plane
-  AStar(const Plane &other);
-  AStar(const AStar &other);
-  AStar &operator=(const AStar &other);
+  Dijkstra(const Plane &other);
+  Dijkstra(const Dijkstra &other);
+  Dijkstra &operator=(const Dijkstra &other);
 
   /// find path from start to finish
   /// \return list of connected coordinates
@@ -28,7 +28,7 @@ class AStar {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
-  virtual ~AStar();
+  virtual ~Dijkstra();
 
  private:
   bool GenerateGraph();

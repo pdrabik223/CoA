@@ -1,9 +1,9 @@
 //
 // Created by piotr on 09/10/2021.
 //
-#include "../a_star/a_star.h"
+#include "../dijkstra/dijkstra.h"
+#include "../brute_force/brute_force.h"
 #include "../random_walk/random_walk_algorithm.h"
-#include "../sample_algorithm/sample.h"
 #include "../sfml_window/window.h"
 #include "maze_painter.h"
 #define WINDOW_SIZE 500
@@ -12,11 +12,11 @@ int Loop(Window &window) {
   return 0;
 }
 
-int GenSampleVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
+int GenBrutForceVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
 
 
 
-    Sample cos(maze);
+    BruteForce cos(maze);
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -28,15 +28,15 @@ int GenSampleVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
 
   return 1;
 }
-int GenAStarVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
+int GenDijkstraVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
 
-    a_star::AStar cos(maze);
+  dijkstra::Dijkstra cos(maze);
 
     auto path = cos.FindPath(window, color_scheme);
 
     auto t1 = std::chrono::steady_clock::now();
     cos.FindPath();
-    printf("algorithm: A*\t\t time: %lld ns\tpath length: %d\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+    printf("algorithm: Dijkstra\t\t time: %lld ns\tpath length: %d\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
 
 return 2;
 
@@ -78,8 +78,8 @@ int main() {
   std::this_thread::sleep_for(std::chrono::milliseconds (500));
 
   std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme,cos);
-  std::thread generator_2(GenSampleVisuals, std::ref(screen_2), color_scheme,cos);
-  std::thread generator_3(GenAStarVisuals, std::ref(screen_3), color_scheme,cos);
+  std::thread generator_2(GenBrutForceVisuals, std::ref(screen_2), color_scheme,cos);
+  std::thread generator_3(GenDijkstraVisuals, std::ref(screen_3), color_scheme,cos);
 
   generator_1.join();
   generator_2.join();

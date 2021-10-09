@@ -13,13 +13,13 @@
 static void ConsoleDisplay(const std::vector<Coord> &path);
 
 /// for now there only can be one start and one finish cell
-class Sample {
+class BruteForce {
  public:
-  Sample() = delete;
+  BruteForce() = delete;
   /// constructs Sample object based of Plane
-  Sample(const Plane &other);
-  Sample(const Sample &other);
-  Sample &operator=(const Sample &other);
+  BruteForce(const Plane &other);
+  BruteForce(const BruteForce &other);
+  BruteForce &operator=(const BruteForce &other);
 
   /// find path from start to finish
   /// \return list of connected coordinates

@@ -108,7 +108,7 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, 
       }
     }
 }
-WindowPlane::WindowPlane(const std::vector<a_star::Cell> &plane, int width, int height, const ColorScheme &color_scheme) : width_(width), height_(height), colorscheme_(color_scheme)
+WindowPlane::WindowPlane(const std::vector<dijkstra::Cell> &plane, int width, int height, const ColorScheme &color_scheme) : width_(width), height_(height), colorscheme_(color_scheme)
 {
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {

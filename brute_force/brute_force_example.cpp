@@ -2,8 +2,8 @@
 // Created by piotr on 05/10/2021.
 //
 #include "../plane/plane.h"
+#include "brute_force.h"
 #include <iostream>
-#include "sample.h"
 int main() {
 
   Plane sic(10, 10, 10);
@@ -19,7 +19,7 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  Sample sample(sic);
+  BruteForce sample(sic);
 
   printf("\nsolution:\n");
 

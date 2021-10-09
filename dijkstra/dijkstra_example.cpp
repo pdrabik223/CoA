@@ -1,10 +1,10 @@
 //
 // Created by piotr on 07/10/2021.
 //
+#include "../brute_force/brute_force.h"
 #include "../plane/plane.h"
-#include "../sample_algorithm/sample.h"
+#include "dijkstra.h"
 #include <iostream>
-#include "a_star.h"
 int main() {
 
   Plane sic(20, 20, 10);
@@ -18,7 +18,7 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  a_star::AStar sample(sic);
+  dijkstra::Dijkstra sample(sic);
 
   printf("\nsolution:\n");
 

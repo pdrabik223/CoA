@@ -1,8 +1,8 @@
-#include "a_star.h"
+#include "dijkstra.h"
 #include <iostream>
 #define INT(x) x.ToInt(width_)
 
-a_star::AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+dijkstra::Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)
@@ -14,7 +14,7 @@ a_star::AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(oth
 
   if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
 }
-a_star::AStar::AStar(const a_star::AStar &other) : width_(other.width_), height_(other.height_) {
+dijkstra::Dijkstra::Dijkstra(const dijkstra::Dijkstra &other) : width_(other.width_), height_(other.height_) {
   copy_plane_.reserve(width_ * height_);
 
   for (int i = 0; i < width_ * height_; i++)
@@ -29,7 +29,7 @@ a_star::AStar::AStar(const a_star::AStar &other) : width_(other.width_), height_
   for (const auto &f : other.shortest_path_)
     shortest_path_ = other.shortest_path_;
 }
-a_star::AStar &a_star::AStar::operator=(const a_star::AStar &other) {
+dijkstra::Dijkstra &dijkstra::Dijkstra::operator=(const dijkstra::Dijkstra &other) {
   if (&other == this) return *this;
 
   width_ = other.width_;
@@ -50,7 +50,7 @@ a_star::AStar &a_star::AStar::operator=(const a_star::AStar &other) {
 
   return *this;
 }
-std::vector<Coord> a_star::AStar::GenNeighbours(const Coord &position) {
+std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
 
   std::vector<Coord> potential_neighbours;
 
@@ -86,13 +86,13 @@ std::vector<Coord> a_star::AStar::GenNeighbours(const Coord &position) {
   }
   return neighbours;
 }
-void a_star::AStar::ApplyHDistance(std::vector<Coord> &cells) {
+void dijkstra::Dijkstra::ApplyHDistance(std::vector<Coord> &cells) {
   for (auto &c : cells) {
     GetCell(c).SetH(EuclideanDistance(c));
   }
 }
 
-double a_star::AStar::EuclideanDistance(const Coord &position) {
+double dijkstra::Dijkstra::EuclideanDistance(const Coord &position) {
 
   double smallest_distance = UINT32_MAX;
   double distance_to_f = 0;
@@ -108,7 +108,7 @@ double a_star::AStar::EuclideanDistance(const Coord &position) {
   return smallest_distance;
 }
 
-Coord a_star::AStar::PopBestFCell(std::vector<Coord> &positions) {
+Coord dijkstra::Dijkstra::PopBestFCell(std::vector<Coord> &positions) {
 
   int smallest_f_id = 0;
 
@@ -123,7 +123,7 @@ Coord a_star::AStar::PopBestFCell(std::vector<Coord> &positions) {
   return temp;
 }
 
-std::vector<Coord> a_star::AStar::FindPath() {
+std::vector<Coord> dijkstra::Dijkstra::FindPath() {
 
   ClearGraph();
 
@@ -136,7 +136,7 @@ std::vector<Coord> a_star::AStar::FindPath() {
   return shortest_path_;
 }
 
-bool a_star::AStar::GenerateGraph() {
+bool dijkstra::Dijkstra::GenerateGraph() {
   bool path_has_been_found = false;
 
   std::vector<Coord> open;
@@ -162,7 +162,7 @@ bool a_star::AStar::GenerateGraph() {
 
   return path_has_been_found;
 }
-void a_star::AStar::GeneratePath() {
+void dijkstra::Dijkstra::GeneratePath() {
 
   Coord final_point;
   for (const auto &s : final_points_)
@@ -179,7 +179,7 @@ void a_star::AStar::GeneratePath() {
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
-bool a_star::AStar::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
+bool dijkstra::Dijkstra::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
   path_has_been_found = false;
 
   // check if this is the end of path
@@ -193,7 +193,7 @@ bool a_star::AStar::SearchBreakingPoint(const std::vector<Coord> &possible_routs
   return false;
 }
 
-std::vector<Coord> a_star::AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+std::vector<Coord> dijkstra::Dijkstra::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
   ClearGraph();
 
   if (not GenerateGraph(window_handle, color_scheme)) return {};
@@ -202,17 +202,17 @@ std::vector<Coord> a_star::AStar::FindPath(Window &window_handle, const ColorSch
 
   return shortest_path_;
 }
-void a_star::AStar::ClearGraph() {
+void dijkstra::Dijkstra::ClearGraph() {
   for (auto &g : copy_plane_)
     g.father_ptr = nullptr;
 
   shortest_path_.clear();
 }
-a_star::AStar::~AStar() {
+dijkstra::Dijkstra::~Dijkstra() {
   ClearGraph();
 }
 
-bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
+bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
   bool path_has_been_found = false;
 
   std::vector<Coord> open;
@@ -248,7 +248,7 @@ bool a_star::AStar::GenerateGraph(Window &window_handle, const ColorScheme &colo
   return path_has_been_found;
 }
 
-void a_star::AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
+void dijkstra::Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).father_ptr) {

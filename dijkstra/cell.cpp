@@ -4,16 +4,16 @@
 
 #include "cell.h"
 
-double a_star::Cell::GetH() const {
+double dijkstra::Cell::GetH() const {
   return h + g;
 }
 
-void a_star::Cell::SetFatherPtr(Cell &father) {
+void dijkstra::Cell::SetFatherPtr(Cell &father) {
   Cell::father_ptr = &father;
   g = father.g + 1;
 }
 
-a_star::Cell::Cell(const a_star::Cell &other) {
+dijkstra::Cell::Cell(const dijkstra::Cell &other) {
 
   g = other.g;
   h = other.h;
@@ -22,7 +22,7 @@ a_star::Cell::Cell(const a_star::Cell &other) {
   placement = other.placement;
   cell_type = other.cell_type;
 }
-a_star::Cell &a_star::Cell::operator=(const a_star::Cell &other) {
+dijkstra::Cell &dijkstra::Cell::operator=(const dijkstra::Cell &other) {
   if (this == &other) return *this;
 
   g = other.g;
@@ -34,6 +34,6 @@ a_star::Cell &a_star::Cell::operator=(const a_star::Cell &other) {
 
   return *this;
 }
-unsigned a_star::Cell::GetG() const {
+unsigned dijkstra::Cell::GetG() const {
   return g;
 }

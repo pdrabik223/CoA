@@ -6,12 +6,12 @@
 #define COA_A_STAR_CELL_H_
 
 #include "../plane/cell_type.h"
-#include "../sample_algorithm/cell.h"
+#include "../brute_force/cell.h"
 #include "../utility/coord.h"
 
 #define CELL_MAX 100'000'000
 
-namespace a_star {
+namespace dijkstra {
 struct Cell {
   Cell() : cell_type(CellState::EMPTY){};
   Cell(CellState cell_type, const Coord &position) : cell_type(cell_type), placement(position) {

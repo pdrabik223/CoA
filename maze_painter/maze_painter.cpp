@@ -26,11 +26,11 @@ void MazePainter::MainLoop() {
                           sf::Style::Default, settings);
 
   window.setPosition(sf::Vector2i(0, 0));
+  Coord mouse_position;
+
 
   DrawPlane(window);
   window.display();
-
-  Coord mouse_position;
   while (window.isOpen()) {
     // check all the window's events that were triggered since the last
     // iteration of the loop
@@ -39,7 +39,6 @@ void MazePainter::MainLoop() {
         window.close();
       else if (event_.type == sf::Event::KeyPressed) {
         if (event_.key.code == sf::Keyboard::F) {
-
           current_brush_state_ = CellState::FINISH;
         } else if (event_.key.code == sf::Keyboard::S) {
           current_brush_state_ = CellState::START;
@@ -49,8 +48,9 @@ void MazePainter::MainLoop() {
           brush_size_++;
         } else if (event_.key.code == sf::Keyboard::Down) {
           if (brush_size_ > 0) brush_size_--;
+        }else if(event_.key.code == sf::Keyboard::Enter){
+          window.close();
         }
-
       }
 
       else if (event_.type == sf::Event::MouseMoved) {
