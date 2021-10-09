@@ -9,9 +9,9 @@ void Window::MainLoop() {
   settings.antialiasingLevel = 10;
 
   sf::RenderWindow window(sf::VideoMode(width_, height_), "CoA",
-                          sf::Style::Default, settings);
+                          sf::Style::None, settings);
 
-  window.setPosition(sf::Vector2i(0, 0));
+  window.setPosition(sf::Vector2i(position_.x, position_.y));
 
   window.display();
   sf::Clock clock;
@@ -23,29 +23,31 @@ void Window::MainLoop() {
     while (window.pollEvent(event_)) {
       if (event_.type == sf::Event::Closed)
         window.close();
-      else if(event_.type == sf::Event::KeyPressed){
-        if(event_.key.code == sf::Keyboard::Space){
-          for(int i=0;i<10;i++)
+      else if (event_.type == sf::Event::KeyPressed) {
+        if (event_.key.code == sf::Keyboard::Space) {
+          for (int i = 0; i < 10; i++)
             PopFrame();
+        }else if(event_.key.code == sf::Keyboard::Escape){
+          window.close();
         }
       }
     }
 
+    //    if(clock.getElapsedTime().asMilliseconds()<150) continue;
+    //    clock.restart();
 
-//    if(clock.getElapsedTime().asMilliseconds()<150) continue;
-//    clock.restart();
+    if (frame_queue_.empty()) continue;
 
-
-
-    if(frame_queue_.empty())continue;
-
-      PopFrame().DrawToWindow(window);
-      window.display();
-
-    }
+    PopFrame().DrawToWindow(window);
+    window.display();
+  }
 }
 
-Window::Window(int width, int height) : height_(height), width_(width) {}
+
+Window::Window(int width, int height) : height_(height), width_(width), position_(0, 0) {}
+Window::Window(const Coord &position, int width, int height) : height_(height), width_(width), position_(position) {
+}
+
 WindowPlane Window::PopFrame() {
   WindowPlane new_frame(width_, height_);
 

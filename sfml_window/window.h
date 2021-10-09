@@ -15,7 +15,9 @@ class Window {
  public:
   Window() = delete;
   Window(int width, int height);
-
+  Window(const Coord& position,int width, int height);
+  Window(const Window& other) = default;
+  Window& operator=(const Window& other) = default;
   WindowPlane PopFrame();
   void PushFrame(const WindowPlane &new_frame);
 
@@ -26,6 +28,7 @@ class Window {
   /// main window loop
   void MainLoop();
 
+ protected:
   int width_;
   int height_;
 
@@ -37,6 +40,9 @@ class Window {
   std::queue<WindowPlane> frame_queue_;
   int display_refresh_rate_ = 15;
   sf::Event event_;
+
+  /// position of window on the screen
+  Coord position_;
 };
 
 #endif//COA_SFML_WINDOW_WINDOW_H_
