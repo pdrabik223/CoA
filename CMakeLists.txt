@@ -7,7 +7,8 @@ set(plane_dir
         plane/plane.h plane/plane.cpp
         plane/cell_type.h
         maze/maze_generator.h maze/maze_generator.cpp
-        utility/coord.h utility/coord.cpp)
+        utility/coord.h utility/coord.cpp
+        CoA_settings.h)
 
 set(sfml_window_dir
         sfml_window/window.h sfml_window/window.cpp
@@ -21,7 +22,6 @@ set(brute_force_dir
 set(dijkstra_dir
         dijkstra/dijkstra.h dijkstra/dijkstra.cpp
         dijkstra/cell.h dijkstra/cell.cpp)
-
 
 set(random_walk_dir
         random_walk/random_walk_algorithm.h random_walk/random_walk_algorithm.cpp)
@@ -60,7 +60,6 @@ add_executable(maze_painter  maze_painter/painter_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${maze_painter_dir}
-
         ${random_walk_dir}
         ${dijkstra_dir}
         ${brute_force_dir})
