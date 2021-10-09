@@ -106,6 +106,6 @@ int main() {
   window_thread_2.join();
   window_thread_3.join();
 
-
+  system("pause");
   return 0;
 }
