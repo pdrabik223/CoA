@@ -7,7 +7,7 @@
 #include "../plane/plane.h"
 #include "../sfml_window/window.h"
 #include "../sfml_window/window_plane.h"
-#include "cell.h"
+#include "../dijkstra/cell.h"
 
 
 static void ConsoleDisplay(const std::vector<Coord> &path);
@@ -31,22 +31,25 @@ class BruteForce {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
+  ~BruteForce(){ClearGraph();}
+
  private:
   /// \param position center of returned "square"
   /// \return neighbouring cells to cell under specified position
   std::vector<Coord> GenNeighbours(const Coord &position);
-  /// run GenNeighboursForAllPositions function for every point passed in positions param
-  std::vector<Coord> GenNeighboursForAllPositions(const std::vector<Coord> &positions);
 
-  std::vector<Coord> GenNeighboursButIgnoreDistance(const Coord& position);
+  bool GenerateGraph();
+  void GeneratePath();
+
+  bool GenerateGraph(Window &window_handle, const ColorScheme &color_scheme);
+  void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
 
 
-  /// applies distance from starting cell
-  void ApplyIteration(std::vector<Coord> &cells, unsigned iteration);
-  /// searches for lowest distance in positions
-  Coord GetBestCell(std::vector<Coord> &positions);
-  /// populate start point pram and finish point param with coordinates of start and finish
-  void GetStartAndFinish(std::vector<Coord> &start_points, std::vector<Coord> &finish_points);
+  dijkstra::Cell& GetCell(const Coord& position){return copy_plane_[position.ToInt(width_)];};
+
+  bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) ;
+
+  void ClearGraph();;
 
  protected:
   /// x axis
@@ -54,7 +57,12 @@ class BruteForce {
   /// y axis
   unsigned height_;
 
-  std::vector<Cell> copy_plane_;
+  std::vector<dijkstra::Cell> copy_plane_;
+
+  std::vector<Coord> starting_points_;
+  std::vector<Coord> final_points_;
+  std::vector<Coord> shortest_path_;
+
 };
 static void ConsoleDisplay(const std::vector<Coord> &path) {
   if (path.size() > 15) {
