@@ -6,7 +6,7 @@
 #include "random_walk_algorithm.h"
 int main() {
 
-  Plane sic(20, 20);
+  Plane sic(20, 20, 10);
 
   sic.AddBorder();
   sic.SetCell({1, 1}, CellState::FINISH);

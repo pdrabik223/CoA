@@ -17,14 +17,13 @@ int Loop(Window &window) {
 int GenSampleVisuals(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
-    Plane sic(100, 100);
+    Plane sic(100, 100, 10);
 
     sic.SetCell({0, 0}, CellState::FINISH);
     sic.SetCell({50, 50}, CellState::START);
 
     Sample cos(sic);
-    ColorScheme color_scheme;
-    color_scheme.LoadGreenSet();
+
     auto path = cos.FindPath(window, color_scheme);
 
     auto t1 = std::chrono::steady_clock::now();
@@ -39,7 +38,7 @@ int GenSampleVisuals(Window &window, ColorScheme color_scheme) {
 int GenAStarVisuals(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
-    Plane sic(100, 100);
+    Plane sic(100, 100, 10);
 
     sic.SetCell({0, 0}, CellState::FINISH);
     sic.SetCell({50, 50}, CellState::START);
@@ -59,7 +58,7 @@ int GenAStarVisuals(Window &window, ColorScheme color_scheme) {
 int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
-    Plane sic(100, 100);
+    Plane sic(100, 100, 10);
 
     sic.SetCell({0, 0}, CellState::FINISH);
     sic.SetCell({50, 50}, CellState::START);
@@ -90,13 +89,14 @@ int main() {
   Window screen_3(Coord(0, WINDOW_SIZE), WINDOW_SIZE, WINDOW_SIZE);
 
   std::thread window_thread_1(Loop, std::ref(screen_1));
-  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme);
-
   std::thread window_thread_2(Loop, std::ref(screen_2));
-  std::thread generator_2(GenRandomWalkVisuals, std::ref(screen_2), color_scheme);
-
   std::thread window_thread_3(Loop, std::ref(screen_3));
-  std::thread generator_3(GenRandomWalkVisuals, std::ref(screen_3), color_scheme);
+
+  std::this_thread::sleep_for(std::chrono::milliseconds (500));
+
+  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme);
+  std::thread generator_2(GenSampleVisuals, std::ref(screen_2), color_scheme);
+  std::thread generator_3(GenAStarVisuals, std::ref(screen_3), color_scheme);
 
 
   window_thread_1.join();

@@ -6,7 +6,7 @@
 
 int main() {
 
-  Plane sic(10, 10);
+  Plane sic(10, 10, 10);
 
   sic.SetCell({2, 2}, CellState::FINISH);
 
