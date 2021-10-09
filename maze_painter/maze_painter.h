@@ -21,12 +21,22 @@ class MazePainter {
   void DrawPlane(sf::RenderWindow &window);
   const Plane &GetPlane() const;
 
+ private:
+  bool PopulateMousePosition(const sf::RenderWindow &window, Coord &mouse_position);
+  std::vector<Coord> GetHighlightedPositions(const sf::RenderWindow &window);
+  void CheckBoundariesAndPush(const Coord &position, std::vector<Coord> &push_target);
+
+  void DrawCircle(const Coord &center, std::vector<Coord> &target, int radius);
+  void DrawFilledInCircle(const Coord &center, std::vector<Coord> &target);
 
  protected:
   int screen_width_;
   int screen_height_;
 
   float cell_size_;
+
+  CellState current_brush_state_ = CellState::WALL;
+  int brush_size_ = 1;
 
   ColorScheme color_scheme_;
 

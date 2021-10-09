@@ -60,7 +60,13 @@ add_executable(a_star_example  a_star/a_star_example.cpp
 add_executable(maze_painter  maze_painter/painter_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
-        ${maze_painter_dir})
+        ${maze_painter_dir}
+
+        ${random_walk_dir}
+        ${a_star_dir}
+        ${sample_dir}
+
+        )
 
 set(executables CoA a_star_example sample_example random_walk_example  maze_painter)
 
