@@ -40,16 +40,22 @@ void MazePainter::MainLoop() {
       else if (event_.type == sf::Event::KeyPressed) {
         if (event_.key.code == sf::Keyboard::F) {
           current_brush_state_ = CellState::FINISH;
+          DrawPlane(window);
         } else if (event_.key.code == sf::Keyboard::S) {
           current_brush_state_ = CellState::START;
+          DrawPlane(window);
         } else if (event_.key.code == sf::Keyboard::W) {
           current_brush_state_ = CellState::WALL;
+          DrawPlane(window);
         } else if (event_.key.code == sf::Keyboard::Up) {
           brush_size_++;
+          DrawPlane(window);
         } else if (event_.key.code == sf::Keyboard::Down) {
           if (brush_size_ > 0) brush_size_--;
+          DrawPlane(window);
         }else if(event_.key.code == sf::Keyboard::Enter){
           window.close();
+
         }
       }
 
