@@ -5,8 +5,8 @@
 #ifndef COA_A_STAR_CELL_H_
 #define COA_A_STAR_CELL_H_
 
-#include "../plane/cell_type.h"
 #include "../brute_force/cell.h"
+#include "../plane/cell_type.h"
 #include "../utility/coord.h"
 
 #define CELL_MAX 100'000'000
@@ -20,22 +20,28 @@ struct Cell {
   Cell(const Cell &other);
   Cell &operator=(const Cell &other);
 
-  void SetH(const double &h) { this->h = h; }
+  void SetH(const double &h) { this->h = h ; }
+  void SetG(const unsigned int &g) {
+    this->g = g;
+    if (son_ptr)
+      son_ptr->SetG(g + 1);
+  }
 
   double GetH() const;
 
   unsigned GetG() const;
 
   /// beksa
-  double GetF() const { return h; }
-
+  double GetF() const { return h  ; }
 
   void SetFatherPtr(Cell &father);
+  void SetSonPtr(Cell &son);
 
   Cell *GetFatherPtr() const { return father_ptr; };
 
   ~Cell() {
     delete father_ptr;
+    delete son_ptr;
   }
 
   /// distance from cell to finish
@@ -45,10 +51,11 @@ struct Cell {
   unsigned g = 0;
 
   Cell *father_ptr = nullptr;
+  Cell *son_ptr = nullptr;
 
   Coord placement;
 
   CellState cell_type;
 };
-}// namespace a_star
+}// namespace dijkstra
 #endif//COA_A_STAR_CELL_H_

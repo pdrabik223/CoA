@@ -5,12 +5,12 @@
 #include "cell.h"
 
 double dijkstra::Cell::GetH() const {
-  return h + g;
+  return h ;
 }
 
 void dijkstra::Cell::SetFatherPtr(Cell &father) {
   Cell::father_ptr = &father;
-  g = father.g + 1;
+  SetG(father.g + 1 );
 }
 
 dijkstra::Cell::Cell(const dijkstra::Cell &other) {
@@ -36,4 +36,7 @@ dijkstra::Cell &dijkstra::Cell::operator=(const dijkstra::Cell &other) {
 }
 unsigned dijkstra::Cell::GetG() const {
   return g;
+}
+void dijkstra::Cell::SetSonPtr(Cell &son) {
+  Cell::son_ptr = &son;
 }
