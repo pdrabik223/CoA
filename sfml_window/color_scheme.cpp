@@ -36,3 +36,12 @@ void ColorScheme::LoadOrangeSet() {
   finish = sf::Color(sf::Color::White);
 
 }
+void ColorScheme::LoadPainterSet() {
+  background = sf::Color(29,38,38);
+  discovered = sf::Color(249,163,42);
+  wall = sf::Color(132 ,42,249);
+  point_of_interest = sf::Color(119,239,33);
+
+  start = sf::Color(sf::Color::Red);
+  finish = sf::Color(sf::Color::White);
+}
