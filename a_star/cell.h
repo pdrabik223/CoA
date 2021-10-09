@@ -26,6 +26,7 @@ struct Cell {
 
   unsigned GetG() const;
 
+  /// beksa
   double GetF() const { return h; }
 
 
