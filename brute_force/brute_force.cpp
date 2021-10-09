@@ -59,8 +59,6 @@ BruteForce &BruteForce::operator=(const BruteForce &other) {
   return *this;
 }
 
-
-
 std::vector<Coord> BruteForce::GenNeighbours(const Coord &position) {
 
   std::vector<Coord> potential_neighbours;
@@ -97,24 +95,6 @@ std::vector<Coord> BruteForce::GenNeighbours(const Coord &position) {
   return neighbours;
 }
 
-
-
-std::vector<Coord> BruteForce::GenNeighboursForAllPositions(const std::vector<Coord> &positions) {
-  std::vector<Coord> solution;
-  for (auto &c : positions) {
-    for (auto &gc : GenNeighbours(c))
-      solution.push_back(gc);
-  }
-
-  std::sort(solution.begin(), solution.end());
-
-  auto last = std::unique(solution.begin(), solution.end());
-
-  solution.erase(last, solution.end());
-  return solution;
-}
-
-
 std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
 
   ClearGraph();
@@ -126,29 +106,6 @@ std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme
   return shortest_path_;
 }
 
-std::vector<Coord> BruteForce::GenNeighboursButIgnoreDistance(const Coord &position) {
-  std::vector<Coord> potential_neighbours;
-
-  potential_neighbours.emplace_back(position.x, position.y - 1);
-  potential_neighbours.emplace_back(position.x, position.y + 1);
-  potential_neighbours.emplace_back(position.x - 1, position.y);
-  potential_neighbours.emplace_back(position.x + 1, position.y);
-
-  std::vector<Coord> neighbours;
-  for (const auto &pn : potential_neighbours)
-    if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
-      switch (copy_plane_[pn.ToInt(width_)].cell_type) {
-        case CellState::EMPTY:
-        case CellState::START:
-          neighbours.push_back(pn);
-
-        default:
-          break;
-      }
-    }
-
-  return neighbours;
-}
 void BruteForce::GeneratePath() {
   Coord final_point;
   for (const auto &s : final_points_)
@@ -174,6 +131,8 @@ bool BruteForce::GenerateGraph(Window &window_handle, const ColorScheme &color_s
 
   while (not open.empty()) {
     std::vector<Coord> successors;
+
+    if (not DYNAMIC_DISPLAY) window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
     for (const auto &q : open) {
       for (const auto &nq : GenNeighbours(q)) {
@@ -252,8 +211,9 @@ bool BruteForce::GenerateGraph() {
   return path_has_been_found;
 }
 void BruteForce::ClearGraph() {
-  for (auto &g : copy_plane_)
+  for (auto &g : copy_plane_) {
     g.father_ptr = nullptr;
+  }
 
   shortest_path_.clear();
 }
