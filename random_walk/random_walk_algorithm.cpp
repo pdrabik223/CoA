@@ -139,9 +139,14 @@ void RandomWalkAlgorithm::GeneratePath(Window &window_handle, const ColorScheme 
       final_point = s;
       break;
     }
-
   shortest_path_.push_back(final_point);
   while (true) {
+
+    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+
+    highlights.HighlightCells(shortest_path_);
+    window_handle.PushFrame(highlights);
+
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
     shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
   }
