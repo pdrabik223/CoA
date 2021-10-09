@@ -32,12 +32,12 @@ unsigned int Plane::GetWidth() const {
 unsigned int Plane::GetHeight() const {
   return height_;
 }
-Plane::Plane(unsigned int width, unsigned int height) : width_(width), height_(height) {
-  int threshold = 10;
+Plane::Plane(unsigned int width, unsigned int height, int infill_percentage) : width_(width), height_(height) {
+
   plane_.reserve(width * height);
 
   for (int i = 0; i < width * height; i++)
-    if (rand() % 100 < threshold)
+    if (rand() % 100 < infill_percentage)
       plane_.emplace_back(CellState::WALL);
     else
       plane_.emplace_back(CellState::EMPTY);

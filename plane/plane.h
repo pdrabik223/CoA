@@ -12,7 +12,7 @@
 class Plane {
  public:
   Plane() : width_(0), height_(0){};
-  Plane(unsigned int width, unsigned int height);
+  Plane(unsigned int width, unsigned int height, int infill_percentage);
   Plane(const Plane &other);
   Plane &operator=(const Plane &other);
 
