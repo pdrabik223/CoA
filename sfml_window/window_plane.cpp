@@ -108,7 +108,8 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, 
       }
     }
 }
-WindowPlane::WindowPlane(const std::vector<a_star::Cell> &plane, int width, int height, const ColorScheme &color_scheme) : width_(width), height_(height), colorscheme_(color_scheme) {
+WindowPlane::WindowPlane(const std::vector<a_star::Cell> &plane, int width, int height, const ColorScheme &color_scheme) : width_(width), height_(height), colorscheme_(color_scheme)
+{
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {
@@ -132,11 +133,13 @@ WindowPlane::WindowPlane(const std::vector<a_star::Cell> &plane, int width, int 
       }
     }
 }
+
+/// this one is flipped, I'm so sorry
 WindowPlane::WindowPlane(const Plane &plane, const ColorScheme &color_scheme): width_(plane.GetWidth()), height_(plane.GetHeight()),colorscheme_(color_scheme) {
   grid_.reserve(width_ * height_);
 
-  for (int x = 0; x < width_; x++)
-    for (int y = 0; y < height_; y++) {
+  for (int y = 0; y < width_; y++)
+    for (int x = 0; x < height_; x++) {
       switch (plane.GetCell({x, y})) {
         case CellState::EMPTY:
           grid_.emplace_back(colorscheme_.discovered);
