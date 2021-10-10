@@ -13,6 +13,13 @@ struct SquareMazeInfo {
   int min_cavity_area = 25;
 };
 
+struct CircularMazeInfo {
+  unsigned hole_size = 1;
+  int wall_thickness = 1;
+  int cavity_thickness = 1;
+  int central_cavity_radius = 5;
+};
+
 class MazeGenerator {
   using Square = std::pair<Coord, Coord>;
 
@@ -26,20 +33,31 @@ class MazeGenerator {
 
   const Plane &GetPlane() const;
 
-  void GenMaze() {
+  void GenSquareMaze() {
     plane_.Clear();
-    plane_.AddBorder();
+    plane_.AddBorder(CellState::WALL);
     RecursiveDivision({{0, 0}, {(int) plane_.GetWidth() - 1, (int) plane_.GetHeight() - 1}}, 0);
     AddStartAndFinish();
   };
+  void RecursiveCircularDivision();
+  void GenCircularMaze() {
+    plane_.Clear();
+    RecursiveCircularDivision();
+    Coord center = {(int) (plane_.GetWidth() / 2), (int) (plane_.GetHeight() / 2)};
+    plane_.SetCell(center, CellState::FINISH);
+    plane_.AddBorder(CellState::START);
+  }
 
  private:
+  void CheckBoundariesAndPush(const Coord &position, std::vector<Coord> &push_target);
   void RecursiveDivision(const Square &square, int depth);
   void DrawLine(const Coord &start, const Coord &finish, const Coord &breaking_point);
+  void DrawCircle(const Coord &center, std::vector<Coord> &target, int radius);
 
  protected:
   Plane plane_;
   SquareMazeInfo maze_info_;
+  CircularMazeInfo circular_maze_info_;
 };
 
 #endif//COA_MAZE_MAZE_GENERATOR_H_

@@ -19,7 +19,7 @@ int main() {
 
   MazeGenerator maze(100, 100);
 
-  maze.GenMaze();
+  maze.GenCircularMaze();
 
   auto plane = maze.GetPlane();
 

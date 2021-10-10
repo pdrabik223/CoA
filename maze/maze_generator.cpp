@@ -124,6 +124,39 @@ void MazeGenerator::RecursiveDivision(const Square &square, int depth = 0) {
   }
 }
 
+void MazeGenerator::RecursiveCircularDivision() {
+
+  int max_radius = plane_.GetWidth() < plane_.GetHeight() ? plane_.GetWidth() / 2 : plane_.GetHeight() / 2;
+
+  max_radius -= 2;// so the outer circle does not touch sides
+  Coord center = {(int) (plane_.GetWidth() / 2), (int) (plane_.GetHeight() / 2)};
+  for (int r = circular_maze_info_.central_cavity_radius; r < max_radius; r += circular_maze_info_.cavity_thickness + circular_maze_info_.wall_thickness + 1) {
+
+    std::vector<Coord> circle;
+    DrawCircle(center, circle, r);
+
+    for (const auto &c : circle)
+      plane_.SetCell(c, CellState::WALL);
+
+    int hole_position = rand() % (circle.size() - 2);
+    std::vector<Coord> neighbours;
+    neighbours.emplace_back(circle[hole_position].x, circle[hole_position].y - 1);
+    neighbours.emplace_back(circle[hole_position].x, circle[hole_position].y + 1);
+    neighbours.emplace_back(circle[hole_position].x - 1, circle[hole_position].y);
+    neighbours.emplace_back(circle[hole_position].x + 1, circle[hole_position].y);
+
+    neighbours.emplace_back(neighbours.back().x + 1, neighbours.back().y);
+
+    neighbours.emplace_back(neighbours.front().x, neighbours.front().y - 1);
+    neighbours.emplace_back(neighbours.front().x, neighbours.front().y + 1);
+    neighbours.emplace_back(neighbours.front().x - 1, neighbours.front().y);
+    neighbours.emplace_back(neighbours.front().x + 1, neighbours.front().y);
+
+    for (auto &n : neighbours)
+      plane_.SetCell(n, CellState::EMPTY);
+  }
+}
+
 void MazeGenerator::DrawLine(const Coord &start, const Coord &finish, const Coord &breaking_point) {
 
   assert((start.x != finish.x) xor (start.y != finish.y));
@@ -152,24 +185,51 @@ void MazeGenerator::DrawLine(const Coord &start, const Coord &finish, const Coor
 void MazeGenerator::AddStartAndFinish() {
   bool side = rand() % 2;
 
-
-  while(1<2) {
+  while (1 < 2) {
     int start_x_shift = rand() % maze_info_.min_cavity_size.x;
     int start_y_shift = rand() % maze_info_.min_cavity_size.y;
-    if(plane_.GetCell({start_x_shift, start_y_shift}) == CellState::EMPTY) {
+    if (plane_.GetCell({start_x_shift, start_y_shift}) == CellState::EMPTY) {
       plane_.SetCell({start_x_shift, start_y_shift}, CellState::START);
       break;
     }
   }
-  while(1<2) {
-    int finish_x_shift = plane_.GetWidth() -1  - rand() % maze_info_.min_cavity_size.x;
-    int finish_y_shift = plane_.GetHeight() -1- rand() % maze_info_.min_cavity_size.y;
+  while (1 < 2) {
+    int finish_x_shift = plane_.GetWidth() - 1 - rand() % maze_info_.min_cavity_size.x;
+    int finish_y_shift = plane_.GetHeight() - 1 - rand() % maze_info_.min_cavity_size.y;
 
-    if(plane_.GetCell({finish_x_shift, finish_y_shift}) == CellState::EMPTY) {
+    if (plane_.GetCell({finish_x_shift, finish_y_shift}) == CellState::EMPTY) {
       plane_.SetCell({finish_x_shift, finish_y_shift}, CellState::FINISH);
       break;
     }
-
   }
+}
 
+void MazeGenerator::DrawCircle(const Coord &center, std::vector<Coord> &target, int radius) {
+  int x = radius;
+  int y = 0;
+  int err = 0;
+
+  while (x >= y) {
+    CheckBoundariesAndPush({center.y + y, center.x + x}, target);
+    CheckBoundariesAndPush({center.y + x, center.x + y}, target);
+    CheckBoundariesAndPush({center.y + x, center.x - y}, target);
+    CheckBoundariesAndPush({center.y + y, center.x - x}, target);
+    CheckBoundariesAndPush({center.y - y, center.x - x}, target);
+    CheckBoundariesAndPush({center.y - x, center.x - y}, target);
+    CheckBoundariesAndPush({center.y - x, center.x + y}, target);
+    CheckBoundariesAndPush({center.y - y, center.x + x}, target);
+    if (err <= 0) {
+      ++y;
+      err += 2 * y + 1;
+    } else {
+      --x;
+      err -= 2 * x + 1;
+    }
+  }
+}
+
+void MazeGenerator::CheckBoundariesAndPush(const Coord &position, std::vector<Coord> &push_target) {
+  if (position.x >= 0 and position.x < plane_.GetWidth() and position.y >= 0 and position.y < plane_.GetHeight()) {
+    push_target.push_back(position);
+  }
 }
