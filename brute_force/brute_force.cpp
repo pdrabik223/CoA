@@ -4,9 +4,8 @@
 
 #include "brute_force.h"
 #include <algorithm>
-#define FUCK false
-#include <algorithm>
-#include <assert.h>
+
+
 
 BruteForce::BruteForce(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
