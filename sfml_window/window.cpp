@@ -12,7 +12,7 @@ void Window::MainLoop() {
                           sf::Style::None, settings);
 
   window.setPosition(sf::Vector2i(position_.x, position_.y));
-
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
   // window.display();
   sf::Clock clock;
 
@@ -39,7 +39,7 @@ void Window::MainLoop() {
     //    if(clock.getElapsedTime().asMilliseconds()<150) continue;
     //    clock.restart();
 
-    if (not frame_queue_.empty()) {
+    if (GetQueueSize() != 0) {
       PopFrame().DrawToWindow(window);
       window.display();
     }
@@ -61,7 +61,7 @@ WindowPlane Window::PopFrame() {
 
 void Window::PushFrame(const WindowPlane &new_frame) {
 
-  while (GetQueueSize() > 80) std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  while (GetQueueSize() > 80) std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
   const std::lock_guard<std::mutex> kLock(event_queue_mutex_);
   frame_queue_.push(new_frame);
