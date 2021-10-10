@@ -10,7 +10,8 @@ double dijkstra::Cell::GetH() const {
 
 void dijkstra::Cell::SetFatherPtr(Cell &father) {
   Cell::father_ptr = &father;
-  SetG(father.g + 1 );
+  SetG(father.g + 1);
+  //  father.SetSonPtr(*this);
 }
 
 dijkstra::Cell::Cell(const dijkstra::Cell &other) {
@@ -38,5 +39,6 @@ unsigned dijkstra::Cell::GetG() const {
   return g;
 }
 void dijkstra::Cell::SetSonPtr(Cell &son) {
+
   Cell::son_ptr = &son;
 }

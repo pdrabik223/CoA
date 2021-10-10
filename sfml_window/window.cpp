@@ -25,8 +25,11 @@ void Window::MainLoop() {
         window.close();
       else if (event_.type == sf::Event::KeyPressed) {
         if (event_.key.code == sf::Keyboard::Space) {
-          for (int i = 0; i < 10; i++)
+
+          for (int i = 0; i < 10; i++) {
+            if (GetQueueSize() < 1) break;
             PopFrame();
+          }
         } else if (event_.key.code == sf::Keyboard::Escape) {
           window.close();
         }
@@ -49,7 +52,6 @@ Window::Window(const Coord &position, int width, int height) : height_(height), 
 
 WindowPlane Window::PopFrame() {
   WindowPlane new_frame(width_, height_);
-
   const std::lock_guard<std::mutex> kLock(event_queue_mutex_);
   new_frame = frame_queue_.front();
   frame_queue_.pop();
@@ -59,7 +61,7 @@ WindowPlane Window::PopFrame() {
 
 void Window::PushFrame(const WindowPlane &new_frame) {
 
-  while(GetQueueSize() > 30) std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  while (GetQueueSize() > 80) std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
   const std::lock_guard<std::mutex> kLock(event_queue_mutex_);
   frame_queue_.push(new_frame);

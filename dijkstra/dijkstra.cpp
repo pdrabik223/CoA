@@ -60,7 +60,7 @@ std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
   potential_neighbours.emplace_back(position.x + 1, position.y);
 
   std::vector<Coord> neighbours;
-  for (const auto &pn : potential_neighbours) {
+  for (auto &pn : potential_neighbours) {
     if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
       switch (GetCell(pn).cell_type) {
         case CellState::EMPTY:
@@ -70,11 +70,14 @@ std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
             GetCell(position).SetSonPtr(GetCell(neighbours.back()));
 
-          } else if (GetCell(position).GetG()  < GetCell(pn).GetG()) {
+          } else if (GetCell(position).GetG() < GetCell(pn).GetG()) {
+
             GetCell(pn).SetFatherPtr(GetCell(position));
-          }
-          else if (GetCell(position).GetG() > GetCell(pn).GetG() ) {
+            //            GetCell(position).SetSonPtr(GetCell(pn));
+          } else if (GetCell(position).GetG() > GetCell(pn).GetG()) {
+
             GetCell(position).SetFatherPtr(GetCell(pn));
+            //            GetCell(pn).SetSonPtr(GetCell(position));
           }
 
           break;
@@ -87,6 +90,7 @@ std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
       }
     }
   }
+
   return neighbours;
 }
 void dijkstra::Dijkstra::ApplyHDistance(std::vector<Coord> &cells) {
@@ -175,6 +179,7 @@ void dijkstra::Dijkstra::GeneratePath() {
   shortest_path_.push_back(final_point);
   while (true) {
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
+    assert(GetCell(shortest_path_.back()).father_ptr);
     shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
@@ -261,7 +266,6 @@ void dijkstra::Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &
   while (true) {
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-
     highlights.HighlightCells(shortest_path_);
     window_handle.PushFrame(highlights);
 
