@@ -16,8 +16,8 @@ class Window {
   Window() = delete;
   Window(int width, int height);
   Window(const Coord &position, int width, int height);
-  Window(const Window &other) = default;
-  Window &operator=(const Window &other) = default;
+  Window(const Window &other);;
+  Window &operator=(const Window &other);;
   WindowPlane PopFrame();
   void PushFrame(const WindowPlane &new_frame);
 
