@@ -72,7 +72,7 @@ std::vector<Coord> RandomWalkAlgorithm::GenNeighbours(const Coord &position) {
             neighbours.push_back(pn);
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
             GetCell(position).SetSonPtr(GetCell(neighbours.back()));
-          } else if (GetCell(position).GetG() < GetCell(pn).GetG()) {
+          } else if (GetCell(position).GetG() < GetCell(pn).father_ptr->GetG()) {
             //GetCell(position).ClearSonPtr();
             GetCell(pn).SetFatherPtr(GetCell(position));
           }

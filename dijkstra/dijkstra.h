@@ -10,11 +10,13 @@
 #include <vector>
 
 namespace dijkstra {
+
 class Dijkstra {
  public:
   Dijkstra() = delete;
   /// constructs Sample object based of Plane
-  Dijkstra(const Plane &other);
+  explicit Dijkstra(const Plane &other);
+  ;
   Dijkstra(const Dijkstra &other);
   Dijkstra &operator=(const Dijkstra &other);
 
@@ -37,7 +39,7 @@ class Dijkstra {
   bool GenerateGraph(Window &window_handle, const ColorScheme &color_scheme);
   void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
 
-  bool SearchBreakingPoint(const std::vector<Coord>& possible_routs, bool& path_has_been_found);
+  bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found);
 
   /// \param position center of returned "square"
   /// \return neighbouring cells to cell under specified position
@@ -52,10 +54,9 @@ class Dijkstra {
   /// finds Manhattan distance between position and closest finish point
   double EuclideanDistance(const Coord &position);
 
-  Cell& GetCell(const Coord& position){return copy_plane_[position.ToInt(width_)];};
+  Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
   void ClearGraph();
-
 
  protected:
   /// x axis
@@ -65,12 +66,9 @@ class Dijkstra {
 
   std::vector<Cell> copy_plane_;
 
-
   std::vector<Coord> starting_points_;
   std::vector<Coord> final_points_;
   std::vector<Coord> shortest_path_;
-
-
 };
-}// namespace a_star
+}// namespace dijkstra
 #endif//COA_A_STAR_A_STAR_H_

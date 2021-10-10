@@ -1,19 +1,6 @@
 #include "dijkstra.h"
-#include <iostream>
-#define INT(x) x.ToInt(width_)
 
-dijkstra::Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
-  copy_plane_.reserve(other.GetHeight() * other.GetWidth());
-
-  for (int y = 0; y < other.GetHeight(); y++)
-    for (int x = 0; x < other.GetWidth(); x++) {
-      copy_plane_.push_back({other.GetCell({x, y}), {x, y}});
-      if (other.GetCell({x, y}) == CellState::START) starting_points_.emplace_back(x, y);
-      if (other.GetCell({x, y}) == CellState::FINISH) final_points_.emplace_back(x, y);
-    }
-
-  if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
-}
+//dijkstra::Dijkstra::Dijkstra(const Plane &other)
 dijkstra::Dijkstra::Dijkstra(const dijkstra::Dijkstra &other) : width_(other.width_), height_(other.height_) {
   copy_plane_.reserve(width_ * height_);
 
@@ -70,7 +57,7 @@ std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
             GetCell(position).SetSonPtr(GetCell(neighbours.back()));
 
-          } else if (GetCell(position).GetG() < GetCell(pn).GetG()) {
+          } else if (GetCell(position).GetG() < GetCell(pn).father_ptr->GetG()) {
 
             GetCell(pn).SetFatherPtr(GetCell(position));
           }
@@ -180,7 +167,7 @@ void dijkstra::Dijkstra::GeneratePath() {
   shortest_path_.push_back(final_point);
   while (true) {
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-    assert(GetCell(shortest_path_.back()).father_ptr);
+    //assert(GetCell(shortest_path_.back()).father_ptr);
     shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
@@ -220,7 +207,6 @@ void dijkstra::Dijkstra::ClearGraph() {
 dijkstra::Dijkstra::~Dijkstra() {
   ClearGraph();
 }
-
 bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
   bool path_has_been_found = false;
 
@@ -255,7 +241,6 @@ bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme 
 
   return path_has_been_found;
 }
-
 void dijkstra::Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
   for (const auto &s : final_points_)
@@ -271,10 +256,21 @@ void dijkstra::Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &
     window_handle.PushFrame(highlights);
 
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-    if (shortest_path_.size() > 1000) {
-      std::cout << shortest_path_.size();
-    }
+
     shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
+}
+
+dijkstra::Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+  copy_plane_.reserve(other.GetHeight() * other.GetWidth());
+
+  for (int y = 0; y < other.GetHeight(); y++)
+    for (int x = 0; x < other.GetWidth(); x++) {
+      copy_plane_.push_back({other.GetCell({x, y}), {x, y}});
+      if (other.GetCell({x, y}) == CellState::START) starting_points_.emplace_back(x, y);
+      if (other.GetCell({x, y}) == CellState::FINISH) final_points_.emplace_back(x, y);
+    }
+
+  if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
 }
