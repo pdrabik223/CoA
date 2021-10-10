@@ -1,64 +1,57 @@
 //
 // Created by piotr on 09/10/2021.
 //
-#include "../dijkstra/dijkstra.h"
 #include "../brute_force/brute_force.h"
+#include "../dijkstra/dijkstra.h"
 #include "../random_walk/random_walk_algorithm.h"
-#include "../sfml_window/window.h"
+
 #include "maze_painter.h"
+#include <iostream>
 #define WINDOW_SIZE 500
 int Loop(Window &window) {
   window.MainLoop();
   return 0;
 }
 
-int GenBrutForceVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
+int GenBrutForceVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
+  BruteForce cos(maze);
 
+  auto path = cos.FindPath(window, color_scheme);
 
-    BruteForce cos(maze);
-
-    auto path = cos.FindPath(window, color_scheme);
-
-    auto t1 = std::chrono::steady_clock::now();
-    cos.FindPath();
-    printf("algorithm: BruteForce\t time: %lld ns\tpath length: %d\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
-
-
+  auto t1 = std::chrono::steady_clock::now();
+  cos.FindPath();
+  std::clog << "algorithm: BruteForce\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
 
   return 1;
 }
-int GenDijkstraVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
+int GenDijkstraVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
   dijkstra::Dijkstra cos(maze);
 
-    auto path = cos.FindPath(window, color_scheme);
+  auto path = cos.FindPath(window, color_scheme);
 
-    auto t1 = std::chrono::steady_clock::now();
-    cos.FindPath();
-    printf("algorithm: Dijkstra\t\t time: %lld ns\tpath length: %d\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
-
-return 2;
-
+  auto t1 = std::chrono::steady_clock::now();
+  cos.FindPath();
+  std::clog << "algorithm: Dijkstra\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
+  return 2;
 }
-int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme,  Plane maze) {
+int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
-    RandomWalkAlgorithm cos(maze);
+  RandomWalkAlgorithm cos(maze);
 
-    auto path = cos.FindPath(window, color_scheme);
+  auto path = cos.FindPath(window, color_scheme);
 
-    auto t1 = std::chrono::steady_clock::now();
-    cos.FindPath();
-    printf("algorithm: Random Walk\t time: %lld ns\tpath length: %d\n", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
-
+  auto t1 = std::chrono::steady_clock::now();
+  cos.FindPath();
+  std::clog << "algorithm: Random Walk\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
 
   return 3;
 }
 
-
 int main() {
 
-  MazePainter maze(800,800,100,100);
+  MazePainter maze(800, 800, 100, 100);
   maze.MainLoop();
   Plane cos = maze.GetPlane();
 
@@ -75,23 +68,21 @@ int main() {
   std::thread window_thread_2(Loop, std::ref(screen_2));
   std::thread window_thread_3(Loop, std::ref(screen_3));
 
-  std::this_thread::sleep_for(std::chrono::milliseconds (500));
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme,cos);
-  std::thread generator_2(GenBrutForceVisuals, std::ref(screen_2), color_scheme,cos);
-  std::thread generator_3(GenDijkstraVisuals, std::ref(screen_3), color_scheme,cos);
+  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme, cos);
+  std::thread generator_2(GenBrutForceVisuals, std::ref(screen_2), color_scheme, cos);
+  std::thread generator_3(GenDijkstraVisuals, std::ref(screen_3), color_scheme, cos);
 
   generator_1.join();
   generator_2.join();
   generator_3.join();
 
+  //  system("pause");
+
   window_thread_1.join();
   window_thread_2.join();
   window_thread_3.join();
-
-
-
-
 
   return 0;
 }
