@@ -24,10 +24,7 @@ struct ColorScheme {
   sf::Color point_of_interest;
   sf::Color start;
   sf::Color finish;
-
-
-
-
+  sf::Color path;
 };
 
 #endif//COA_SFML_WINDOW_COLOR_SHEME_H_

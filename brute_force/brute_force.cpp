@@ -160,7 +160,7 @@ void BruteForce::GeneratePath(Window &window_handle, const ColorScheme &color_sc
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
 
-    highlights.HighlightCells(shortest_path_);
+    highlights.HighlightCells(shortest_path_, color_scheme.path);
     window_handle.PushFrame(highlights);
 
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
