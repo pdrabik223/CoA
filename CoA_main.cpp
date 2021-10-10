@@ -96,8 +96,6 @@ int main() {
   std::thread generator_2(GenBruteForceVisuals, std::ref(screen_2), color_scheme);
   std::thread generator_3(GenAStarVisuals, std::ref(screen_3), color_scheme);
 
-
-
   generator_1.join();
   generator_2.join();
   generator_3.join();
@@ -106,6 +104,6 @@ int main() {
   window_thread_2.join();
   window_thread_3.join();
 
-  system("pause");
+
   return 0;
 }

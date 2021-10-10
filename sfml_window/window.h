@@ -15,9 +15,9 @@ class Window {
  public:
   Window() = delete;
   Window(int width, int height);
-  Window(const Coord& position,int width, int height);
-  Window(const Window& other) = default;
-  Window& operator=(const Window& other) = default;
+  Window(const Coord &position, int width, int height);
+  Window(const Window &other) = default;
+  Window &operator=(const Window &other) = default;
   WindowPlane PopFrame();
   void PushFrame(const WindowPlane &new_frame);
 
@@ -31,7 +31,6 @@ class Window {
  protected:
   int width_;
   int height_;
-
 
   std::string current_window_title_ = "CoA";
   bool update_title_ = false;
