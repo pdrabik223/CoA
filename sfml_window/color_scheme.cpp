@@ -14,7 +14,7 @@ void ColorScheme::LoadCyanSet() {
   finish = sf::Color(255,255,255);
 }
 void ColorScheme::LoadGreenSet() {
-  background = sf::Color(0x323031);
+  background = sf::Color(0x009982);
   wall = sf::Color(0x187e8a);
 
   discovered = sf::Color(0xdb3934);
