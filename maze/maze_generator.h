@@ -44,6 +44,10 @@ class MazeGenerator {
     plane_.Clear();
     RecursiveCircularDivision();
     Coord center = {(int) (plane_.GetWidth() / 2), (int) (plane_.GetHeight() / 2)};
+
+    center.x += rand() % 3 - 1;
+    center.y += rand() % 3 - 1;
+
     plane_.SetCell(center, CellState::FINISH);
     plane_.AddBorder(CellState::START);
   }
