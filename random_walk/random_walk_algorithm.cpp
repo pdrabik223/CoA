@@ -73,6 +73,7 @@ std::vector<Coord> RandomWalkAlgorithm::GenNeighbours(const Coord &position) {
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
             GetCell(position).SetSonPtr(GetCell(neighbours.back()));
           } else if (GetCell(position).GetG() < GetCell(pn).GetG()) {
+            //GetCell(position).ClearSonPtr();
             GetCell(pn).SetFatherPtr(GetCell(position));
           }
           //          else if (GetCell(position).GetG() > GetCell(pn).GetG() ) {
@@ -140,6 +141,7 @@ void RandomWalkAlgorithm::GeneratePath() {
 }
 void RandomWalkAlgorithm::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
+
   for (const auto &s : final_points_)
     if (GetCell(s).father_ptr) {
       final_point = s;
@@ -150,7 +152,7 @@ void RandomWalkAlgorithm::GeneratePath(Window &window_handle, const ColorScheme 
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
 
-    highlights.HighlightCells(shortest_path_);
+    highlights.HighlightCells(shortest_path_, color_scheme.path);
     window_handle.PushFrame(highlights);
 
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
