@@ -63,6 +63,7 @@ void Window::PushFrame(const WindowPlane &new_frame) {
   frame_queue_.push(new_frame);
 }
 int Window::GetQueueSize() {
+  const std::lock_guard<std::mutex> lock(event_queue_mutex_);
   return frame_queue_.size();
 }
 void Window::SetWindowLabel(const std::string &label) {
