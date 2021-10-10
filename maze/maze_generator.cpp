@@ -13,9 +13,6 @@ void MazeGenerator::RecursiveDivision(const Square &square, int depth = 0) {
 
   if (depth > 10) return;
 
-  std::clog << "depth: "
-            << depth << "\n";
-
   if (square.first.x >= square.second.x) assert(false);
   if (square.first.y >= square.second.y) assert(false);
 
