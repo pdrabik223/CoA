@@ -12,9 +12,9 @@
 #define RUN_RANDOM_WALK true
 #define RUN_DIJKSTRA true
 
-#define USE_RANDOM_GEN true
+#define USE_RANDOM_GEN false
 #define USE_SQUARE_MAZE false
-#define USE_CIRCULAR_MAZE false
+#define USE_CIRCULAR_MAZE true
 
 int Loop(Window &window) {
   window.MainLoop();
@@ -103,7 +103,7 @@ int GenDijkstraVisualsMaze(Window &window, ColorScheme color_scheme) {
     dijkstra::Dijkstra cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
-    std::cout << "queue size: " << window.GetQueueSize();
+    //    std::cout << "queue size: " << window.GetQueueSize();
     auto t1 = std::chrono::steady_clock::now();
     cos.FindPath();
     MessageMe(i, "square maze", "Dijkstra", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
@@ -151,7 +151,7 @@ int GenDijkstraVisualsCMaze(Window &window, ColorScheme color_scheme) {
     dijkstra::Dijkstra cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
-    std::cout << "queue size: " << window.GetQueueSize();
+    //    std::cout << "queue size: " << window.GetQueueSize();
     auto t1 = std::chrono::steady_clock::now();
     cos.FindPath();
     MessageMe(i, "circular maze", "Dijkstra", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());

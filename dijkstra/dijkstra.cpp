@@ -73,12 +73,13 @@ std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
           } else if (GetCell(position).GetG() < GetCell(pn).GetG()) {
 
             GetCell(pn).SetFatherPtr(GetCell(position));
-            //            GetCell(position).SetSonPtr(GetCell(pn));
-          } else if (GetCell(position).GetG() > GetCell(pn).GetG()) {
-
-            GetCell(position).SetFatherPtr(GetCell(pn));
-            //            GetCell(pn).SetSonPtr(GetCell(position));
           }
+          //            GetCell(position).SetSonPtr(GetCell(pn));
+          //          } else if (GetCell(position).GetG() > GetCell(pn).GetG()) {
+          //
+          //            GetCell(position).SetFatherPtr(GetCell(pn));
+          //            //            GetCell(pn).SetSonPtr(GetCell(position));
+          //          }
 
           break;
 
@@ -270,6 +271,9 @@ void dijkstra::Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &
     window_handle.PushFrame(highlights);
 
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
+    if (shortest_path_.size() > 1000) {
+      std::cout << shortest_path_.size();
+    }
     shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
