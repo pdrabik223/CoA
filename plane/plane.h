@@ -12,6 +12,7 @@
 class Plane {
  public:
   Plane() : width_(0), height_(0){};
+  Plane(const std::string& path){LoadFromFile(path);};
   Plane(unsigned int width, unsigned int height, int infill_percentage);
   Plane(const Plane &other);
   Plane &operator=(const Plane &other);
@@ -24,7 +25,9 @@ class Plane {
 
   void AddBorder();
 
-  void DisplayText(const std::string &text, const Coord &position, unsigned size);
+  void SaveToFile(const std::string& file_name)const;
+  void LoadFromFile(const std::string& file_name);
+
  protected:
   /// x axis
   unsigned width_;

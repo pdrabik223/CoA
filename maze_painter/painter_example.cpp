@@ -53,7 +53,8 @@ int main() {
 
   MazePainter maze(800, 800, 100, 100);
   maze.MainLoop();
-  Plane cos = maze.GetPlane();
+  maze.GetPlane().SaveToFile("../mazes/test.txt");
+  Plane cos("../mazes/test.txt");
 
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
