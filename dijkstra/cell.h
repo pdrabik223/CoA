@@ -20,7 +20,7 @@ struct Cell {
   Cell(const Cell &other);
   Cell &operator=(const Cell &other);
 
-  void SetH(const double &h) { this->h = h ; }
+  void SetH(const double &h) { this->h = h; }
   void SetG(const unsigned int &g) {
     this->g = g;
     if (son_ptr)
@@ -32,11 +32,17 @@ struct Cell {
   unsigned GetG() const;
 
   /// beksa
-  double GetF() const { return h  ; }
+  double GetF() const { return h; }
 
   void SetFatherPtr(Cell &father);
   void SetSonPtr(Cell &son);
-
+  void ClearSonPtr() {
+    if (son_ptr) {
+      son_ptr->father_ptr = nullptr;
+      son_ptr->ClearSonPtr();
+      son_ptr = nullptr;
+    }
+  };
   Cell *GetFatherPtr() const { return father_ptr; };
 
   ~Cell() {
