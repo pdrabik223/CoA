@@ -13,7 +13,7 @@ void Window::MainLoop() {
 
   window.setPosition(sf::Vector2i(position_.x, position_.y));
 
-  window.display();
+  // window.display();
   sf::Clock clock;
 
   while (window.isOpen()) {
@@ -27,7 +27,7 @@ void Window::MainLoop() {
         if (event_.key.code == sf::Keyboard::Space) {
           for (int i = 0; i < 10; i++)
             PopFrame();
-        }else if(event_.key.code == sf::Keyboard::Escape){
+        } else if (event_.key.code == sf::Keyboard::Escape) {
           window.close();
         }
       }
@@ -36,13 +36,12 @@ void Window::MainLoop() {
     //    if(clock.getElapsedTime().asMilliseconds()<150) continue;
     //    clock.restart();
 
-    if (frame_queue_.empty()) continue;
-
-    PopFrame().DrawToWindow(window);
-    window.display();
+    if (not frame_queue_.empty()) {
+      PopFrame().DrawToWindow(window);
+      window.display();
+    }
   }
 }
-
 
 Window::Window(int width, int height) : height_(height), width_(width), position_(0, 0) {}
 Window::Window(const Coord &position, int width, int height) : height_(height), width_(width), position_(position) {
@@ -51,7 +50,7 @@ Window::Window(const Coord &position, int width, int height) : height_(height), 
 WindowPlane Window::PopFrame() {
   WindowPlane new_frame(width_, height_);
 
-  const std::lock_guard<std::mutex> lock(event_queue_mutex_);
+  const std::lock_guard<std::mutex> kLock(event_queue_mutex_);
   new_frame = frame_queue_.front();
   frame_queue_.pop();
 
@@ -59,11 +58,14 @@ WindowPlane Window::PopFrame() {
 }
 
 void Window::PushFrame(const WindowPlane &new_frame) {
-  const std::lock_guard<std::mutex> lock(event_queue_mutex_);
+
+  while(GetQueueSize() > 30) std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  const std::lock_guard<std::mutex> kLock(event_queue_mutex_);
   frame_queue_.push(new_frame);
 }
 int Window::GetQueueSize() {
-  const std::lock_guard<std::mutex> lock(event_queue_mutex_);
+  const std::lock_guard<std::mutex> kLock(event_queue_mutex_);
   return frame_queue_.size();
 }
 void Window::SetWindowLabel(const std::string &label) {
@@ -71,7 +73,7 @@ void Window::SetWindowLabel(const std::string &label) {
   update_title_ = true;
 }
 Window &Window::operator=(const Window &other) {
-  if(this == &other) return *this;
+  if (this == &other) return *this;
   width_ = other.width_;
   height_ = other.height_;
   current_window_title_ = other.current_window_title_;
