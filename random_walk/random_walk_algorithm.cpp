@@ -4,7 +4,7 @@
 
 #include "random_walk_algorithm.h"
 
-RandomWalkAlgorithm::RandomWalkAlgorithm(const Plane &other): width_(other.GetWidth()), height_(other.GetHeight()) {
+RandomWalkAlgorithm::RandomWalkAlgorithm(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)
@@ -16,7 +16,7 @@ RandomWalkAlgorithm::RandomWalkAlgorithm(const Plane &other): width_(other.GetWi
 
   if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
 }
-RandomWalkAlgorithm::RandomWalkAlgorithm(const RandomWalkAlgorithm &other) : width_(other.width_), height_(other.height_)  {
+RandomWalkAlgorithm::RandomWalkAlgorithm(const RandomWalkAlgorithm &other) : width_(other.width_), height_(other.height_) {
   copy_plane_.reserve(width_ * height_);
 
   for (int i = 0; i < width_ * height_; i++)
@@ -71,10 +71,14 @@ std::vector<Coord> RandomWalkAlgorithm::GenNeighbours(const Coord &position) {
           if (not GetCell(pn).father_ptr) {
             neighbours.push_back(pn);
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
+            GetCell(position).SetSonPtr(GetCell(neighbours.back()));
 
-          } else if ((GetCell(position).GetG() + 1) < GetCell(pn).GetG()) {
+          } else if (GetCell(position).GetG()  < GetCell(pn).GetG()) {
             GetCell(pn).SetFatherPtr(GetCell(position));
           }
+//          else if (GetCell(position).GetG() > GetCell(pn).GetG() ) {
+//            GetCell(position).SetFatherPtr(GetCell(pn));
+//          }
 
           break;
 
@@ -89,8 +93,11 @@ std::vector<Coord> RandomWalkAlgorithm::GenNeighbours(const Coord &position) {
   return neighbours;
 }
 void RandomWalkAlgorithm::ClearGraph() {
-  for (auto &g : copy_plane_)
+  for (auto &g : copy_plane_) {
     g.father_ptr = nullptr;
+    g.son_ptr = nullptr;
+  }
+  shortest_path_.clear();
 }
 bool RandomWalkAlgorithm::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
   path_has_been_found = false;
@@ -110,9 +117,9 @@ std::vector<Coord> RandomWalkAlgorithm::FindPath(Window &window_handle, const Co
 
   // convert cell grid to proper graph
   // if connection between any start and any finish won't be found GenerateGraph will return false, and we end the FindPath function
-  if (not GenerateGraph(window_handle,  color_scheme)) return {};
+  if (not GenerateGraph(window_handle, color_scheme)) return {};
 
-  GeneratePath(window_handle,  color_scheme);
+  GeneratePath(window_handle, color_scheme);
 
   return shortest_path_;
 }
@@ -152,14 +159,13 @@ void RandomWalkAlgorithm::GeneratePath(Window &window_handle, const ColorScheme 
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
-Coord RandomWalkAlgorithm::PopRandomCell(std::vector<Coord>& positions) {
+Coord RandomWalkAlgorithm::PopRandomCell(std::vector<Coord> &positions) {
 
-  unsigned rand_pos = rand()%positions.size();
+  unsigned rand_pos = rand() % positions.size();
   auto temp = positions[rand_pos];
   positions.erase(positions.begin() + rand_pos);
 
   return temp;
-
 }
 bool RandomWalkAlgorithm::GenerateGraph() {
   bool path_has_been_found = false;
@@ -179,7 +185,6 @@ bool RandomWalkAlgorithm::GenerateGraph() {
 
     for (const auto &s : successors)
       open.push_back(s);
-
   }
 
   return path_has_been_found;
@@ -200,18 +205,16 @@ bool RandomWalkAlgorithm::GenerateGraph(Window &window_handle, const ColorScheme
 
   std::vector<Coord> open;
 
-
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
   open = starting_points_;
-
 
   Coord q;
   std::vector<Coord> successors;
 
   while (not open.empty()) {
     q = PopRandomCell(open);
-    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
+    if (not DYNAMIC_DISPLAY) window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
     successors = GenNeighbours(q);
 
@@ -221,10 +224,8 @@ bool RandomWalkAlgorithm::GenerateGraph(Window &window_handle, const ColorScheme
 
     if (SearchBreakingPoint(successors, path_has_been_found)) break;
 
-
     for (const auto &s : successors)
       open.push_back(s);
-
   }
 
   return path_has_been_found;
