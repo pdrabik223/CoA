@@ -12,8 +12,7 @@ int main() {
 
   sic.SetCell({6, 6}, CellState::START);
 
-  sic.AddBorder();
-
+  sic.AddBorder(CellState::WALL);
 
   printf("original maze:\n");
 

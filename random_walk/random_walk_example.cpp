@@ -8,7 +8,7 @@ int main() {
 
   Plane sic(20, 20, 10);
 
-  sic.AddBorder();
+  sic.AddBorder(CellState::WALL);
   sic.SetCell({1, 1}, CellState::FINISH);
 
   sic.SetCell({18, 18}, CellState::START);

@@ -23,7 +23,7 @@ class Plane {
   unsigned int GetWidth() const;
   unsigned int GetHeight() const;
 
-  void AddBorder();
+  void AddBorder(CellState border_type);
 
   void SaveToFile(const std::string& file_name)const;
   void LoadFromFile(const std::string& file_name);

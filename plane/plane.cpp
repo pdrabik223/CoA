@@ -43,22 +43,22 @@ Plane::Plane(unsigned int width, unsigned int height, int infill_percentage) : w
     else
       plane_.emplace_back(CellState::EMPTY);
 }
-void Plane::AddBorder() {
+void Plane::AddBorder(CellState border_type) {
   //vertical top
   for (int x = 0; x < GetWidth(); x++)
-    SetCell({x, 0}, CellState::WALL);
+    SetCell({x, 0}, border_type);
 
   //vertical bottom
   for (int x = 0; x < GetWidth(); x++)
-    SetCell({x, (int) GetHeight() - 1}, CellState::WALL);
+    SetCell({x, (int) GetHeight() - 1}, border_type);
 
   // left edge
   for (int y = 0; y < GetHeight(); y++)
-    SetCell({0, y}, CellState::WALL);
+    SetCell({0, y}, border_type);
 
   // right ege
   for (int y = 0; y < GetHeight(); y++)
-    SetCell({(int) GetWidth() - 1, y}, CellState::WALL);
+    SetCell({(int) GetWidth() - 1, y}, border_type);
 }
 void Plane::SaveToFile(const std::string &file_name) const {
   std::ofstream myfile;
