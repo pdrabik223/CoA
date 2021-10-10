@@ -28,6 +28,8 @@ class Plane {
   void SaveToFile(const std::string& file_name)const;
   void LoadFromFile(const std::string& file_name);
 
+  void Clear();
+
  protected:
   /// x axis
   unsigned width_;

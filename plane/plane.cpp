@@ -58,31 +58,36 @@ void Plane::AddBorder() {
 
   // right ege
   for (int y = 0; y < GetHeight(); y++)
-    SetCell({(int)GetWidth()-1, y}, CellState::WALL);
+    SetCell({(int) GetWidth() - 1, y}, CellState::WALL);
 }
 void Plane::SaveToFile(const std::string &file_name) const {
   std::ofstream myfile;
-  myfile.open (file_name, std::ios::out);
+  myfile.open(file_name, std::ios::out);
   if (not myfile.is_open()) throw "invalid filename";
 
-  myfile << height_<<"\n";
-  myfile << height_<<"\n";
+  myfile << height_ << "\n";
+  myfile << height_ << "\n";
   for (auto &c : plane_) {
-    myfile<<(int)c<<" ";
+    myfile << (int) c << " ";
   }
   myfile.close();
 }
 void Plane::LoadFromFile(const std::string &file_name) {
   std::ifstream myfile;
-  myfile.open (file_name, std::ios::in);
+  myfile.open(file_name, std::ios::in);
   if (not myfile.is_open()) throw "invalid filename";
   myfile >> height_;
   myfile >> width_;
   int buffer;
 
-  for (int c = 0; c < height_*width_; ++c) {
-    myfile>>buffer;
-    plane_.emplace_back((CellState)buffer);
+  for (int c = 0; c < height_ * width_; ++c) {
+    myfile >> buffer;
+    plane_.emplace_back((CellState) buffer);
   }
   myfile.close();
+}
+void Plane::Clear() {
+  for (auto &c : plane_) {
+    c = CellState::EMPTY;
+  }
 }
