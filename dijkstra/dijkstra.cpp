@@ -68,10 +68,13 @@ std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
           if (not GetCell(pn).father_ptr) {
             neighbours.push_back(pn);
             GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
+            GetCell(position).SetSonPtr(GetCell(neighbours.back()));
 
-          } else if((GetCell(position).GetG() + 1) < GetCell(pn).GetG()) {
+          } else if (GetCell(position).GetG()  < GetCell(pn).GetG()) {
             GetCell(pn).SetFatherPtr(GetCell(position));
-
+          }
+          else if (GetCell(position).GetG() > GetCell(pn).GetG() ) {
+            GetCell(position).SetFatherPtr(GetCell(pn));
           }
 
           break;
@@ -119,7 +122,6 @@ Coord dijkstra::Dijkstra::PopBestFCell(std::vector<Coord> &positions) {
   auto temp = positions[smallest_f_id];
   positions.erase(positions.begin() + smallest_f_id);
 
-
   return temp;
 }
 
@@ -157,7 +159,6 @@ bool dijkstra::Dijkstra::GenerateGraph() {
 
     for (const auto &s : successors)
       open.push_back(s);
-
   }
 
   return path_has_been_found;
@@ -203,8 +204,10 @@ std::vector<Coord> dijkstra::Dijkstra::FindPath(Window &window_handle, const Col
   return shortest_path_;
 }
 void dijkstra::Dijkstra::ClearGraph() {
-  for (auto &g : copy_plane_)
+  for (auto &g : copy_plane_) {
     g.father_ptr = nullptr;
+    g.son_ptr = nullptr;
+  }
 
   shortest_path_.clear();
 }
@@ -228,7 +231,7 @@ bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme 
 
   while (not open.empty()) {
     q = PopBestFCell(open);
-    window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
+    if (not DYNAMIC_DISPLAY) window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
     successors = GenNeighbours(q);
 
@@ -241,8 +244,7 @@ bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme 
     ApplyHDistance(successors);
 
     for (const auto &s : successors)
-        open.push_back(s);
-
+      open.push_back(s);
   }
 
   return path_has_been_found;
