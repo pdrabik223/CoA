@@ -13,7 +13,8 @@ set(plane_dir
 set(sfml_window_dir
         sfml_window/window.h sfml_window/window.cpp
         sfml_window/window_plane.h sfml_window/window_plane.cpp
-        sfml_window/color_scheme.h sfml_window/color_scheme.cpp)
+        sfml_window/color_scheme.h sfml_window/color_scheme.cpp
+        sfml_window/graph.h sfml_window/graph.cpp)
 
 set(brute_force_dir
         brute_force/brute_force.h brute_force/brute_force.cpp
@@ -65,7 +66,14 @@ add_executable(maze_painter  maze_painter/painter_example.cpp
         ${dijkstra_dir}
         ${brute_force_dir})
 
-add_executable(maze_generator  maze/maze_generator_example.cpp
+add_executable(maze_generator maze/maze_generator_example.cpp
+        ${plane_dir}
+        ${sfml_window_dir}
+        ${maze_painter_dir}
+        ${random_walk_dir}
+        ${dijkstra_dir}
+        ${brute_force_dir})
+add_executable(graph_example sfml_window/graph_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${maze_painter_dir}
@@ -74,7 +82,7 @@ add_executable(maze_generator  maze/maze_generator_example.cpp
         ${brute_force_dir})
 
 
-set(executables CoA dijkstra_example brute_force_example random_walk_example  maze_painter maze_generator)
+set(executables CoA dijkstra_example brute_force_example random_walk_example maze_painter maze_generator graph_example)
 
 foreach(executable IN LISTS executables)
     target_include_directories(${executable}

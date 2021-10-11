@@ -13,8 +13,8 @@
 #define RUN_DIJKSTRA true
 
 #define USE_RANDOM_GEN false
-#define USE_SQUARE_MAZE false
-#define USE_CIRCULAR_MAZE true
+#define USE_SQUARE_MAZE true
+#define USE_CIRCULAR_MAZE false
 
 int Loop(Window &window) {
   window.MainLoop();
