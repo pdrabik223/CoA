@@ -12,14 +12,10 @@
 #define RUN_RANDOM_WALK true
 #define RUN_DIJKSTRA true
 
-#define USE_RANDOM_GEN false
+#define USE_RANDOM_GEN true
 #define USE_SQUARE_MAZE false
 #define USE_CIRCULAR_MAZE false
 
-int Loop(Window &window) {
-  window.MainLoop();
-  return 0;
-}
 void MessageMe(int maze_nr, const std::string &maze_type, const std::string &algorithm, size_t time, int path_length) {
   std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
@@ -183,19 +179,17 @@ int main() {
 #if USE_RANDOM_GEN
 #if RUN_BRUTEFORCE
   Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_1(Loop, std::ref(screen_1));
+
   std::thread generator_1(GenBruteForceVisuals, std::ref(screen_1), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK
   Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_2(Loop, std::ref(screen_2));
   std::thread generator_2(GenRandomWalkVisuals, std::ref(screen_2), color_scheme);
 #endif
 
 #if RUN_DIJKSTRA
   Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_3(Loop, std::ref(screen_3));
   std::thread generator_3(GenDijkstraVisuals, std::ref(screen_3), color_scheme);
 #endif
 #endif
@@ -203,19 +197,16 @@ int main() {
 #if USE_SQUARE_MAZE
 #if RUN_BRUTEFORCE
   Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_1(Loop, std::ref(screen_1));
   std::thread generator_1(GenBruteForceVisualsMaze, std::ref(screen_1), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK
   Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_2(Loop, std::ref(screen_2));
   std::thread generator_2(GenRandomWalkVisualsMaze, std::ref(screen_2), color_scheme);
 #endif
 
 #if RUN_DIJKSTRA
   Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_3(Loop, std::ref(screen_3));
   std::thread generator_3(GenDijkstraVisualsMaze, std::ref(screen_3), color_scheme);
 #endif
 #endif
@@ -223,19 +214,16 @@ int main() {
 #if USE_CIRCULAR_MAZE
 #if RUN_BRUTEFORCE
   Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_1(Loop, std::ref(screen_1));
   std::thread generator_1(GenBruteForceVisualsCMaze, std::ref(screen_1), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK
   Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_2(Loop, std::ref(screen_2));
   std::thread generator_2(GenRandomWalkVisualsCMaze, std::ref(screen_2), color_scheme);
 #endif
 
 #if RUN_DIJKSTRA
   Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread window_3(Loop, std::ref(screen_3));
   std::thread generator_3(GenDijkstraVisualsCMaze, std::ref(screen_3), color_scheme);
 #endif
 #endif
@@ -243,17 +231,17 @@ int main() {
 #if USE_SQUARE_MAZE or USE_CIRCULAR_MAZE or USE_RANDOM_GEN
 #if RUN_BRUTEFORCE
   generator_1.join();
-  window_1.join();
+
 #endif
 
 #if RUN_RANDOM_WALK
-  generator_1.join();
-  window_1.join();
+  generator_2.join();
+
 #endif
 
 #if RUN_DIJKSTRA
-  generator_1.join();
-  window_1.join();
+  generator_3.join();
+
 #endif
 #endif
   return 0;

@@ -16,13 +16,16 @@ class Window {
   Window() = delete;
   Window(int width, int height);
   Window(const Coord &position, int width, int height);
-  Window(const Window &other);;
-  Window &operator=(const Window &other);;
+  Window(const Window &other);
+  Window &operator=(const Window &other);
   WindowPlane PopFrame();
   void PushFrame(const WindowPlane &new_frame);
 
   int GetQueueSize();
-
+  ~Window() {
+    screen_thread_->join();
+    delete screen_thread_;
+  }
   void SetWindowLabel(const std::string &label);
 
   /// main window loop
@@ -37,6 +40,7 @@ class Window {
 
   std::mutex event_queue_mutex_;
   std::queue<WindowPlane> frame_queue_;
+  std::thread *screen_thread_;
   int display_refresh_rate_ = 15;
   sf::Event event_;
 

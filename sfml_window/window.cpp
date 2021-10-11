@@ -46,8 +46,11 @@ void Window::MainLoop() {
   }
 }
 
-Window::Window(int width, int height) : height_(height), width_(width), position_(0, 0) {}
+Window::Window(int width, int height) : height_(height), width_(width), position_(0, 0) {
+  screen_thread_ = new std::thread(&Window::MainLoop, this);
+}
 Window::Window(const Coord &position, int width, int height) : height_(height), width_(width), position_(position) {
+  screen_thread_ = new std::thread(&Window::MainLoop, this);
 }
 
 WindowPlane Window::PopFrame() {
