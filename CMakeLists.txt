@@ -68,18 +68,11 @@ add_executable(maze_painter  maze_painter/painter_example.cpp
 
 add_executable(maze_generator maze/maze_generator_example.cpp
         ${plane_dir}
-        ${sfml_window_dir}
-        ${maze_painter_dir}
-        ${random_walk_dir}
-        ${dijkstra_dir}
-        ${brute_force_dir})
+        ${sfml_window_dir})
+
 add_executable(graph_example sfml_window/graph_example.cpp
         ${plane_dir}
-        ${sfml_window_dir}
-        ${maze_painter_dir}
-        ${random_walk_dir}
-        ${dijkstra_dir}
-        ${brute_force_dir})
+        ${sfml_window_dir})
 
 
 set(executables CoA dijkstra_example brute_force_example random_walk_example maze_painter maze_generator graph_example)
