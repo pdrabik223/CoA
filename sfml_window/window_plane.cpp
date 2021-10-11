@@ -56,7 +56,7 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height) 
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {
         case CellState::EMPTY:
-          if (plane[x * width + y].distance == CELL_MAX)
+          if (plane[x * width + y].father_ptr == nullptr)
             grid_.push_back(colorscheme_.background);
           else
             grid_.push_back(colorscheme_.discovered);
@@ -82,32 +82,8 @@ void WindowPlane::HighlightCells(const std::vector<Coord> &plane, sf::Color high
     grid_[c.ToInt(width_)] = highlight_color;
   }
 }
+
 WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, const ColorScheme &color_scheme) : width_(width), height_(height), colorscheme_(color_scheme) {
-
-  for (int x = 0; x < width_; x++)
-    for (int y = 0; y < height_; y++) {
-      switch (plane[x * width + y].cell_type) {
-        case CellState::EMPTY:
-
-          if (plane[x * width + y].distance == CELL_MAX)
-            grid_.push_back(colorscheme_.background);
-          else
-            grid_.push_back(colorscheme_.discovered);
-          break;
-        case CellState::WALL:
-          grid_.push_back(colorscheme_.wall);
-          break;
-        case CellState::START:
-          grid_.push_back(colorscheme_.start);
-          break;
-        case CellState::FINISH:
-          grid_.push_back(colorscheme_.finish);
-          break;
-      }
-    }
-}
-WindowPlane::WindowPlane(const std::vector<dijkstra::Cell> &plane, int width, int height, const ColorScheme &color_scheme) : width_(width), height_(height), colorscheme_(color_scheme)
-{
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {

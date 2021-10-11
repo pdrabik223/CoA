@@ -18,7 +18,7 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  dijkstra::Dijkstra sample(sic);
+  Dijkstra sample(sic);
 
   printf("\nsolution:\n");
 

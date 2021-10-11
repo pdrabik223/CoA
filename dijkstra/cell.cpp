@@ -4,17 +4,17 @@
 
 #include "cell.h"
 
-double dijkstra::Cell::GetH() const {
+double Cell::GetH() const {
   return h ;
 }
 
-void dijkstra::Cell::SetFatherPtr(Cell &father) {
+void Cell::SetFatherPtr(Cell &father) {
   Cell::father_ptr = &father;
   SetG(father.g + 1);
   //  father.SetSonPtr(*this);
 }
 
-dijkstra::Cell::Cell(const dijkstra::Cell &other) {
+Cell::Cell(const Cell &other) {
 
   g = other.g;
   h = other.h;
@@ -23,7 +23,7 @@ dijkstra::Cell::Cell(const dijkstra::Cell &other) {
   placement = other.placement;
   cell_type = other.cell_type;
 }
-dijkstra::Cell &dijkstra::Cell::operator=(const dijkstra::Cell &other) {
+Cell &Cell::operator=(const Cell &other) {
   if (this == &other) return *this;
 
   g = other.g;
@@ -35,10 +35,10 @@ dijkstra::Cell &dijkstra::Cell::operator=(const dijkstra::Cell &other) {
 
   return *this;
 }
-unsigned dijkstra::Cell::GetG() const {
+unsigned Cell::GetG() const {
   return g;
 }
-void dijkstra::Cell::SetSonPtr(Cell &son) {
+void Cell::SetSonPtr(Cell &son) {
 
   Cell::son_ptr = &son;
 }

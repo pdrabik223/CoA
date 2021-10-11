@@ -10,8 +10,6 @@
 #include "../utility/coord.h"
 
 #define CELL_MAX 100'000'000
-
-namespace dijkstra {
 struct Cell {
   Cell() : cell_type(CellState::EMPTY){};
   Cell(CellState cell_type, const Coord &position) : cell_type(cell_type), placement(position) {
@@ -63,5 +61,5 @@ struct Cell {
 
   CellState cell_type;
 };
-}// namespace dijkstra
+
 #endif//COA_A_STAR_CELL_H_

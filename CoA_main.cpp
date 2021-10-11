@@ -13,7 +13,7 @@
 #define RUN_DIJKSTRA true
 
 #define USE_RANDOM_GEN false
-#define USE_SQUARE_MAZE true
+#define USE_SQUARE_MAZE false
 #define USE_CIRCULAR_MAZE false
 
 int Loop(Window &window) {
@@ -50,7 +50,7 @@ int GenDijkstraVisuals(Window &window, ColorScheme color_scheme) {
     sic.SetCell({0, 0}, CellState::FINISH);
     sic.SetCell({50, 50}, CellState::START);
 
-    dijkstra::Dijkstra cos(sic);
+    Dijkstra cos(sic);
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -100,7 +100,7 @@ int GenDijkstraVisualsMaze(Window &window, ColorScheme color_scheme) {
     MazeGenerator sic(100, 100);
     sic.GenSquareMaze();
 
-    dijkstra::Dijkstra cos(sic.GetPlane());
+    Dijkstra cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
     //    std::cout << "queue size: " << window.GetQueueSize();
@@ -148,7 +148,7 @@ int GenDijkstraVisualsCMaze(Window &window, ColorScheme color_scheme) {
     MazeGenerator sic(100, 100);
     sic.GenCircularMaze();
 
-    dijkstra::Dijkstra cos(sic.GetPlane());
+    Dijkstra cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
     //    std::cout << "queue size: " << window.GetQueueSize();

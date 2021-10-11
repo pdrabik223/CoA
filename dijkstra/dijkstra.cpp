@@ -1,43 +1,42 @@
 #include "dijkstra.h"
-
-//dijkstra::Dijkstra::Dijkstra(const Plane &other)
-dijkstra::Dijkstra::Dijkstra(const dijkstra::Dijkstra &other) : width_(other.width_), height_(other.height_) {
-  copy_plane_.reserve(width_ * height_);
-
-  for (int i = 0; i < width_ * height_; i++)
-    copy_plane_.emplace_back(other.copy_plane_[i]);
-
-  for (const auto &f : other.starting_points_)
-    starting_points_ = other.starting_points_;
-
-  for (const auto &f : other.final_points_)
-    final_points_ = other.final_points_;
-
-  for (const auto &f : other.shortest_path_)
-    shortest_path_ = other.shortest_path_;
-}
-dijkstra::Dijkstra &dijkstra::Dijkstra::operator=(const dijkstra::Dijkstra &other) {
-  if (&other == this) return *this;
-
-  width_ = other.width_;
-  height_ = other.height_;
-  copy_plane_.reserve(width_ * height_);
-
-  for (int i = 0; i < width_ * height_; i++)
-    copy_plane_.emplace_back(other.copy_plane_[i]);
-
-  for (const auto &f : other.starting_points_)
-    starting_points_ = other.starting_points_;
-
-  for (const auto &f : other.final_points_)
-    final_points_ = other.final_points_;
-
-  for (const auto &f : other.shortest_path_)
-    shortest_path_ = other.shortest_path_;
-
-  return *this;
-}
-std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
+//
+//Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.height_) {
+//  copy_plane_.reserve(width_ * height_);
+//
+//  for (int i = 0; i < width_ * height_; i++)
+//    copy_plane_.emplace_back(other.copy_plane_[i]);
+//
+//  for (const auto &f : other.starting_points_)
+//    starting_points_ = other.starting_points_;
+//
+//  for (const auto &f : other.final_points_)
+//    final_points_ = other.final_points_;
+//
+//  for (const auto &f : other.shortest_path_)
+//    shortest_path_ = other.shortest_path_;
+//}
+//Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
+//  if (&other == this) return *this;
+//
+//  width_ = other.width_;
+//  height_ = other.height_;
+//  copy_plane_.reserve(width_ * height_);
+//
+//  for (int i = 0; i < width_ * height_; i++)
+//    copy_plane_.emplace_back(other.copy_plane_[i]);
+//
+//  for (const auto &f : other.starting_points_)
+//    starting_points_ = other.starting_points_;
+//
+//  for (const auto &f : other.final_points_)
+//    final_points_ = other.final_points_;
+//
+//  for (const auto &f : other.shortest_path_)
+//    shortest_path_ = other.shortest_path_;
+//
+//  return *this;
+//}
+std::vector<Coord> Dijkstra::GenNeighbours(const Coord &position) {
 
   std::vector<Coord> potential_neighbours;
 
@@ -81,13 +80,23 @@ std::vector<Coord> dijkstra::Dijkstra::GenNeighbours(const Coord &position) {
 
   return neighbours;
 }
-void dijkstra::Dijkstra::ApplyHDistance(std::vector<Coord> &cells) {
-  for (auto &c : cells) {
-    GetCell(c).SetH(EuclideanDistance(c));
+void Dijkstra::ApplyHDistance(std::vector<Coord> &cells) {
+  switch (used_distance_function_) {
+
+    case EUCLIDEAN_DISTANCE:
+      for (auto &c : cells) {
+        GetCell(c).SetH(EuclideanDistance(c));
+      }
+      break;
+    case MANHATTAN_DISTANCE:
+      for (auto &c : cells) {
+        GetCell(c).SetH(ManhattanDistance(c));
+
+        break;
+      }
   }
 }
-
-double dijkstra::Dijkstra::EuclideanDistance(const Coord &position) {
+double Dijkstra::EuclideanDistance(const Coord &position) {
 
   double smallest_distance = UINT32_MAX;
   double distance_to_f = 0;
@@ -102,8 +111,22 @@ double dijkstra::Dijkstra::EuclideanDistance(const Coord &position) {
 
   return smallest_distance;
 }
+double Dijkstra::ManhattanDistance(const Coord &position) {
 
-Coord dijkstra::Dijkstra::PopBestFCell(std::vector<Coord> &positions) {
+  double smallest_distance = UINT32_MAX;
+  double distance_to_f = 0;
+
+  for (const auto &f : final_points_) {
+
+    distance_to_f = abs(f.x - position.x) + abs(f.y - position.y);
+
+    if (distance_to_f < smallest_distance)
+      smallest_distance = distance_to_f;
+  }
+
+  return smallest_distance;
+}
+Coord Dijkstra::PopBestFCell(std::vector<Coord> &positions) {
 
   int smallest_f_id = 0;
 
@@ -117,7 +140,7 @@ Coord dijkstra::Dijkstra::PopBestFCell(std::vector<Coord> &positions) {
   return temp;
 }
 
-std::vector<Coord> dijkstra::Dijkstra::FindPath() {
+std::vector<Coord> Dijkstra::FindPath() {
 
   ClearGraph();
 
@@ -130,7 +153,7 @@ std::vector<Coord> dijkstra::Dijkstra::FindPath() {
   return shortest_path_;
 }
 
-bool dijkstra::Dijkstra::GenerateGraph() {
+bool Dijkstra::GenerateGraph() {
   bool path_has_been_found = false;
 
   std::vector<Coord> open;
@@ -155,7 +178,7 @@ bool dijkstra::Dijkstra::GenerateGraph() {
 
   return path_has_been_found;
 }
-void dijkstra::Dijkstra::GeneratePath() {
+void Dijkstra::GeneratePath() {
 
   Coord final_point;
   for (const auto &s : final_points_)
@@ -173,7 +196,7 @@ void dijkstra::Dijkstra::GeneratePath() {
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
-bool dijkstra::Dijkstra::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
+bool Dijkstra::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
   path_has_been_found = false;
 
   // check if this is the end of path
@@ -187,7 +210,7 @@ bool dijkstra::Dijkstra::SearchBreakingPoint(const std::vector<Coord> &possible_
   return false;
 }
 
-std::vector<Coord> dijkstra::Dijkstra::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
   ClearGraph();
 
   if (not GenerateGraph(window_handle, color_scheme)) return {};
@@ -196,7 +219,7 @@ std::vector<Coord> dijkstra::Dijkstra::FindPath(Window &window_handle, const Col
 
   return shortest_path_;
 }
-void dijkstra::Dijkstra::ClearGraph() {
+void Dijkstra::ClearGraph() {
   for (auto &g : copy_plane_) {
     g.father_ptr = nullptr;
     g.son_ptr = nullptr;
@@ -204,10 +227,10 @@ void dijkstra::Dijkstra::ClearGraph() {
 
   shortest_path_.clear();
 }
-dijkstra::Dijkstra::~Dijkstra() {
+Dijkstra::~Dijkstra() {
   ClearGraph();
 }
-bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
+bool Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
   bool path_has_been_found = false;
 
   std::vector<Coord> open;
@@ -221,16 +244,29 @@ bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme 
   Coord q;
   std::vector<Coord> successors;
 
+  int i = 0;
   while (not open.empty()) {
     q = PopBestFCell(open);
     if (not DYNAMIC_DISPLAY) window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
     successors = GenNeighbours(q);
+    // 1 1 -> 1
+    // 1 0 -> 0
+    // 0 1 -> 1
+    // 0 0 -> 1
 
-    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-    highlights.HighlightCells(successors);
-    window_handle.PushFrame(highlights);
+    if (SPEED_UP_DIJKSTRA) {
+      if ((++i) % 3) {
+        WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+        highlights.HighlightCells(successors);
+        window_handle.PushFrame(highlights);
+      }
 
+    } else {
+      WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+      highlights.HighlightCells(successors);
+      window_handle.PushFrame(highlights);
+    }
     if (SearchBreakingPoint(successors, path_has_been_found)) break;
 
     ApplyHDistance(successors);
@@ -241,7 +277,7 @@ bool dijkstra::Dijkstra::GenerateGraph(Window &window_handle, const ColorScheme 
 
   return path_has_been_found;
 }
-void dijkstra::Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
+void Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).father_ptr) {
@@ -262,7 +298,7 @@ void dijkstra::Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
-dijkstra::Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)

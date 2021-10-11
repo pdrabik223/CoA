@@ -2,7 +2,6 @@
 // Created by piotr on 09/10/2021.
 //
 #include "../plane/plane.h"
-#include "../sample_algorithm/sample.h"
 #include "random_walk_algorithm.h"
 int main() {
 
@@ -23,7 +22,6 @@ int main() {
 
   ConsoleDisplay(sic,sample.FindPath());
 
-  ConsoleDisplay(sample.FindPath());
 
   getchar();
 

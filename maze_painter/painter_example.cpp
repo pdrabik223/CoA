@@ -27,7 +27,7 @@ int GenBrutForceVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 }
 int GenDijkstraVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
-  dijkstra::Dijkstra cos(maze);
+  Dijkstra cos(maze);
 
   auto path = cos.FindPath(window, color_scheme);
 

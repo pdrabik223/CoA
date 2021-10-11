@@ -48,7 +48,7 @@ class RandomWalkAlgorithm {
   bool SearchBreakingPoint(const std::vector<Coord>& possible_routs, bool& path_has_been_found);
 
 
-  dijkstra::Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
+  Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
   void ClearGraph();
 
@@ -59,7 +59,7 @@ class RandomWalkAlgorithm {
     /// y axis
     unsigned height_;
 
-    std::vector<dijkstra::Cell> copy_plane_;
+    std::vector<Cell> copy_plane_;
 
     std::vector<Coord> starting_points_;
     std::vector<Coord> final_points_;

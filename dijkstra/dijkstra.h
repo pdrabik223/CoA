@@ -9,9 +9,12 @@
 #include "cell.h"
 #include <vector>
 
-namespace dijkstra {
-
 class Dijkstra {
+  enum DistanceFunction {
+    EUCLIDEAN_DISTANCE,
+    MANHATTAN_DISTANCE
+  };
+
  public:
   Dijkstra() = delete;
   /// constructs Sample object based of Plane
@@ -54,6 +57,8 @@ class Dijkstra {
   /// finds Manhattan distance between position and closest finish point
   double EuclideanDistance(const Coord &position);
 
+  double ManhattanDistance(const Coord &position);
+
   Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
   void ClearGraph();
@@ -69,6 +74,8 @@ class Dijkstra {
   std::vector<Coord> starting_points_;
   std::vector<Coord> final_points_;
   std::vector<Coord> shortest_path_;
+
+  DistanceFunction used_distance_function_ = MANHATTAN_DISTANCE;
 };
-}// namespace dijkstra
+
 #endif//COA_A_STAR_A_STAR_H_
