@@ -16,7 +16,7 @@ void ColorScheme::LoadCyanSet() {
   path = sf::Color(255, 215, 0);
 }
 void ColorScheme::LoadGreenSet() {
-  background = sf::Color(0, 0, 0);
+  background = sf::Color(255, 255, 255);
   //  wall = sf::Color(0x187e8a);
 
   wall = sf::Color(126, 0, 255);

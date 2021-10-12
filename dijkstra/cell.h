@@ -68,10 +68,10 @@ struct Cell {
   bool got_g = false;
 
   /// distance from cell to finish
-  double h = 1000'000'000;
+  double h = 100'000'000;
 
   /// distance from cell to start
-  unsigned g = 1000'000'000;
+  unsigned g = 100'000'000;
   Coord placement;
   CellState cell_type;
 };

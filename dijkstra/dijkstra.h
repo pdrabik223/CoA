@@ -36,17 +36,9 @@ class Dijkstra {
   ~Dijkstra() { ClearGraph(); };
 
  private:
-  bool GenerateGraph();
   void GeneratePath();
 
-  bool GenerateGraph(Window &window_handle, const ColorScheme &color_scheme);
   void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
-
-  bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found);
-
-  /// \param position center of returned "square"
-  /// \return neighbouring cells to cell under specified position
-  std::vector<Coord> GenNeighbours(const Coord &position);
 
   /// applies distance from cell to finish
   void ApplyHDistance(std::vector<Coord> &cells);
@@ -78,6 +70,7 @@ class Dijkstra {
   std::vector<Coord> shortest_path_;
 
   DistanceFunction used_distance_function_ = MANHATTAN_DISTANCE;
+  Cell *PopSmallestH(std::vector<Cell *> &open_set);
 };
 
 #endif//COA_A_STAR_A_STAR_H_

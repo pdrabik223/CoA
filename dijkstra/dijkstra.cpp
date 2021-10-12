@@ -109,16 +109,19 @@ void Dijkstra::UpdateGs() {
   std::vector<Cell *> successors;
   while (not open.empty()) {
 
-    for (const auto &q : open)
-      for (const auto kP : q->nodes)
-        if (not kP->got_g) {
-          kP->got_g = true;
-          successors.push_back(kP);
+    Cell *q = PopSmallestH(open);
 
-          kP->g = q->g + 1;
-        }
+    for (const auto kP : q->nodes)
+      if (not kP->got_g) {
+        kP->got_g = true;
+        successors.push_back(kP);
+        kP->g = q->g + 1;
+        if (kP->cell_type == CellState::FINISH) return;
+      }
 
-    open = successors;
+    for (const auto kS : successors) {
+      open.push_back(kS);
+    }
     successors.clear();
   }
 }
@@ -157,6 +160,7 @@ void Dijkstra::ClearGraph() {
   shortest_path_.clear();
 }
 void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -169,30 +173,30 @@ void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
   std::vector<Cell *> successors;
+
   while (not open.empty()) {
 
-    for (const auto &q : open)
-      for (const auto kP : q->nodes) {
-        if (not kP->got_g) {
-          kP->got_g = true;
-          successors.push_back(kP);
+    Cell *q = PopSmallestH(open);
 
-          kP->g = q->g + 1;
-
-          if (kP->cell_type == CellState::FINISH) return;
-        }
+    for (const auto kP : q->nodes)
+      if (not kP->got_g) {
+        kP->got_g = true;
+        successors.push_back(kP);
+        kP->g = q->g + 1;
+        if (kP->cell_type == CellState::FINISH) return;
       }
+
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
     std::vector<Coord> highlighted_positions;
-
     highlighted_positions.reserve(successors.size());
-    for (const auto kS : successors) {
+    for (const auto kS : successors)
       highlighted_positions.push_back(kS->placement);
-    }
     highlights.HighlightCells(highlighted_positions);
     window_handle.PushFrame(highlights);
 
-    open = successors;
+    for (const auto kS : successors)
+      open.push_back(kS);
+
     successors.clear();
   }
 }
@@ -217,4 +221,29 @@ void Dijkstra::GeneratePath() {
     shortest_path_.push_back(next->placement);
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
+}
+
+double Dijkstra::EuclideanDistance(const Coord &position) {
+  double smallest_distance = 100000000;
+
+  for (auto &f : final_points_) {
+    double distance = sqrt(pow(position.x - f.x, 2) + pow(position.y - f.y, 2));
+    if (distance < smallest_distance) smallest_distance = distance;
+  }
+
+  return smallest_distance;
+}
+Cell *Dijkstra::PopSmallestH(std::vector<Cell *> &open_set) {
+  for (const auto &o : open_set)
+    o->h = EuclideanDistance(o->placement);
+
+  int smallest_h = 0;
+
+  for (int i = 1; i < open_set.size(); i++)
+    if (open_set[i]->h < open_set[smallest_h]->h) smallest_h = i;
+
+  Cell *temp = open_set[smallest_h];
+  open_set.erase(open_set.begin() + smallest_h);
+
+  return temp;
 }

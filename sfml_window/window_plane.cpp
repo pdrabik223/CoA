@@ -56,7 +56,7 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height) 
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {
         case CellState::EMPTY:
-          if (not plane[x * width + y].got_g)
+          if (plane[x * width + y].g == 100'000'000)
             grid_.push_back(colorscheme_.background);
           else
             grid_.push_back(colorscheme_.discovered);
@@ -89,7 +89,7 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, 
       switch (plane[x * width + y].cell_type) {
         case CellState::EMPTY:
           if (not plane[x * width + y].got_g)
-            grid_.push_back(colorscheme_.discovered);
+            grid_.push_back(colorscheme_.background);
           else
             grid_.push_back(colorscheme_.discovered);
           break;

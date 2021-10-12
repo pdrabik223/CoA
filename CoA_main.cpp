@@ -8,9 +8,9 @@
 #include <iostream>
 #define WINDOW_SIZE 500
 
-#define RUN_BRUTEFORCE true
+#define RUN_BRUTEFORCE false
 #define RUN_RANDOM_WALK false
-#define RUN_DIJKSTRA false
+#define RUN_DIJKSTRA true
 
 #define USE_RANDOM_GEN true
 #define USE_SQUARE_MAZE true
@@ -174,7 +174,7 @@ int GenRandomWalkVisualsCMaze(Window &window, ColorScheme color_scheme) {
 int main() {
 
   ColorScheme color_scheme;
-  color_scheme.LoadPainterSet();
+  color_scheme.LoadGreenSet();
 
 #if USE_RANDOM_GEN
 #if RUN_BRUTEFORCE
@@ -188,8 +188,8 @@ int main() {
 #endif
 
 #if RUN_DIJKSTRA
-  Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_3(GenDijkstraVisuals, std::ref(screen_3), color_scheme);
+  Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
+  std::thread generator_1(GenDijkstraVisuals, std::ref(screen_1), color_scheme);
 #endif
 #endif
 
@@ -205,8 +205,8 @@ int main() {
 #endif
 
 #if RUN_DIJKSTRA
-  Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_3(GenDijkstraVisualsMaze, std::ref(screen_3), color_scheme);
+  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
+  std::thread generator_2(GenDijkstraVisualsMaze, std::ref(screen_2), color_scheme);
 #endif
 #endif
 
