@@ -31,27 +31,21 @@ class BruteForce {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
-  ~BruteForce(){ClearGraph();}
+  ~BruteForce() {
+    ClearGraph();
+  }
 
  private:
-  /// \param position center of returned "square"
-  /// \return neighbouring cells to cell under specified position
-  void GenNeighbours(const Coord &position, std::vector<Coord> &target_vec);
+  void ConnectNeighbours(const Coord &position);
 
-  bool GenerateGraph();
   void GeneratePath();
-
-  bool GenerateGraph(Window &window_handle, const ColorScheme &color_scheme);
   void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
 
   Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
-  bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found);
-
-  void ClearGraph();
   void UpdateGs();
   void UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
-  void ConnectNeighbours(const Coord &position);
+  void ClearGraph();
 
  protected:
   /// x axis

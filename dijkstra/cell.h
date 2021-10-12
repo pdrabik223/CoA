@@ -17,7 +17,6 @@ struct Cell {
   Cell(CellState cell_type, const Coord &position) : cell_type(cell_type), placement(position) {
     if (cell_type == CellState::START) {
       g = 0;
-      is_connected = false;
     }
   };
   Cell(const Cell &other);
@@ -38,7 +37,7 @@ struct Cell {
   //  }
   void Clear() {
     //    nodes.clear();
-    is_connected = false;
+
     got_g = false;
     if (cell_type == CellState::START)
       g = 0;
