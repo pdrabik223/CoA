@@ -9,8 +9,8 @@
 #define WINDOW_SIZE 500
 
 #define RUN_BRUTEFORCE true
-#define RUN_RANDOM_WALK true
-#define RUN_DIJKSTRA true
+#define RUN_RANDOM_WALK false
+#define RUN_DIJKSTRA false
 
 #define USE_RANDOM_GEN true
 #define USE_SQUARE_MAZE false
@@ -23,10 +23,10 @@ void MessageMe(int maze_nr, const std::string &maze_type, const std::string &alg
 int GenBruteForceVisuals(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
-    Plane sic(100, 100, 10);
+    Plane sic(10, 10, 10);
 
     sic.SetCell({0, 0}, CellState::FINISH);
-    sic.SetCell({50, 50}, CellState::START);
+    sic.SetCell({5, 5}, CellState::START);
 
     BruteForce cos(sic);
 

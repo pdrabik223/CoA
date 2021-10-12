@@ -36,7 +36,7 @@ class BruteForce {
  private:
   /// \param position center of returned "square"
   /// \return neighbouring cells to cell under specified position
-  std::vector<Coord> GenNeighbours(const Coord &position);
+  void GenNeighbours(const Coord &position, std::vector<Coord> &target_vec);
 
   bool GenerateGraph();
   void GeneratePath();
@@ -49,7 +49,7 @@ class BruteForce {
   bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found);
 
   void ClearGraph();
-  ;
+  void UpdateGs();
 
  protected:
   /// x axis

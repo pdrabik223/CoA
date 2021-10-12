@@ -5,8 +5,6 @@
 #include "brute_force.h"
 #include <algorithm>
 
-
-
 BruteForce::BruteForce(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
@@ -58,7 +56,7 @@ BruteForce &BruteForce::operator=(const BruteForce &other) {
   return *this;
 }
 
-std::vector<Coord> BruteForce::GenNeighbours(const Coord &position) {
+void BruteForce::GenNeighbours(const Coord &position, std::vector<Coord> &target_vec) {
 
   std::vector<Coord> potential_neighbours;
 
@@ -67,31 +65,37 @@ std::vector<Coord> BruteForce::GenNeighbours(const Coord &position) {
   potential_neighbours.emplace_back(position.x - 1, position.y);
   potential_neighbours.emplace_back(position.x + 1, position.y);
 
-  std::vector<Coord> neighbours;
   for (const auto &pn : potential_neighbours) {
     if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
+
       switch (GetCell(pn).cell_type) {
         case CellState::EMPTY:
+          GetCell(position).Connect(GetCell(pn));
 
-          if (not GetCell(pn).father_ptr) {
-            neighbours.push_back(pn);
-            GetCell(neighbours.back()).SetFatherPtr(GetCell(position));
-
-          } else if ((GetCell(position).GetG() + 1) < GetCell(pn).GetG()) {
-            GetCell(pn).SetFatherPtr(GetCell(position));
+          if (not GetCell(pn).is_connected) {
+            target_vec.push_back(pn);
+            GetCell(pn).is_connected = true;
           }
-
           break;
 
         case CellState::FINISH:
-          GetCell(pn).SetFatherPtr(GetCell(position));
-          return std::vector<Coord>({pn});
+          GetCell(position).Connect(GetCell(pn));
+
+          GetCell(pn).Connect(GetCell(position));
+          GetCell(pn).is_connected = true;
+
+          target_vec.clear();
+          target_vec.push_back(pn);
+          return;
+        case CellState::START:
+          GetCell(position).Connect(GetCell(pn));
+          break;
+
         default:
           break;
       }
     }
   }
-  return neighbours;
 }
 
 std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
@@ -100,15 +104,28 @@ std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme
 
   if (not GenerateGraph(window_handle, color_scheme)) return {};
 
+  UpdateGs();
+
   GeneratePath(window_handle, color_scheme);
 
   return shortest_path_;
 }
+std::vector<Coord> BruteForce::FindPath() {
+  ClearGraph();
 
+  if (not GenerateGraph()) return {};
+
+  UpdateGs();
+
+  GeneratePath();
+
+  return shortest_path_;
+}
 void BruteForce::GeneratePath() {
+
   Coord final_point;
   for (const auto &s : final_points_)
-    if (GetCell(s).father_ptr) {
+    if (GetCell(s).is_connected) {
       final_point = s;
       break;
     }
@@ -116,11 +133,46 @@ void BruteForce::GeneratePath() {
   shortest_path_.push_back(final_point);
   while (true) {
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-    shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
+    if (GetCell(shortest_path_.back()).GetSmallestG() == nullptr) {
+      shortest_path_.clear();
+      return;
+    }
+    shortest_path_.push_back(GetCell(shortest_path_.back()).GetSmallestG()->placement);
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
+void BruteForce::UpdateGs() {
+  std::vector<Cell *> open;
+
+  for (const auto &s : starting_points_)
+    open.push_back(&GetCell(s));
+
+  for (auto o : open) {
+    o->g = 0;
+    o->got_g = true;
+  }
+  std::vector<Cell *> successors;
+  while (not open.empty()) {
+
+    for (auto &i : open)
+      std::clog << i->g << " ";
+    std::clog << "\n";
+
+    for (const auto &q : open)
+      for (const auto kP : q->nodes)
+        if (not kP->got_g) {
+          kP->got_g = true;
+          successors.push_back(kP);
+          // if (kP->g > q->g + 1) {
+          kP->g = q->g + 1;
+          // }
+        }
+
+    open = successors;
+    successors.clear();
+  }
+}
 bool BruteForce::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
   bool path_has_been_found = false;
 
@@ -133,11 +185,8 @@ bool BruteForce::GenerateGraph(Window &window_handle, const ColorScheme &color_s
 
     if (not DYNAMIC_DISPLAY) window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
-    for (const auto &q : open) {
-      for (const auto &nq : GenNeighbours(q)) {
-        successors.push_back(nq);
-      }
-    }
+    for (const auto &q : open)
+      GenNeighbours(q, successors);
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
     highlights.HighlightCells(successors);
@@ -151,20 +200,29 @@ bool BruteForce::GenerateGraph(Window &window_handle, const ColorScheme &color_s
 void BruteForce::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
   for (const auto &s : final_points_)
-    if (GetCell(s).father_ptr) {
+    if (GetCell(s).is_connected) {
       final_point = s;
       break;
     }
+
   shortest_path_.push_back(final_point);
   while (true) {
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-
     highlights.HighlightCells(shortest_path_, color_scheme.path);
     window_handle.PushFrame(highlights);
 
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-    shortest_path_.push_back(GetCell(shortest_path_.back()).father_ptr->placement);
+    Cell *next = GetCell(shortest_path_.back()).GetSmallestG();
+    if (not next) {
+      shortest_path_.clear();
+      return;
+    }
+    if (shortest_path_.size() > 40) {
+
+      std::cout << shortest_path_.size() << "\n";
+    }
+    shortest_path_.push_back(next->placement);
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
@@ -182,15 +240,7 @@ bool BruteForce::SearchBreakingPoint(const std::vector<Coord> &possible_routs, b
 
   return false;
 }
-std::vector<Coord> BruteForce::FindPath() {
-  ClearGraph();
 
-  if (not GenerateGraph()) return {};
-
-  GeneratePath();
-
-  return shortest_path_;
-}
 bool BruteForce::GenerateGraph() {
   bool path_has_been_found = false;
 
@@ -199,11 +249,9 @@ bool BruteForce::GenerateGraph() {
   while (not open.empty()) {
     std::vector<Coord> successors;
 
-    for (const auto &q : open) {
-      for (const auto &nq : GenNeighbours(q)) {
-        successors.push_back(nq);
-      }
-    }
+    for (const auto &q : open)
+      GenNeighbours(q, successors);
+
     if (SearchBreakingPoint(successors, path_has_been_found)) break;
     open = successors;
   }
@@ -211,8 +259,7 @@ bool BruteForce::GenerateGraph() {
 }
 void BruteForce::ClearGraph() {
   for (auto &g : copy_plane_) {
-    g.father_ptr = nullptr;
+    g.Clear();
   }
-
   shortest_path_.clear();
 }
