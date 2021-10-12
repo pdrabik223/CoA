@@ -33,7 +33,7 @@ class Dijkstra {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
-  virtual ~Dijkstra();
+  ~Dijkstra() { ClearGraph(); };
 
  private:
   bool GenerateGraph();
@@ -60,8 +60,10 @@ class Dijkstra {
   double ManhattanDistance(const Coord &position);
 
   Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
-
+  void UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
   void ClearGraph();
+  void ConnectNeighbours(const Coord &position);
+  void UpdateGs();
 
  protected:
   /// x axis
