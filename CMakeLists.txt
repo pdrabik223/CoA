@@ -30,6 +30,7 @@ set(random_walk_dir
 set(maze_painter_dir
         maze_painter/maze_painter.h maze_painter/maze_painter.cpp)
 
+
 add_subdirectory(SFML)
 
 add_executable(CoA CoA_main.cpp
@@ -42,6 +43,13 @@ add_executable(CoA CoA_main.cpp
 
 add_executable(plane_example plane/plane_example.cpp
         ${plane_dir})
+
+add_executable(saved_maze saved_mazes/saved_mazes.cpp
+        ${plane_dir}
+        ${sfml_window_dir}
+        ${random_walk_dir}
+        ${dijkstra_dir}
+        ${brute_force_dir})
 
 add_executable(brute_force_example brute_force/brute_force_example.cpp
         ${plane_dir}
@@ -75,7 +83,7 @@ add_executable(graph_example sfml_window/graph_example.cpp
         ${sfml_window_dir})
 
 
-set(executables CoA dijkstra_example brute_force_example random_walk_example maze_painter maze_generator graph_example)
+set(executables CoA dijkstra_example brute_force_example random_walk_example maze_painter maze_generator graph_example saved_maze)
 
 foreach(executable IN LISTS executables)
     target_include_directories(${executable}
