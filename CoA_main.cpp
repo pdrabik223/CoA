@@ -9,8 +9,8 @@
 #define WINDOW_SIZE 500
 
 #define RUN_BRUTEFORCE false
-#define RUN_RANDOM_WALK false
-#define RUN_DIJKSTRA true
+#define RUN_RANDOM_WALK true
+#define RUN_DIJKSTRA false
 
 #define USE_RANDOM_GEN true
 #define USE_SQUARE_MAZE true
@@ -64,7 +64,7 @@ int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme) {
     sic.SetCell({0, 0}, CellState::FINISH);
     sic.SetCell({50, 50}, CellState::START);
 
-    RandomWalkAlgorithm cos(sic);
+    RandomWalk cos(sic);
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -112,7 +112,7 @@ int GenRandomWalkVisualsMaze(Window &window, ColorScheme color_scheme) {
     MazeGenerator sic(100, 100);
     sic.GenSquareMaze();
 
-    RandomWalkAlgorithm cos(sic.GetPlane());
+    RandomWalk cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -160,7 +160,7 @@ int GenRandomWalkVisualsCMaze(Window &window, ColorScheme color_scheme) {
     MazeGenerator sic(100, 100);
     sic.GenCircularMaze();
 
-    RandomWalkAlgorithm cos(sic.GetPlane());
+    RandomWalk cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -183,8 +183,8 @@ int main() {
 #endif
 
 #if RUN_RANDOM_WALK
-  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenRandomWalkVisuals, std::ref(screen_2), color_scheme);
+  Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
+  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme);
 #endif
 
 #if RUN_DIJKSTRA
@@ -200,7 +200,7 @@ int main() {
 #endif
 
 #if RUN_RANDOM_WALK
-  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
+  Window screen_2(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
   std::thread generator_2(GenRandomWalkVisualsMaze, std::ref(screen_2), color_scheme);
 #endif
 
@@ -217,8 +217,8 @@ int main() {
 #endif
 
 #if RUN_RANDOM_WALK
-  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenRandomWalkVisualsCMaze, std::ref(screen_2), color_scheme);
+  Window screen_3(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
+  std::thread generator_3(GenRandomWalkVisualsCMaze, std::ref(screen_3), color_scheme);
 #endif
 
 #if RUN_DIJKSTRA

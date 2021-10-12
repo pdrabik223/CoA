@@ -38,7 +38,7 @@ int GenDijkstraVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 }
 int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
-  RandomWalkAlgorithm cos(maze);
+  RandomWalk cos(maze);
 
   auto path = cos.FindPath(window, color_scheme);
 
@@ -65,9 +65,6 @@ int main() {
 
   Window screen_3(Coord(0, WINDOW_SIZE), WINDOW_SIZE, WINDOW_SIZE);
 
-  std::thread window_thread_1(Loop, std::ref(screen_1));
-  std::thread window_thread_2(Loop, std::ref(screen_2));
-  std::thread window_thread_3(Loop, std::ref(screen_3));
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -80,10 +77,6 @@ int main() {
   generator_3.join();
 
   //  system("pause");
-
-  window_thread_1.join();
-  window_thread_2.join();
-  window_thread_3.join();
 
   return 0;
 }

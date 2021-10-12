@@ -16,7 +16,7 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  RandomWalkAlgorithm sample(sic);
+  RandomWalk sample(sic);
 
   printf("\nsolution:\n");
 

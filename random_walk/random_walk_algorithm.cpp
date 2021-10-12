@@ -3,8 +3,9 @@
 //
 
 #include "random_walk_algorithm.h"
+#include <algorithm>
 
-RandomWalkAlgorithm::RandomWalkAlgorithm(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+RandomWalk::RandomWalk(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)
@@ -15,8 +16,13 @@ RandomWalkAlgorithm::RandomWalkAlgorithm(const Plane &other) : width_(other.GetW
     }
 
   if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
+
+  for (int y = 0; y < other.GetHeight(); y++)
+    for (int x = 0; x < other.GetWidth(); x++)
+      ConnectNeighbours({x, y});
 }
-RandomWalkAlgorithm::RandomWalkAlgorithm(const RandomWalkAlgorithm &other) : width_(other.width_), height_(other.height_) {
+
+RandomWalk::RandomWalk(const RandomWalk &other) : width_(other.width_), height_(other.height_) {
   copy_plane_.reserve(width_ * height_);
 
   for (int i = 0; i < width_ * height_; i++)
@@ -31,7 +37,8 @@ RandomWalkAlgorithm::RandomWalkAlgorithm(const RandomWalkAlgorithm &other) : wid
   for (const auto &f : other.shortest_path_)
     shortest_path_ = other.shortest_path_;
 }
-RandomWalkAlgorithm &RandomWalkAlgorithm::operator=(const RandomWalkAlgorithm &other) {
+RandomWalk &RandomWalk::operator=(const RandomWalk &other) {
+
   if (&other == this) return *this;
 
   width_ = other.width_;
@@ -53,8 +60,8 @@ RandomWalkAlgorithm &RandomWalkAlgorithm::operator=(const RandomWalkAlgorithm &o
   return *this;
 }
 
-std::vector<Coord> RandomWalkAlgorithm::GenNeighbours(const Coord &position) {
-
+void RandomWalk::ConnectNeighbours(const Coord &position) {
+  if (GetCell(position).cell_type == CellState::WALL) return;
   std::vector<Coord> potential_neighbours;
 
   potential_neighbours.emplace_back(position.x, position.y - 1);
@@ -62,160 +69,166 @@ std::vector<Coord> RandomWalkAlgorithm::GenNeighbours(const Coord &position) {
   potential_neighbours.emplace_back(position.x - 1, position.y);
   potential_neighbours.emplace_back(position.x + 1, position.y);
 
-  std::vector<Coord> neighbours;
-  for (const auto &pn : potential_neighbours) {
-    if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_) {
-
-      switch (GetCell(pn).cell_type) {
-        case CellState::EMPTY:
-          GetCell(position).Connect(GetCell(pn));
-          break;
-
-        case CellState::FINISH:
-          GetCell(position).Connect(GetCell(pn));
-          return std::vector<Coord>({pn});
-        default:
-          break;
-      }
-    }
-  }
-  return neighbours;
+  for (const auto &pn : potential_neighbours)
+    if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_)
+      if (GetCell(pn).cell_type != CellState::WALL)
+        GetCell(position).Connect(GetCell(pn));
 }
-void RandomWalkAlgorithm::ClearGraph() {
-  for (auto &g : copy_plane_) {
-    g.Clear();
-  }
-  shortest_path_.clear();
-}
-bool RandomWalkAlgorithm::SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found) {
-  path_has_been_found = false;
 
-  // check if this is the end of path
-  if (possible_routs.size() == 1) {
-    for (auto &p : final_points_)
-      if (possible_routs.front() == p) {
-        path_has_been_found = true;
-        return true;
-      }
-  }
-  return false;
-}
-std::vector<Coord> RandomWalkAlgorithm::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+std::vector<Coord> RandomWalk::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+
   ClearGraph();
 
-  // convert cell grid to proper graph
-  // if connection between any start and any finish won't be found GenerateGraph will return false, and we end the FindPath function
-  if (not GenerateGraph(window_handle, color_scheme)) return {};
+  UpdateGs(window_handle, color_scheme);
 
   GeneratePath(window_handle, color_scheme);
 
   return shortest_path_;
 }
-void RandomWalkAlgorithm::GeneratePath() {
-  Coord final_point;
-  for (const auto &s : final_points_)
-    if (GetCell(s).is_connected) {
-      final_point = s;
-      break;
-    }
-
-  shortest_path_.push_back(final_point);
-  while (true) {
-    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-    //assert(GetCell(shortest_path_.back()).father_ptr);
-    shortest_path_.push_back(GetCell(shortest_path_.back()).GetSmallestG()->placement);
-  }
-  std::reverse(shortest_path_.begin(), shortest_path_.end());
-}
-void RandomWalkAlgorithm::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
-  Coord final_point;
-
-  for (const auto &s : final_points_)
-    if (GetCell(s).is_connected) {
-      final_point = s;
-      break;
-    }
-  shortest_path_.push_back(final_point);
-  while (true) {
-
-    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-
-    highlights.HighlightCells(shortest_path_, color_scheme.path);
-    window_handle.PushFrame(highlights);
-
-    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-    shortest_path_.push_back(GetCell(shortest_path_.back()).GetSmallestG()->placement);
-  }
-  std::reverse(shortest_path_.begin(), shortest_path_.end());
-}
-Coord RandomWalkAlgorithm::PopRandomCell(std::vector<Coord> &positions) {
-
-  unsigned rand_pos = rand() % positions.size();
-  auto temp = positions[rand_pos];
-  positions.erase(positions.begin() + rand_pos);
-
-  return temp;
-}
-bool RandomWalkAlgorithm::GenerateGraph() {
-  bool path_has_been_found = false;
-
-  std::vector<Coord> open;
-
-  open = starting_points_;
-  Coord q;
-  std::vector<Coord> successors;
-
-  while (not open.empty()) {
-    q = PopRandomCell(open);
-
-    successors = GenNeighbours(q);
-
-    if (SearchBreakingPoint(successors, path_has_been_found)) break;
-
-    for (const auto &s : successors)
-      open.push_back(s);
-  }
-
-  return path_has_been_found;
-}
-std::vector<Coord> RandomWalkAlgorithm::FindPath() {
+std::vector<Coord> RandomWalk::FindPath() {
   ClearGraph();
 
-  // convert cell grid to proper graph
-  // if connection between any start and any finish won't be found GenerateGraph will return false, and we end the FindPath function
-  if (not GenerateGraph()) return {};
+  UpdateGs();
 
   GeneratePath();
 
   return shortest_path_;
 }
-bool RandomWalkAlgorithm::GenerateGraph(Window &window_handle, const ColorScheme &color_scheme) {
-  bool path_has_been_found = false;
 
-  std::vector<Coord> open;
+void RandomWalk::UpdateGs() {
+  std::vector<Cell *> open;
 
-  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
+  for (const auto &s : starting_points_)
+    open.push_back(&GetCell(s));
 
-  open = starting_points_;
-
-  Coord q;
-  std::vector<Coord> successors;
-
-  while (not open.empty()) {
-    q = PopRandomCell(open);
-    if (not DYNAMIC_DISPLAY) window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
-
-    successors = GenNeighbours(q);
-
-    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-    highlights.HighlightCells(successors);
-    window_handle.PushFrame(highlights);
-
-    if (SearchBreakingPoint(successors, path_has_been_found)) break;
-
-    for (const auto &s : successors)
-      open.push_back(s);
+  for (auto o : open) {
+    o->g = 0;
+    o->got_g = true;
   }
 
-  return path_has_been_found;
+  std::vector<Cell *> successors;
+  while (not open.empty()) {
+
+    Cell *q = PopRandomCell(open);
+
+    for (const auto kP : q->nodes)
+      if (not kP->got_g) {
+        kP->got_g = true;
+        successors.push_back(kP);
+        kP->g = q->g + 1;
+        if (kP->cell_type == CellState::FINISH) return;
+      }
+
+    for (const auto kS : successors) {
+      open.push_back(kS);
+    }
+    successors.clear();
+  }
+}
+
+void RandomWalk::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
+  Coord final_point;
+  for (const auto &s : final_points_)
+    if (GetCell(s).got_g) {
+      final_point = s;
+      break;
+    }
+
+  shortest_path_.push_back(final_point);
+  while (true) {
+
+    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+    highlights.HighlightCells(shortest_path_, color_scheme.path);
+    window_handle.PushFrame(highlights);
+
+    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
+    Cell *next = GetCell(shortest_path_.back()).GetSmallestG();
+    if (not next) {
+      shortest_path_.clear();
+      return;
+    }
+
+    shortest_path_.push_back(next->placement);
+  }
+  std::reverse(shortest_path_.begin(), shortest_path_.end());
+}
+
+void RandomWalk::ClearGraph() {
+  for (auto &g : copy_plane_) {
+    g.Clear();
+  }
+  shortest_path_.clear();
+}
+void RandomWalk::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+
+  std::vector<Cell *> open;
+
+  for (const auto &s : starting_points_)
+    open.push_back(&GetCell(s));
+
+  for (auto o : open) {
+    o->g = 0;
+    o->got_g = true;
+  }
+  window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
+
+  std::vector<Cell *> successors;
+
+  while (not open.empty()) {
+
+    Cell *q = PopRandomCell(open);
+
+    for (const auto kP : q->nodes)
+      if (not kP->got_g) {
+        kP->got_g = true;
+        successors.push_back(kP);
+        kP->g = q->g + 1;
+        if (kP->cell_type == CellState::FINISH) return;
+      }
+
+    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+    std::vector<Coord> highlighted_positions;
+    highlighted_positions.reserve(successors.size());
+    for (const auto kS : successors)
+      highlighted_positions.push_back(kS->placement);
+    highlights.HighlightCells(highlighted_positions);
+    window_handle.PushFrame(highlights);
+
+    for (const auto kS : successors)
+      open.push_back(kS);
+
+    successors.clear();
+  }
+}
+void RandomWalk::GeneratePath() {
+  Coord final_point;
+  for (const auto &s : final_points_)
+    if (GetCell(s).got_g) {
+      final_point = s;
+      break;
+    }
+
+  shortest_path_.push_back(final_point);
+  while (true) {
+
+    if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
+    Cell *next = GetCell(shortest_path_.back()).GetSmallestG();
+    if (not next) {
+      shortest_path_.clear();
+      return;
+    }
+
+    shortest_path_.push_back(next->placement);
+  }
+  std::reverse(shortest_path_.begin(), shortest_path_.end());
+}
+
+Cell *RandomWalk::PopRandomCell(std::vector<Cell *> &open_set) {
+
+  int rand_pos = rand() % open_set.size();
+
+  Cell *temp = open_set[rand_pos];
+  open_set.erase(open_set.begin() + rand_pos);
+
+  return temp;
 }

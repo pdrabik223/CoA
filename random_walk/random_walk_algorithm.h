@@ -9,14 +9,14 @@
 #include "../sfml_window/window.h"
 #include "../sfml_window/window_plane.h"
 
-class RandomWalkAlgorithm {
+class RandomWalk {
 
  public:
-  RandomWalkAlgorithm() = delete;
+  RandomWalk() = delete;
   /// constructs Sample object based of Plane
-  RandomWalkAlgorithm(const Plane &other);
-  RandomWalkAlgorithm(const RandomWalkAlgorithm &other);
-  RandomWalkAlgorithm &operator=(const RandomWalkAlgorithm &other);
+  RandomWalk(const Plane &other);
+  RandomWalk(const RandomWalk &other);
+  RandomWalk &operator=(const RandomWalk &other);
 
   /// find path from start to finish
   /// \return list of connected coordinates
@@ -28,7 +28,7 @@ class RandomWalkAlgorithm {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
-  ~RandomWalkAlgorithm() {
+  ~RandomWalk() {
     ClearGraph();
   }
 
@@ -43,27 +43,29 @@ class RandomWalkAlgorithm {
   /// \return neighbouring cells to cell under specified position
   std::vector<Coord> GenNeighbours(const Coord &position);
 
-  Coord PopRandomCell(std::vector<Coord>& positions);
+  Cell *PopRandomCell(std::vector<Cell *> &positions);
 
-  bool SearchBreakingPoint(const std::vector<Coord>& possible_routs, bool& path_has_been_found);
-
+  bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found);
 
   Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
   void ClearGraph();
 
+  void ConnectNeighbours(const Coord &position);
+  void UpdateGs();
+  void UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 
-   protected:
-    /// x axis
-    unsigned width_;
-    /// y axis
-    unsigned height_;
+ protected:
+  /// x axis
+  unsigned width_;
+  /// y axis
+  unsigned height_;
 
-    std::vector<Cell> copy_plane_;
+  std::vector<Cell> copy_plane_;
 
-    std::vector<Coord> starting_points_;
-    std::vector<Coord> final_points_;
-    std::vector<Coord> shortest_path_;
+  std::vector<Coord> starting_points_;
+  std::vector<Coord> final_points_;
+  std::vector<Coord> shortest_path_;
 
   };
 
