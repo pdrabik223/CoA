@@ -13,8 +13,8 @@
 #define RUN_DIJKSTRA false
 
 #define USE_RANDOM_GEN true
-#define USE_SQUARE_MAZE false
-#define USE_CIRCULAR_MAZE false
+#define USE_SQUARE_MAZE true
+#define USE_CIRCULAR_MAZE true
 
 void MessageMe(int maze_nr, const std::string &maze_type, const std::string &algorithm, size_t time, int path_length) {
   std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
@@ -23,10 +23,10 @@ void MessageMe(int maze_nr, const std::string &maze_type, const std::string &alg
 int GenBruteForceVisuals(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
-    Plane sic(10, 10, 10);
+    Plane sic(100, 100, 10);
 
     sic.SetCell({0, 0}, CellState::FINISH);
-    sic.SetCell({5, 5}, CellState::START);
+    sic.SetCell({50, 50}, CellState::START);
 
     BruteForce cos(sic);
 
@@ -174,12 +174,11 @@ int GenRandomWalkVisualsCMaze(Window &window, ColorScheme color_scheme) {
 int main() {
 
   ColorScheme color_scheme;
-  color_scheme.LoadGreenSet();
+  color_scheme.LoadPainterSet();
 
 #if USE_RANDOM_GEN
 #if RUN_BRUTEFORCE
   Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-
   std::thread generator_1(GenBruteForceVisuals, std::ref(screen_1), color_scheme);
 #endif
 
@@ -196,8 +195,8 @@ int main() {
 
 #if USE_SQUARE_MAZE
 #if RUN_BRUTEFORCE
-  Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_1(GenBruteForceVisualsMaze, std::ref(screen_1), color_scheme);
+  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
+  std::thread generator_2(GenBruteForceVisualsMaze, std::ref(screen_2), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK
@@ -213,8 +212,8 @@ int main() {
 
 #if USE_CIRCULAR_MAZE
 #if RUN_BRUTEFORCE
-  Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_1(GenBruteForceVisualsCMaze, std::ref(screen_1), color_scheme);
+  Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
+  std::thread generator_3(GenBruteForceVisualsCMaze, std::ref(screen_3), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK

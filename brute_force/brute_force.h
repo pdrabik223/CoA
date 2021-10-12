@@ -50,6 +50,8 @@ class BruteForce {
 
   void ClearGraph();
   void UpdateGs();
+  void UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
+  void ConnectNeighbours(const Coord &position);
 
  protected:
   /// x axis

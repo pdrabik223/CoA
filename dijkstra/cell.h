@@ -37,7 +37,7 @@ struct Cell {
   //    assert(nodes.size() <= 4);
   //  }
   void Clear() {
-    nodes.clear();
+    //    nodes.clear();
     is_connected = false;
     got_g = false;
     if (cell_type == CellState::START)
@@ -45,6 +45,7 @@ struct Cell {
     else
       g = 100'000'000;
   }
+
   void Connect(Cell &new_cell);
 
   double GetH() const;
@@ -56,6 +57,7 @@ struct Cell {
   double GetF() const { return h; }
 
   ~Cell() {
+    nodes.clear();
     for (auto &n : nodes) {
       delete n;
     }
