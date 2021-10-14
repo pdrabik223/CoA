@@ -115,7 +115,7 @@ void Dijkstra::UpdateGs() {
       if (not kP->got_g) {
         kP->got_g = true;
         successors.push_back(kP);
-        kP->g = q->g + 1;
+        kP->UpdateG();
         if (kP->cell_type == CellState::FINISH) return;
       }
 
@@ -182,7 +182,7 @@ void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
       if (not kP->got_g) {
         kP->got_g = true;
         successors.push_back(kP);
-        kP->g = q->g + 1;
+        kP->UpdateG();
         if (kP->cell_type == CellState::FINISH) return;
       }
 

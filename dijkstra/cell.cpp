@@ -55,3 +55,8 @@ void Cell::Connect(Cell &new_cell) {
 
   //    g = nodes.back()->g+1;
 }
+void Cell::UpdateG() {
+
+  for (auto &node : nodes)
+    if (node->g + 1 < g) g = node->g + 1;
+}
