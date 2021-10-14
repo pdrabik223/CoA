@@ -6,7 +6,7 @@
 
 void Window::MainLoop() {
   sf::ContextSettings settings;
-  settings.antialiasingLevel = 10;
+  settings.antialiasingLevel = 8;
 
   sf::RenderWindow window(sf::VideoMode(width_, height_), "CoA",
                           sf::Style::None, settings);
