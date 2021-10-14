@@ -18,7 +18,7 @@ class Dijkstra {
  public:
   Dijkstra() = delete;
   /// constructs Sample object based of Plane
-  explicit Dijkstra(const Plane &other);
+  Dijkstra(const Plane &other);
   ;
   Dijkstra(const Dijkstra &other);
   Dijkstra &operator=(const Dijkstra &other);

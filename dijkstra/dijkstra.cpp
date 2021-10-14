@@ -22,43 +22,43 @@ Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other
       ConnectNeighbours({x, y});
 }
 
-Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.height_) {
-  copy_plane_.reserve(width_ * height_);
-
-  for (int i = 0; i < width_ * height_; i++)
-    copy_plane_.emplace_back(other.copy_plane_[i]);
-
-  for (const auto &f : other.starting_points_)
-    starting_points_ = other.starting_points_;
-
-  for (const auto &f : other.final_points_)
-    final_points_ = other.final_points_;
-
-  for (const auto &f : other.shortest_path_)
-    shortest_path_ = other.shortest_path_;
-}
-Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
-
-  if (&other == this) return *this;
-
-  width_ = other.width_;
-  height_ = other.height_;
-  copy_plane_.reserve(width_ * height_);
-
-  for (int i = 0; i < width_ * height_; i++)
-    copy_plane_.emplace_back(other.copy_plane_[i]);
-
-  for (const auto &f : other.starting_points_)
-    starting_points_ = other.starting_points_;
-
-  for (const auto &f : other.final_points_)
-    final_points_ = other.final_points_;
-
-  for (const auto &f : other.shortest_path_)
-    shortest_path_ = other.shortest_path_;
-
-  return *this;
-}
+//Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.height_) {
+//  copy_plane_.reserve(width_ * height_);
+//
+//  for (int i = 0; i < width_ * height_; i++)
+//    copy_plane_.emplace_back(other.copy_plane_[i]);
+//
+//  for (const auto &f : other.starting_points_)
+//    starting_points_ = other.starting_points_;
+//
+//  for (const auto &f : other.final_points_)
+//    final_points_ = other.final_points_;
+//
+//  for (const auto &f : other.shortest_path_)
+//    shortest_path_ = other.shortest_path_;
+//}
+//Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
+//
+//  if (&other == this) return *this;
+//
+//  width_ = other.width_;
+//  height_ = other.height_;
+//  copy_plane_.reserve(width_ * height_);
+//
+//  for (int i = 0; i < width_ * height_; i++)
+//    copy_plane_.emplace_back(other.copy_plane_[i]);
+//
+//  for (const auto &f : other.starting_points_)
+//    starting_points_ = other.starting_points_;
+//
+//  for (const auto &f : other.final_points_)
+//    final_points_ = other.final_points_;
+//
+//  for (const auto &f : other.shortest_path_)
+//    shortest_path_ = other.shortest_path_;
+//
+//  return *this;
+//}
 
 void Dijkstra::ConnectNeighbours(const Coord &position) {
   if (GetCell(position).cell_type == CellState::WALL) return;
@@ -201,6 +201,7 @@ void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
   }
 }
 void Dijkstra::GeneratePath() {
+
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).got_g) {

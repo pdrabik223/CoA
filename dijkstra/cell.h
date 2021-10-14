@@ -50,12 +50,14 @@ struct Cell {
   double GetH() const;
 
   unsigned GetG() const;
+  void UpdateG();
   Cell *GetSmallestG();
 
   /// beksa
   double GetF() const { return h; }
 
   ~Cell() {
+
     nodes.clear();
     for (auto &n : nodes) {
       delete n;
@@ -64,7 +66,6 @@ struct Cell {
 
   std::vector<Cell *> nodes;
 
-  bool is_connected = false;
   bool got_g = false;
 
   /// distance from cell to finish

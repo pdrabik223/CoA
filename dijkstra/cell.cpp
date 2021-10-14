@@ -42,21 +42,9 @@ Cell *Cell::GetSmallestG() {
   return nodes[smallest_g];
 }
 void Cell::Connect(Cell &new_cell) {
-  //  if (not new_cell.is_connected)
   nodes.emplace_back(&new_cell);
-
-  //  if (new_cell.g < g + 1)
-  //
-  //    SetG(new_cell.g + 1);
-  //
-  //  else if (new_cell.g > g + 1)
-  //
-  //    new_cell.SetG(g + 1);
-
-  //    g = nodes.back()->g+1;
 }
 void Cell::UpdateG() {
-
   for (auto &node : nodes)
     if (node->g + 1 < g) g = node->g + 1;
 }
