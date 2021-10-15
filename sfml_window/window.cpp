@@ -75,14 +75,12 @@ int Window::GetQueueSize() {
 }
 void Window::SetWindowLabel(const std::string &label) {
   current_window_title_ = label;
-  update_title_ = true;
 }
 Window &Window::operator=(const Window &other) {
   if (this == &other) return *this;
   width_ = other.width_;
   height_ = other.height_;
   current_window_title_ = other.current_window_title_;
-  update_title_ = false;
   event_ = other.event_;
   frame_queue_ = other.frame_queue_;
   return *this;
@@ -91,7 +89,6 @@ Window::Window(const Window &other) {
   width_ = other.width_;
   height_ = other.height_;
   current_window_title_ = other.current_window_title_;
-  update_title_ = false;
   event_ = other.event_;
   frame_queue_ = other.frame_queue_;
 }

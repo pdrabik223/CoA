@@ -48,3 +48,22 @@ void Cell::UpdateG() {
   for (auto &node : nodes)
     if (node->g + 1 < g) g = node->g + 1;
 }
+void Cell::Clear() {
+  if (cell_type == CellState::START)
+    g = 0;
+  else
+    g = CELL_MAX;
+}
+void Cell::SetH(const double &h) { this->h = h; }
+Cell::~Cell() {
+
+  nodes.clear();
+  for (auto &n : nodes) {
+    delete n;
+  }
+}
+Cell::Cell(CellState cell_type, const Coord &position) : cell_type(cell_type), placement(position) {
+  if (cell_type == CellState::START) {
+    g = 0;
+  }
+}

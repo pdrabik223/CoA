@@ -28,8 +28,8 @@ void WindowPlane::DrawToWindow(sf::RenderWindow &window) {
   unsigned window_height = window.getSize().y;
   unsigned window_width = window.getSize().x;
 
-  float cell_width = window_width / width_;
-  float cell_height = window_height / height_;
+  float cell_width = (float) window_width / (float) width_;
+  float cell_height = (float) window_height / (float) height_;
 
   float cell_size = cell_height < cell_width ? cell_height : cell_width;
 
@@ -40,8 +40,8 @@ void WindowPlane::DrawToWindow(sf::RenderWindow &window) {
   square.setSize(sf::Vector2f(cell_size, cell_size));
   square.setOutlineThickness(0);
 
-  int x_pixel_shift = (window_width - (width_ * cell_size)) / 2;
-  int y_pixel_shift = (window_height - (height_ * cell_size)) / 2;
+  float x_pixel_shift = (window_width - (width_ * cell_size)) / 2;
+  float y_pixel_shift = (window_height - (height_ * cell_size)) / 2;
 
   for (int x = 0; x < width_; x++)
     for (int y = 0; y < height_; y++) {
@@ -56,7 +56,7 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height) 
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {
         case CellState::EMPTY:
-          if (plane[x * width + y].g == 100'000'000)
+          if (plane[x * width + y].IsDiscovered())
             grid_.push_back(colorscheme_.background);
           else
             grid_.push_back(colorscheme_.discovered);
@@ -88,10 +88,10 @@ WindowPlane::WindowPlane(const std::vector<Cell> &plane, int width, int height, 
     for (int y = 0; y < height_; y++) {
       switch (plane[x * width + y].cell_type) {
         case CellState::EMPTY:
-          if (not plane[x * width + y].got_g)
-            grid_.push_back(colorscheme_.background);
-          else
+          if (plane[x * width + y].IsDiscovered())
             grid_.push_back(colorscheme_.discovered);
+          else
+            grid_.push_back(colorscheme_.background);
           break;
         case CellState::WALL:
           grid_.push_back(colorscheme_.wall);

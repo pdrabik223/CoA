@@ -19,7 +19,6 @@ class Dijkstra {
   Dijkstra() = delete;
   /// constructs Sample object based of Plane
   Dijkstra(const Plane &other);
-  ;
   Dijkstra(const Dijkstra &other);
   Dijkstra &operator=(const Dijkstra &other);
 
@@ -40,12 +39,6 @@ class Dijkstra {
 
   void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
 
-  /// applies distance from cell to finish
-  void ApplyHDistance(std::vector<Coord> &cells);
-
-  /// searches for lowest g distance  in positions
-  Coord PopBestFCell(std::vector<Coord> &positions);
-
   /// finds Manhattan distance between position and closest finish point
   double EuclideanDistance(const Coord &position);
 
@@ -56,6 +49,8 @@ class Dijkstra {
   void ClearGraph();
   void ConnectNeighbours(const Coord &position);
   void UpdateGs();
+
+  double ComputeH();
 
  protected:
   /// x axis

@@ -14,65 +14,26 @@
 #define CELL_MAX 100'000'000
 struct Cell {
   Cell() : cell_type(CellState::EMPTY){};
-  Cell(CellState cell_type, const Coord &position) : cell_type(cell_type), placement(position) {
-    if (cell_type == CellState::START) {
-      g = 0;
-    }
-  };
+  Cell(CellState cell_type, const Coord &position);
   Cell(const Cell &other);
   Cell &operator=(const Cell &other);
 
-  void SetH(const double &h) { this->h = h; }
-  //  void SetG(const unsigned int &g) {
-  //
-  //
-  //
-  //      this->g = g;
-  //      for (auto &n : nodes)
-  //        if(n->g > g + 1 )n->SetG(g + 1);
-  //
-  //    got_g = true;
-  //
-  //    assert(nodes.size() <= 4);
-  //  }
-  void Clear() {
-    //    nodes.clear();
-
-    got_g = false;
-    if (cell_type == CellState::START)
-      g = 0;
-    else
-      g = 100'000'000;
-  }
-
+  void SetH(const double &h);
+  void Clear();
   void Connect(Cell &new_cell);
-
   double GetH() const;
-
   unsigned GetG() const;
   void UpdateG();
   Cell *GetSmallestG();
-
-  /// beksa
   double GetF() const { return h; }
-
-  ~Cell() {
-
-    nodes.clear();
-    for (auto &n : nodes) {
-      delete n;
-    }
-  }
-
+  ~Cell();
+  bool IsDiscovered() const { return g != CELL_MAX; };
   std::vector<Cell *> nodes;
 
-  bool got_g = false;
-
   /// distance from cell to finish
-  double h = 100'000'000;
-
+  double h = CELL_MAX;
   /// distance from cell to start
-  unsigned g = 100'000'000;
+  unsigned g = CELL_MAX;
   Coord placement;
   CellState cell_type;
 };

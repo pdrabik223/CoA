@@ -9,8 +9,8 @@
 #define WINDOW_SIZE 500
 
 #define RUN_BRUTEFORCE false
-#define RUN_RANDOM_WALK true
-#define RUN_DIJKSTRA false
+#define RUN_RANDOM_WALK false
+#define RUN_DIJKSTRA true
 
 #define USE_RANDOM_GEN true
 #define USE_SQUARE_MAZE true

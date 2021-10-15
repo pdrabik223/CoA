@@ -103,7 +103,6 @@ void Dijkstra::UpdateGs() {
 
   for (auto o : open) {
     o->g = 0;
-    o->got_g = true;
   }
 
   std::vector<Cell *> successors;
@@ -112,8 +111,7 @@ void Dijkstra::UpdateGs() {
     Cell *q = PopSmallestH(open);
 
     for (const auto kP : q->nodes)
-      if (not kP->got_g) {
-        kP->got_g = true;
+      if (not kP->IsDiscovered()) {
         successors.push_back(kP);
         kP->UpdateG();
         if (kP->cell_type == CellState::FINISH) return;
@@ -129,7 +127,7 @@ void Dijkstra::UpdateGs() {
 void Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
   for (const auto &s : final_points_)
-    if (GetCell(s).got_g) {
+    if (GetCell(s).IsDiscovered()) {
       final_point = s;
       break;
     }
@@ -168,7 +166,6 @@ void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
 
   for (auto o : open) {
     o->g = 0;
-    o->got_g = true;
   }
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
@@ -179,8 +176,7 @@ void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
     Cell *q = PopSmallestH(open);
 
     for (const auto kP : q->nodes)
-      if (not kP->got_g) {
-        kP->got_g = true;
+      if (not kP->IsDiscovered()) {
         successors.push_back(kP);
         kP->UpdateG();
         if (kP->cell_type == CellState::FINISH) return;
@@ -204,7 +200,7 @@ void Dijkstra::GeneratePath() {
 
   Coord final_point;
   for (const auto &s : final_points_)
-    if (GetCell(s).got_g) {
+    if (GetCell(s).IsDiscovered()) {
       final_point = s;
       break;
     }

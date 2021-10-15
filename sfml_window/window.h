@@ -36,7 +36,6 @@ class Window {
   int height_;
 
   std::string current_window_title_ = "CoA";
-  bool update_title_ = false;
 
   std::mutex event_queue_mutex_;
   std::queue<WindowPlane> frame_queue_;
