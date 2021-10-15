@@ -5,7 +5,6 @@
 #ifndef COA_RANDOM_WALK_RANDOW_WALK_ALGORITHM_H_
 #define COA_RANDOM_WALK_RANDOW_WALK_ALGORITHM_H_
 #include "../plane/plane.h"
-#include "../brute_force/cell.h"
 #include "../sfml_window/window.h"
 #include "../sfml_window/window_plane.h"
 

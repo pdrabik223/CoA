@@ -23,7 +23,7 @@ set(sfml_window_dir
 
 set(brute_force_dir
         brute_force/brute_force.h brute_force/brute_force.cpp
-        brute_force/cell.h brute_force/cell.cpp)
+        )
 
 set(a_star_dir
         a_star/a_star.h a_star/a_star.cpp

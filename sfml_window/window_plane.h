@@ -7,7 +7,6 @@
 
 #include "../a_star/cell.h"
 #include "../plane/plane.h"
-#include "../brute_force/cell.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"
