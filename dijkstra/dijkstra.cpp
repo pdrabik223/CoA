@@ -2,10 +2,10 @@
 // Created by piotr on 05/10/2021.
 //
 
-#include "brute_force.h"
+#include "dijkstra.h"
 #include <algorithm>
 
-BruteForce::BruteForce(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)
@@ -22,7 +22,7 @@ BruteForce::BruteForce(const Plane &other) : width_(other.GetWidth()), height_(o
       ConnectNeighbours({x, y});
 }
 
-BruteForce::BruteForce(const BruteForce &other) : width_(other.width_), height_(other.height_) {
+Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.height_) {
   copy_plane_.reserve(width_ * height_);
 
   for (int i = 0; i < width_ * height_; i++)
@@ -37,7 +37,7 @@ BruteForce::BruteForce(const BruteForce &other) : width_(other.width_), height_(
   for (const auto &f : other.shortest_path_)
     shortest_path_ = other.shortest_path_;
 }
-BruteForce &BruteForce::operator=(const BruteForce &other) {
+Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
 
   if (&other == this) return *this;
 
@@ -60,7 +60,7 @@ BruteForce &BruteForce::operator=(const BruteForce &other) {
   return *this;
 }
 
-void BruteForce::ConnectNeighbours(const Coord &position) {
+void Dijkstra::ConnectNeighbours(const Coord &position) {
   if (GetCell(position).cell_type == CellState::WALL) return;
   std::vector<Coord> potential_neighbours;
 
@@ -75,7 +75,7 @@ void BruteForce::ConnectNeighbours(const Coord &position) {
         GetCell(position).Connect(GetCell(pn));
 }
 
-std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
 
   ClearGraph();
 
@@ -85,7 +85,7 @@ std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme
 
   return shortest_path_;
 }
-std::vector<Coord> BruteForce::FindPath() {
+std::vector<Coord> Dijkstra::FindPath() {
   ClearGraph();
 
   if (not UpdateGs()) return {};
@@ -95,7 +95,7 @@ std::vector<Coord> BruteForce::FindPath() {
   return shortest_path_;
 }
 
-bool BruteForce::UpdateGs() {
+bool Dijkstra::UpdateGs() {
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -122,7 +122,7 @@ bool BruteForce::UpdateGs() {
   return false;
 }
 
-void BruteForce::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
+void Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {
@@ -149,13 +149,13 @@ void BruteForce::GeneratePath(Window &window_handle, const ColorScheme &color_sc
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
-void BruteForce::ClearGraph() {
+void Dijkstra::ClearGraph() {
   for (auto &g : copy_plane_) {
     g.Clear();
   }
   shortest_path_.clear();
 }
-bool BruteForce::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -194,7 +194,7 @@ bool BruteForce::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
   }
   return false;
 }
-void BruteForce::GeneratePath() {
+void Dijkstra::GeneratePath() {
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {

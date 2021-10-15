@@ -2,7 +2,7 @@
 // Created by piotr on 04/10/2021.
 //
 #include "a_star/a_star.h"
-#include "brute_force/brute_force.h"
+#include "dijkstra/dijkstra.h"
 #include "maze/maze_generator.h"
 #include "random_walk/random_walk_algorithm.h"
 #include <iostream>
@@ -20,7 +20,7 @@ void MessageMe(int maze_nr, const std::string &maze_type, const std::string &alg
   std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
 }
-int GenBruteForceVisuals(Window &window, ColorScheme color_scheme) {
+int GenDijkstraVisuals(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
     Plane sic(100, 100, 10);
@@ -28,7 +28,7 @@ int GenBruteForceVisuals(Window &window, ColorScheme color_scheme) {
     sic.SetCell({0, 0}, CellState::FINISH);
     sic.SetCell({50, 50}, CellState::START);
 
-    BruteForce cos(sic);
+    Dijkstra cos(sic);
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -75,12 +75,12 @@ int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme) {
   return 420;
 }
 
-int GenBruteForceVisualsMaze(Window &window, ColorScheme color_scheme) {
+int GenDijkstraVisualsMaze(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
     MazeGenerator sic(100, 100);
     sic.GenSquareMaze();
-    BruteForce cos(sic.GetPlane());
+    Dijkstra cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -123,12 +123,12 @@ int GenRandomWalkVisualsMaze(Window &window, ColorScheme color_scheme) {
   return 420;
 }
 
-int GenBruteForceVisualsCMaze(Window &window, ColorScheme color_scheme) {
+int GenDijkstraVisualsCMaze(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
     MazeGenerator sic(100, 100);
     sic.GenCircularMaze();
-    BruteForce cos(sic.GetPlane());
+    Dijkstra cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
 
@@ -179,7 +179,7 @@ int main() {
 #if USE_RANDOM_GEN
 #if RUN_BRUTEFORCE
   Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_1(GenBruteForceVisuals, std::ref(screen_1), color_scheme);
+  std::thread generator_1(GenDijkstraVisuals, std::ref(screen_1), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK
@@ -196,7 +196,7 @@ int main() {
 #if USE_SQUARE_MAZE
 #if RUN_BRUTEFORCE
   Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenBruteForceVisualsMaze, std::ref(screen_2), color_scheme);
+  std::thread generator_2(GenDijkstraVisualsMaze, std::ref(screen_2), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK
@@ -213,7 +213,7 @@ int main() {
 #if USE_CIRCULAR_MAZE
 #if RUN_BRUTEFORCE
   Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_3(GenBruteForceVisualsCMaze, std::ref(screen_3), color_scheme);
+  std::thread generator_3(GenDijkstraVisualsCMaze, std::ref(screen_3), color_scheme);
 #endif
 
 #if RUN_RANDOM_WALK

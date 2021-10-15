@@ -2,8 +2,8 @@
 // Created by piotr on 05/10/2021.
 //
 
-#ifndef COA_BRUTE_FORCE_BRUTE_FORCE_H_
-#define COA_BRUTE_FORCE_BRUTE_FORCE_H_
+#ifndef COA_DIJKSTRA_DIJKSTRA_H_
+#define COA_DIJKSTRA_DIJKSTRA_H_
 #include "../a_star/cell.h"
 #include "../plane/plane.h"
 #include "../sfml_window/window.h"
@@ -12,13 +12,13 @@
 static void ConsoleDisplay(const std::vector<Coord> &path);
 
 /// for now there only can be one start and one finish cell
-class BruteForce {
+class Dijkstra {
  public:
-  BruteForce() = delete;
+  Dijkstra() = delete;
   /// constructs Sample object based of Plane
-  BruteForce(const Plane &other);
-  BruteForce(const BruteForce &other);
-  BruteForce &operator=(const BruteForce &other);
+  Dijkstra(const Plane &other);
+  Dijkstra(const Dijkstra &other);
+  Dijkstra &operator=(const Dijkstra &other);
 
   /// find path from start to finish
   /// \return list of connected coordinates
@@ -30,7 +30,7 @@ class BruteForce {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
-  ~BruteForce() {
+  ~Dijkstra() {
     ClearGraph();
   }
 
@@ -74,4 +74,4 @@ static void ConsoleDisplay(const std::vector<Coord> &path) {
 
 }
 
-#endif//COA_BRUTE_FORCE_BRUTE_FORCE_H_
+#endif//COA_DIJKSTRA_DIJKSTRA_H_

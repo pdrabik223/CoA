@@ -3,7 +3,7 @@
 //
 
 #include "../a_star/a_star.h"
-#include "../brute_force/brute_force.h"
+#include "../dijkstra/dijkstra.h"
 #include "../maze/maze_generator.h"
 #include "../plane/plane.h"
 #include <fstream>
@@ -42,7 +42,7 @@ void AStarRandom() {
       sic.SetCell({0, 0}, CellState::FINISH);
       sic.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
 
-      BruteForce cos(sic);
+      Dijkstra cos(sic);
       AStar cos_2(sic);
       auto t_1 = std::chrono::steady_clock::now();
       auto path = cos.FindPath();

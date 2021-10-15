@@ -2,7 +2,7 @@
 // Created by piotr on 05/10/2021.
 //
 #include "../plane/plane.h"
-#include "brute_force.h"
+#include "dijkstra.h"
 #include <iostream>
 int main() {
 
@@ -18,7 +18,7 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  BruteForce sample(sic);
+  Dijkstra sample(sic);
 
   printf("\nsolution:\n");
 

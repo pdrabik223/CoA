@@ -2,7 +2,7 @@
 // Created by piotr on 09/10/2021.
 //
 #include "../a_star/a_star.h"
-#include "../brute_force/brute_force.h"
+#include "../dijkstra/dijkstra.h"
 #include "../random_walk/random_walk_algorithm.h"
 
 #include "maze_painter.h"
@@ -15,13 +15,13 @@ int Loop(Window &window) {
 
 int GenBrutForceVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
-  BruteForce cos(maze);
+  Dijkstra cos(maze);
 
   auto path = cos.FindPath(window, color_scheme);
 
   auto t1 = std::chrono::steady_clock::now();
   cos.FindPath();
-  std::clog << "algorithm: BruteForce\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
+  std::clog << "algorithm: Dijkstra\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
 
   return 1;
 }

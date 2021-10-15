@@ -21,8 +21,8 @@ set(sfml_window_dir
         sfml_window/color_scheme.h sfml_window/color_scheme.cpp
         sfml_window/graph.h sfml_window/graph.cpp)
 
-set(brute_force_dir
-        brute_force/brute_force.h brute_force/brute_force.cpp
+set(dijkstra_dir
+        dijkstra/dijkstra.h dijkstra/dijkstra.cpp
         )
 
 set(a_star_dir
@@ -41,14 +41,14 @@ add_subdirectory(SFML)
 add_executable(CoA CoA_main.cpp
         ${plane_dir}
         ${sfml_window_dir}
-        ${brute_force_dir}
+        ${dijkstra_dir}
         ${random_walk_dir}
         ${a_star_dir}
         )
 add_executable(tests testing/testing.cpp
         ${plane_dir}
         ${sfml_window_dir}
-        ${brute_force_dir}
+        ${dijkstra_dir}
         ${random_walk_dir}
         ${a_star_dir}
         )
@@ -60,13 +60,12 @@ add_executable(saved_maze saved_mazes/saved_mazes.cpp
         ${sfml_window_dir}
         ${random_walk_dir}
         ${a_star_dir}
-        ${brute_force_dir})
+        ${dijkstra_dir})
 
-add_executable(brute_force_example brute_force/brute_force_example.cpp
+add_executable(dijkstra_example dijkstra/dijkstra_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
-        ${brute_force_dir}
-        )
+        ${dijkstra_dir})
 add_executable(random_walk_example random_walk/random_walk_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
@@ -77,13 +76,13 @@ add_executable(a_star_example a_star/a_star_example.cpp
         ${sfml_window_dir}
         ${a_star_dir})
 
-add_executable(maze_painter  maze_painter/painter_example.cpp
+add_executable(maze_painter maze_painter/painter_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${maze_painter_dir}
         ${random_walk_dir}
         ${a_star_dir}
-        ${brute_force_dir})
+        ${dijkstra_dir})
 
 add_executable(maze_generator maze/maze_generator_example.cpp
         ${plane_dir}
@@ -94,7 +93,7 @@ add_executable(graph_example sfml_window/graph_example.cpp
         ${sfml_window_dir})
 
 
-set(executables CoA a_star_example brute_force_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
+set(executables CoA a_star_example dijkstra_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
 
 foreach(executable IN LISTS executables)
     target_include_directories(${executable}
