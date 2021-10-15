@@ -87,6 +87,7 @@ std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &col
   return shortest_path_;
 }
 std::vector<Coord> AStar::FindPath() {
+  START_CLOCK("AStar::FindPath");
   ClearGraph();
 
   if (not UpdateGs()) return {};
@@ -97,7 +98,7 @@ std::vector<Coord> AStar::FindPath() {
 }
 
 bool AStar::UpdateGs() {
-  START_CLOCK("UpdateGs");
+  START_CLOCK("AStar::UpdateGs");
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -108,7 +109,7 @@ bool AStar::UpdateGs() {
 
     Cell *q = PopSmallestH(open);
     {
-      START_CLOCK("AStar_Inner_Loop");
+
       for (const auto kP : q->nodes)
         if (not kP->IsDiscovered()) {
           successors.push_back(kP);
@@ -152,7 +153,7 @@ void AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme)
 }
 
 void AStar::ClearGraph() {
-  START_CLOCK("ClearGraph");
+  START_CLOCK("AStar::ClearGraph");
   for (auto &g : copy_plane_) {
     g.Clear();
   }
@@ -199,7 +200,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   return false;
 }
 void AStar::GeneratePath() {
-  START_CLOCK("GeneratePath");
+  START_CLOCK("AStar::GeneratePath");
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {
@@ -211,7 +212,12 @@ void AStar::GeneratePath() {
   while (true) {
 
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
-    Cell *next = GetCell(shortest_path_.back()).GetSmallestG();
+
+    Cell *next;
+    {
+      Clock timer_2("AStar::GetSmallestG");
+      next = GetCell(shortest_path_.back()).GetSmallestG();
+    }
     if (not next) {
       shortest_path_.clear();
       return;
@@ -223,7 +229,7 @@ void AStar::GeneratePath() {
 }
 
 double AStar::EuclideanDistance(const Coord &position) {
-  START_CLOCK("AStar_EuclideanDistance");
+  START_CLOCK("AStar::EuclideanDistance");
   double smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
@@ -234,7 +240,7 @@ double AStar::EuclideanDistance(const Coord &position) {
   return smallest_distance;
 }
 Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
-  START_CLOCK("AStar_PopSmallestH");
+  START_CLOCK("AStar::PopSmallestH");
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++)
@@ -246,5 +252,6 @@ Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
   return temp;
 }
 double AStar::ComputeH(Cell *target) {
+  START_CLOCK("AStar::ComputeH");
   return EuclideanDistance(target->placement);
 }

@@ -15,6 +15,7 @@ int Fun() {
 
 int Fun2() {
   START_CLOCK("fun2");
+
   std::this_thread::sleep_for(std::chrono::seconds(1));
   return 7;
 }

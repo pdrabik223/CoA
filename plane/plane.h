@@ -4,11 +4,11 @@
 
 #ifndef COA_PLANE_H
 #define COA_PLANE_H
+#include "../utility/clock.h"
 #include "../utility/coord.h"
 #include "cell_type.h"
 #include <ciso646>
 #include <vector>
-
 class Plane {
  public:
   Plane() : width_(0), height_(0){};

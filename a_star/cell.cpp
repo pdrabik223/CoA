@@ -3,6 +3,7 @@
 //
 
 #include "cell.h"
+#include "../utility/clock.h"
 
 double Cell::GetH() const {
   return h;
@@ -33,6 +34,7 @@ unsigned Cell::GetG() const {
   return g;
 }
 Cell *Cell::GetSmallestG() {
+
   if (nodes.empty()) return nullptr;
   int smallest_g = 0;
 
@@ -45,6 +47,7 @@ void Cell::Connect(Cell &new_cell) {
   nodes.emplace_back(&new_cell);
 }
 void Cell::UpdateG() {
+
   for (auto &node : nodes)
     if (node->g + 1 < g) g = node->g + 1;
 }

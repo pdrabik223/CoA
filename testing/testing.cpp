@@ -18,6 +18,7 @@ void MessageMe(int maze_nr, const std::string &maze_type, const std::string &alg
 int main() {
   srand(time(NULL));
   AStarRandom();
+  SAVE_TIMINGS("timings.txt");
   return 1;
 }
 
@@ -52,7 +53,8 @@ void AStarRandom() {
       auto path_2 = a_star.FindPath();
       a_star_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_2).count();
     }
-    output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\n';
+
+    //    output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\n';
     printf("current maze size:%d\n", maze_size);
   }
 
