@@ -2,28 +2,28 @@
 // Created by piotr on 15/10/2021.
 //
 
+#include "../a_star/a_star.h"
 #include "../brute_force/brute_force.h"
-#include "../dijkstra/dijkstra.h"
 #include "../maze/maze_generator.h"
 #include "../plane/plane.h"
 #include <fstream>
 
-void DijkstraCMaze();
-void DijkstraRandom();
-void DijkstraMaze();
+void AStarCMaze();
+void AStarRandom();
+void AStarMaze();
 void MessageMe(int maze_nr, const std::string &maze_type, const std::string &algorithm, size_t time, int path_length) {
   std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
 }
 int main() {
   srand(time(NULL));
-  DijkstraRandom();
+  AStarRandom();
   return 1;
 }
 
-void DijkstraRandom() {
+void AStarRandom() {
   std::fstream output_file;
-  output_file.open("../testing/DijkstraRandom.txt", std::ios::out);
+  output_file.open("../testing/AStarRandom.txt", std::ios::out);
 
   int min_maze_size = 10;
   int max_maze_size = 200;
@@ -43,7 +43,7 @@ void DijkstraRandom() {
       sic.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
 
       BruteForce cos(sic);
-      Dijkstra cos_2(sic);
+      AStar cos_2(sic);
       auto t_1 = std::chrono::steady_clock::now();
       auto path = cos.FindPath();
       if (!path.empty())
@@ -60,30 +60,30 @@ void DijkstraRandom() {
 
   output_file.close();
 }
-void DijkstraMaze() {
+void AStarMaze() {
 
   for (int i = 0; i < 10; ++i) {
     MazeGenerator sic(100, 100);
     sic.GenSquareMaze();
 
-    Dijkstra cos(sic.GetPlane());
+    AStar cos(sic.GetPlane());
 
     auto t1 = std::chrono::steady_clock::now();
     auto path = cos.FindPath();
-    MessageMe(i, "square maze", "Dijkstra", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+    MessageMe(i, "square maze", "AStar", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
   }
 }
 
-void DijkstraCMaze() {
+void AStarCMaze() {
 
   for (int i = 0; i < 10; ++i) {
     MazeGenerator sic(100, 100);
     sic.GenCircularMaze();
 
-    Dijkstra cos(sic.GetPlane());
+    AStar cos(sic.GetPlane());
 
     auto t1 = std::chrono::steady_clock::now();
     auto path = cos.FindPath();
-    MessageMe(i, "circular maze", "Dijkstra", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+    MessageMe(i, "circular maze", "AStar", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
   }
 }

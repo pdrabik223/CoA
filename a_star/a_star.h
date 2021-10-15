@@ -9,18 +9,18 @@
 #include "cell.h"
 #include <vector>
 
-class Dijkstra {
+class AStar {
   enum DistanceFunction {
     EUCLIDEAN_DISTANCE,
     MANHATTAN_DISTANCE
   };
 
  public:
-  Dijkstra() = delete;
+  AStar() = delete;
   /// constructs Sample object based of Plane
-  Dijkstra(const Plane &other);
-  Dijkstra(const Dijkstra &other);
-  Dijkstra &operator=(const Dijkstra &other);
+  AStar(const Plane &other);
+  AStar(const AStar &other);
+  AStar &operator=(const AStar &other);
 
   /// find path from start to finish
   /// \return list of connected coordinates
@@ -32,7 +32,7 @@ class Dijkstra {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
 
-  ~Dijkstra() { ClearGraph(); };
+  ~AStar() { ClearGraph(); };
 
  private:
   void GeneratePath();

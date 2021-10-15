@@ -25,9 +25,9 @@ set(brute_force_dir
         brute_force/brute_force.h brute_force/brute_force.cpp
         brute_force/cell.h brute_force/cell.cpp)
 
-set(dijkstra_dir
-        dijkstra/dijkstra.h dijkstra/dijkstra.cpp
-        dijkstra/cell.h dijkstra/cell.cpp)
+set(a_star_dir
+        a_star/a_star.h a_star/a_star.cpp
+        a_star/cell.h a_star/cell.cpp)
 
 set(random_walk_dir
         random_walk/random_walk_algorithm.h random_walk/random_walk_algorithm.cpp)
@@ -43,14 +43,14 @@ add_executable(CoA CoA_main.cpp
         ${sfml_window_dir}
         ${brute_force_dir}
         ${random_walk_dir}
-        ${dijkstra_dir}
+        ${a_star_dir}
         )
-add_executable(tests testing/dijkstra_testing.cpp
+add_executable(tests testing/testing.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${brute_force_dir}
         ${random_walk_dir}
-        ${dijkstra_dir}
+        ${a_star_dir}
         )
 add_executable(plane_example plane/plane_example.cpp
         ${plane_dir})
@@ -59,7 +59,7 @@ add_executable(saved_maze saved_mazes/saved_mazes.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${random_walk_dir}
-        ${dijkstra_dir}
+        ${a_star_dir}
         ${brute_force_dir})
 
 add_executable(brute_force_example brute_force/brute_force_example.cpp
@@ -72,17 +72,17 @@ add_executable(random_walk_example random_walk/random_walk_example.cpp
         ${sfml_window_dir}
         ${random_wald_dir})
 
-add_executable(dijkstra_example dijkstra/dijkstra_example.cpp
+add_executable(a_star_example a_star/a_star_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
-        ${dijkstra_dir})
+        ${a_star_dir})
 
 add_executable(maze_painter  maze_painter/painter_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${maze_painter_dir}
         ${random_walk_dir}
-        ${dijkstra_dir}
+        ${a_star_dir}
         ${brute_force_dir})
 
 add_executable(maze_generator maze/maze_generator_example.cpp
@@ -94,7 +94,7 @@ add_executable(graph_example sfml_window/graph_example.cpp
         ${sfml_window_dir})
 
 
-set(executables CoA dijkstra_example brute_force_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
+set(executables CoA a_star_example brute_force_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
 
 foreach(executable IN LISTS executables)
     target_include_directories(${executable}

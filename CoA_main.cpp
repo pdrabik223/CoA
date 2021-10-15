@@ -1,8 +1,8 @@
 //
 // Created by piotr on 04/10/2021.
 //
+#include "a_star/a_star.h"
 #include "brute_force/brute_force.h"
-#include "dijkstra/dijkstra.h"
 #include "maze/maze_generator.h"
 #include "random_walk/random_walk_algorithm.h"
 #include <iostream>
@@ -38,7 +38,7 @@ int GenBruteForceVisuals(Window &window, ColorScheme color_scheme) {
   }
   return 420;
 }
-int GenDijkstraVisuals(Window &window, ColorScheme color_scheme) {
+int GenAStarVisuals(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 40; ++i) {
     Plane sic(100, 100, 10);
@@ -46,13 +46,13 @@ int GenDijkstraVisuals(Window &window, ColorScheme color_scheme) {
     sic.SetCell({0, 0}, CellState::FINISH);
     sic.SetCell({50, 50}, CellState::START);
 
-    Dijkstra cos(sic);
+    AStar cos(sic);
 
     auto path = cos.FindPath(window, color_scheme);
 
     auto t1 = std::chrono::steady_clock::now();
     cos.FindPath();
-    MessageMe(i, "random", "Dijkstra", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+    MessageMe(i, "random", "AStar", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
   }
   return 420;
 }
@@ -90,19 +90,19 @@ int GenBruteForceVisualsMaze(Window &window, ColorScheme color_scheme) {
   }
   return 420;
 }
-int GenDijkstraVisualsMaze(Window &window, ColorScheme color_scheme) {
+int GenAStarVisualsMaze(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
     MazeGenerator sic(100, 100);
     sic.GenSquareMaze();
 
-    Dijkstra cos(sic.GetPlane());
+    AStar cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
     //    std::cout << "queue size: " << window.GetQueueSize();
     auto t1 = std::chrono::steady_clock::now();
     cos.FindPath();
-    MessageMe(i, "square maze", "Dijkstra", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+    MessageMe(i, "square maze", "AStar", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
   }
   return 420;
 }
@@ -138,19 +138,19 @@ int GenBruteForceVisualsCMaze(Window &window, ColorScheme color_scheme) {
   }
   return 420;
 }
-int GenDijkstraVisualsCMaze(Window &window, ColorScheme color_scheme) {
+int GenAStarVisualsCMaze(Window &window, ColorScheme color_scheme) {
 
   for (int i = 0; i < 10; ++i) {
     MazeGenerator sic(100, 100);
     sic.GenCircularMaze();
 
-    Dijkstra cos(sic.GetPlane());
+    AStar cos(sic.GetPlane());
 
     auto path = cos.FindPath(window, color_scheme);
     //    std::cout << "queue size: " << window.GetQueueSize();
     auto t1 = std::chrono::steady_clock::now();
     cos.FindPath();
-    MessageMe(i, "circular maze", "Dijkstra", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+    MessageMe(i, "circular maze", "AStar", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
   }
   return 420;
 }
@@ -189,7 +189,7 @@ int main() {
 
 #if RUN_DIJKSTRA
   Window screen_2(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenDijkstraVisuals, std::ref(screen_1), color_scheme);
+  std::thread generator_2(GenAStarVisuals, std::ref(screen_1), color_scheme);
 #endif
 #endif
 
@@ -206,7 +206,7 @@ int main() {
 
 #if RUN_DIJKSTRA
   Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenDijkstraVisualsMaze, std::ref(screen_2), color_scheme);
+  std::thread generator_2(GenAStarVisualsMaze, std::ref(screen_2), color_scheme);
 #endif
 #endif
 
@@ -223,7 +223,7 @@ int main() {
 
 #if RUN_DIJKSTRA
   Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_3(GenDijkstraVisualsCMaze, std::ref(screen_3), color_scheme);
+  std::thread generator_3(GenAStarVisualsCMaze, std::ref(screen_3), color_scheme);
 #endif
 #endif
 

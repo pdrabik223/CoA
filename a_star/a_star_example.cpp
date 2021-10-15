@@ -3,7 +3,7 @@
 //
 #include "../brute_force/brute_force.h"
 #include "../plane/plane.h"
-#include "dijkstra.h"
+#include "a_star.h"
 #include <iostream>
 int main() {
 
@@ -18,7 +18,7 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  Dijkstra sample(sic);
+  AStar sample(sic);
 
   printf("\nsolution:\n");
 

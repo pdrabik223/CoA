@@ -2,13 +2,12 @@
 // Created by piotr on 05/10/2021.
 //
 
-#ifndef COA_SAMPLE_ALGORITHM_SAMPLE_H_
-#define COA_SAMPLE_ALGORITHM_SAMPLE_H_
+#ifndef COA_BRUTE_FORCE_BRUTE_FORCE_H_
+#define COA_BRUTE_FORCE_BRUTE_FORCE_H_
+#include "../a_star/cell.h"
 #include "../plane/plane.h"
 #include "../sfml_window/window.h"
 #include "../sfml_window/window_plane.h"
-#include "../dijkstra/cell.h"
-
 
 static void ConsoleDisplay(const std::vector<Coord> &path);
 
@@ -75,4 +74,4 @@ static void ConsoleDisplay(const std::vector<Coord> &path) {
 
 }
 
-#endif//COA_SAMPLE_ALGORITHM_SAMPLE_H_
+#endif//COA_BRUTE_FORCE_BRUTE_FORCE_H_

@@ -2,10 +2,10 @@
 // Created by piotr on 05/10/2021.
 //
 
-#include "dijkstra.h"
+#include "a_star.h"
 #include <algorithm>
 
-Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)
@@ -22,7 +22,7 @@ Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other
       ConnectNeighbours({x, y});
 }
 
-Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.height_) {
+AStar::AStar(const AStar &other) : width_(other.width_), height_(other.height_) {
   copy_plane_.reserve(width_ * height_);
 
   for (int i = 0; i < width_ * height_; i++)
@@ -37,7 +37,7 @@ Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.
   for (const auto &f : other.shortest_path_)
     shortest_path_ = other.shortest_path_;
 }
-Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
+AStar &AStar::operator=(const AStar &other) {
 
   if (&other == this) return *this;
 
@@ -60,7 +60,7 @@ Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
   return *this;
 }
 
-void Dijkstra::ConnectNeighbours(const Coord &position) {
+void AStar::ConnectNeighbours(const Coord &position) {
   if (GetCell(position).cell_type == CellState::WALL) return;
   std::vector<Coord> potential_neighbours;
 
@@ -75,7 +75,7 @@ void Dijkstra::ConnectNeighbours(const Coord &position) {
         GetCell(position).Connect(GetCell(pn));
 }
 
-std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
 
   ClearGraph();
 
@@ -85,7 +85,7 @@ std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &
 
   return shortest_path_;
 }
-std::vector<Coord> Dijkstra::FindPath() {
+std::vector<Coord> AStar::FindPath() {
   ClearGraph();
 
   if (not UpdateGs()) return {};
@@ -95,7 +95,7 @@ std::vector<Coord> Dijkstra::FindPath() {
   return shortest_path_;
 }
 
-bool Dijkstra::UpdateGs() {
+bool AStar::UpdateGs() {
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -125,7 +125,7 @@ bool Dijkstra::UpdateGs() {
   return false;
 }
 
-void Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
+void AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {
@@ -152,13 +152,13 @@ void Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_sche
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
-void Dijkstra::ClearGraph() {
+void AStar::ClearGraph() {
   for (auto &g : copy_plane_) {
     g.Clear();
   }
   shortest_path_.clear();
 }
-bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   std::vector<Cell *> open;
 
@@ -198,7 +198,7 @@ bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
   }
   return false;
 }
-void Dijkstra::GeneratePath() {
+void AStar::GeneratePath() {
 
   Coord final_point;
   for (const auto &s : final_points_)
@@ -222,7 +222,7 @@ void Dijkstra::GeneratePath() {
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
-double Dijkstra::EuclideanDistance(const Coord &position) {
+double AStar::EuclideanDistance(const Coord &position) {
   double smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
@@ -232,7 +232,7 @@ double Dijkstra::EuclideanDistance(const Coord &position) {
 
   return smallest_distance;
 }
-Cell *Dijkstra::PopSmallestH(std::vector<Cell *> &open_set) {
+Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
 
   int smallest_h = 0;
 
@@ -244,6 +244,6 @@ Cell *Dijkstra::PopSmallestH(std::vector<Cell *> &open_set) {
 
   return temp;
 }
-double Dijkstra::ComputeH(Cell *target) {
+double AStar::ComputeH(Cell *target) {
   return EuclideanDistance(target->placement);
 }

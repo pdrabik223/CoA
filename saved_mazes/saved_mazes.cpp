@@ -2,8 +2,8 @@
 // Created by piotr on 12/10/2021.
 //
 
+#include "../a_star/a_star.h"
 #include "../brute_force/brute_force.h"
-#include "../dijkstra/dijkstra.h"
 #include "../random_walk/random_walk_algorithm.h"
 
 #include <iostream>
@@ -27,7 +27,7 @@ int GenBrutForceVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 }
 int GenDijkstraVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
-  Dijkstra cos(maze);
+  AStar cos(maze);
 
   auto path = cos.FindPath(window, color_scheme);
 
