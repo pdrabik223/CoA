@@ -51,10 +51,10 @@ int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
 
 int main() {
 
-  MazePainter maze(800, 800, 100, 100);
+  MazePainter maze(800, 800, 20, 20);
   maze.MainLoop();
-  maze.GetPlane().SaveToFile("../mazes/test.txt");
-  Plane cos("../mazes/test.txt");
+  maze.GetPlane().SaveToFile("../saved_mazes/test.txt");
+  Plane cos("../saved_mazes/test.txt");
 
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
@@ -64,7 +64,6 @@ int main() {
   Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
 
   Window screen_3(Coord(0, WINDOW_SIZE), WINDOW_SIZE, WINDOW_SIZE);
-
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 

@@ -22,43 +22,43 @@ Dijkstra::Dijkstra(const Plane &other) : width_(other.GetWidth()), height_(other
       ConnectNeighbours({x, y});
 }
 
-//Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.height_) {
-//  copy_plane_.reserve(width_ * height_);
-//
-//  for (int i = 0; i < width_ * height_; i++)
-//    copy_plane_.emplace_back(other.copy_plane_[i]);
-//
-//  for (const auto &f : other.starting_points_)
-//    starting_points_ = other.starting_points_;
-//
-//  for (const auto &f : other.final_points_)
-//    final_points_ = other.final_points_;
-//
-//  for (const auto &f : other.shortest_path_)
-//    shortest_path_ = other.shortest_path_;
-//}
-//Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
-//
-//  if (&other == this) return *this;
-//
-//  width_ = other.width_;
-//  height_ = other.height_;
-//  copy_plane_.reserve(width_ * height_);
-//
-//  for (int i = 0; i < width_ * height_; i++)
-//    copy_plane_.emplace_back(other.copy_plane_[i]);
-//
-//  for (const auto &f : other.starting_points_)
-//    starting_points_ = other.starting_points_;
-//
-//  for (const auto &f : other.final_points_)
-//    final_points_ = other.final_points_;
-//
-//  for (const auto &f : other.shortest_path_)
-//    shortest_path_ = other.shortest_path_;
-//
-//  return *this;
-//}
+Dijkstra::Dijkstra(const Dijkstra &other) : width_(other.width_), height_(other.height_) {
+  copy_plane_.reserve(width_ * height_);
+
+  for (int i = 0; i < width_ * height_; i++)
+    copy_plane_.emplace_back(other.copy_plane_[i]);
+
+  for (const auto &f : other.starting_points_)
+    starting_points_ = other.starting_points_;
+
+  for (const auto &f : other.final_points_)
+    final_points_ = other.final_points_;
+
+  for (const auto &f : other.shortest_path_)
+    shortest_path_ = other.shortest_path_;
+}
+Dijkstra &Dijkstra::operator=(const Dijkstra &other) {
+
+  if (&other == this) return *this;
+
+  width_ = other.width_;
+  height_ = other.height_;
+  copy_plane_.reserve(width_ * height_);
+
+  for (int i = 0; i < width_ * height_; i++)
+    copy_plane_.emplace_back(other.copy_plane_[i]);
+
+  for (const auto &f : other.starting_points_)
+    starting_points_ = other.starting_points_;
+
+  for (const auto &f : other.final_points_)
+    final_points_ = other.final_points_;
+
+  for (const auto &f : other.shortest_path_)
+    shortest_path_ = other.shortest_path_;
+
+  return *this;
+}
 
 void Dijkstra::ConnectNeighbours(const Coord &position) {
   if (GetCell(position).cell_type == CellState::WALL) return;
@@ -79,7 +79,7 @@ std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &
 
   ClearGraph();
 
-  UpdateGs(window_handle, color_scheme);
+  if (not UpdateGs(window_handle, color_scheme)) return {};
 
   GeneratePath(window_handle, color_scheme);
 
@@ -88,22 +88,22 @@ std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &
 std::vector<Coord> Dijkstra::FindPath() {
   ClearGraph();
 
-  UpdateGs();
+  if (not UpdateGs()) return {};
 
   GeneratePath();
 
   return shortest_path_;
 }
 
-void Dijkstra::UpdateGs() {
+bool Dijkstra::UpdateGs() {
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
     open.push_back(&GetCell(s));
 
-  for (auto o : open) {
-    o->g = 0;
-  }
+  //  for (auto o : open) {
+  //    o->g = 0;
+  //  }
 
   std::vector<Cell *> successors;
   while (not open.empty()) {
@@ -114,7 +114,7 @@ void Dijkstra::UpdateGs() {
       if (not kP->IsDiscovered()) {
         successors.push_back(kP);
         kP->UpdateG();
-        if (kP->cell_type == CellState::FINISH) return;
+        if (kP->cell_type == CellState::FINISH) return true;
       }
 
     for (const auto kS : successors) {
@@ -122,6 +122,7 @@ void Dijkstra::UpdateGs() {
     }
     successors.clear();
   }
+  return false;
 }
 
 void Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
@@ -157,7 +158,7 @@ void Dijkstra::ClearGraph() {
   }
   shortest_path_.clear();
 }
-void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   std::vector<Cell *> open;
 
@@ -179,7 +180,7 @@ void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
       if (not kP->IsDiscovered()) {
         successors.push_back(kP);
         kP->UpdateG();
-        if (kP->cell_type == CellState::FINISH) return;
+        if (kP->cell_type == CellState::FINISH) return true;
       }
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
@@ -195,6 +196,7 @@ void Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
 
     successors.clear();
   }
+  return false;
 }
 void Dijkstra::GeneratePath() {
 
@@ -231,16 +233,17 @@ double Dijkstra::EuclideanDistance(const Coord &position) {
   return smallest_distance;
 }
 Cell *Dijkstra::PopSmallestH(std::vector<Cell *> &open_set) {
-  for (const auto &o : open_set)
-    o->h = EuclideanDistance(o->placement);
 
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++)
-    if (open_set[i]->h < open_set[smallest_h]->h) smallest_h = i;
+    if (ComputeH(open_set[i]) < ComputeH(open_set[smallest_h])) smallest_h = i;
 
   Cell *temp = open_set[smallest_h];
   open_set.erase(open_set.begin() + smallest_h);
 
   return temp;
+}
+double Dijkstra::ComputeH(Cell *target) {
+  return EuclideanDistance(target->placement);
 }

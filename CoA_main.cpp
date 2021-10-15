@@ -8,13 +8,13 @@
 #include <iostream>
 #define WINDOW_SIZE 500
 
-#define RUN_BRUTEFORCE false
+#define RUN_BRUTEFORCE true
 #define RUN_RANDOM_WALK false
 #define RUN_DIJKSTRA true
 
 #define USE_RANDOM_GEN true
-#define USE_SQUARE_MAZE true
-#define USE_CIRCULAR_MAZE true
+#define USE_SQUARE_MAZE false
+#define USE_CIRCULAR_MAZE false
 
 void MessageMe(int maze_nr, const std::string &maze_type, const std::string &algorithm, size_t time, int path_length) {
   std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
@@ -40,7 +40,7 @@ int GenBruteForceVisuals(Window &window, ColorScheme color_scheme) {
 }
 int GenDijkstraVisuals(Window &window, ColorScheme color_scheme) {
 
-  for (int i = 0; i < 10; ++i) {
+  for (int i = 0; i < 40; ++i) {
     Plane sic(100, 100, 10);
 
     sic.SetCell({0, 0}, CellState::FINISH);
@@ -172,7 +172,7 @@ int GenRandomWalkVisualsCMaze(Window &window, ColorScheme color_scheme) {
 }
 
 int main() {
-
+  srand(time(NULL));
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
 
@@ -188,8 +188,8 @@ int main() {
 #endif
 
 #if RUN_DIJKSTRA
-  Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_1(GenDijkstraVisuals, std::ref(screen_1), color_scheme);
+  Window screen_2(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
+  std::thread generator_2(GenDijkstraVisuals, std::ref(screen_1), color_scheme);
 #endif
 #endif
 
@@ -239,7 +239,7 @@ int main() {
 #endif
 
 #if RUN_DIJKSTRA
-  generator_3.join();
+  generator_1.join();
 
 #endif
 #endif

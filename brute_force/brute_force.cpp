@@ -79,7 +79,7 @@ std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme
 
   ClearGraph();
 
-  UpdateGs(window_handle, color_scheme);
+  if (not UpdateGs(window_handle, color_scheme)) return {};
 
   GeneratePath(window_handle, color_scheme);
 
@@ -88,14 +88,14 @@ std::vector<Coord> BruteForce::FindPath(Window &window_handle, const ColorScheme
 std::vector<Coord> BruteForce::FindPath() {
   ClearGraph();
 
-  UpdateGs();
+  if (not UpdateGs()) return {};
 
   GeneratePath();
 
   return shortest_path_;
 }
 
-void BruteForce::UpdateGs() {
+bool BruteForce::UpdateGs() {
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -113,11 +113,13 @@ void BruteForce::UpdateGs() {
         if (not kP->IsDiscovered()) {
           successors.push_back(kP);
           kP->g = q->g + 1;
+          if (kP->cell_type == CellState::FINISH) return true;
         }
 
     open = successors;
     successors.clear();
   }
+  return false;
 }
 
 void BruteForce::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
@@ -153,7 +155,7 @@ void BruteForce::ClearGraph() {
   }
   shortest_path_.clear();
 }
-void BruteForce::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+bool BruteForce::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -174,7 +176,7 @@ void BruteForce::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
 
           kP->g = q->g + 1;
 
-          if (kP->cell_type == CellState::FINISH) return;
+          if (kP->cell_type == CellState::FINISH) return true;
         }
       }
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
@@ -190,6 +192,7 @@ void BruteForce::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
     open = successors;
     successors.clear();
   }
+  return false;
 }
 void BruteForce::GeneratePath() {
   Coord final_point;

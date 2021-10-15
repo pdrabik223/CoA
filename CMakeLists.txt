@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.19)
 project(CoA)
 
+if (MSVC)
+    # warning level 4 and all warnings as errors
+    add_compile_options(/DEBUG)
+endif ()
+
 set(CMAKE_CXX_STANDARD 14)
 
 set(plane_dir
@@ -40,7 +45,13 @@ add_executable(CoA CoA_main.cpp
         ${random_walk_dir}
         ${dijkstra_dir}
         )
-
+add_executable(tests testing/dijkstra_testing.cpp
+        ${plane_dir}
+        ${sfml_window_dir}
+        ${brute_force_dir}
+        ${random_walk_dir}
+        ${dijkstra_dir}
+        )
 add_executable(plane_example plane/plane_example.cpp
         ${plane_dir})
 
@@ -83,7 +94,7 @@ add_executable(graph_example sfml_window/graph_example.cpp
         ${sfml_window_dir})
 
 
-set(executables CoA dijkstra_example brute_force_example random_walk_example maze_painter maze_generator graph_example saved_maze)
+set(executables CoA dijkstra_example brute_force_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
 
 foreach(executable IN LISTS executables)
     target_include_directories(${executable}

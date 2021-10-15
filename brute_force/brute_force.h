@@ -43,8 +43,8 @@ class BruteForce {
 
   Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
-  void UpdateGs();
-  void UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
+  bool UpdateGs();
+  bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
   void ClearGraph();
 
  protected:

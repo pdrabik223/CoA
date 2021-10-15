@@ -45,12 +45,14 @@ class Dijkstra {
   double ManhattanDistance(const Coord &position);
 
   Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
-  void UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
+
+  bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
+
   void ClearGraph();
   void ConnectNeighbours(const Coord &position);
-  void UpdateGs();
+  bool UpdateGs();
 
-  double ComputeH();
+  double ComputeH(Cell *target);
 
  protected:
   /// x axis
