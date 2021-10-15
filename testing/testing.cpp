@@ -23,10 +23,10 @@ int main() {
 
 void AStarRandom() {
   std::fstream output_file;
-  output_file.open("../testing/AStarRandom.txt", std::ios::out);
+  output_file.open("../testing/RandomMaze.txt", std::ios::out);
 
   int min_maze_size = 10;
-  int max_maze_size = 200;
+  int max_maze_size = 210;
   int maze_size_jump = 10;
   int no_tests = 50;
 
@@ -37,22 +37,20 @@ void AStarRandom() {
     double a_star_time_sum = 0;
     double dijkstra_time_sum = 0;
     for (int i = 0; i < no_tests; ++i) {
-      Plane sic(maze_size, maze_size, 0);
+      Plane maze(maze_size, maze_size, 0);
 
-      sic.SetCell({0, 0}, CellState::FINISH);
-      sic.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
+      maze.SetCell({0, 0}, CellState::FINISH);
+      maze.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
 
-      Dijkstra cos(sic);
-      AStar cos_2(sic);
+      Dijkstra dijkstra(maze);
       auto t_1 = std::chrono::steady_clock::now();
-      auto path = cos.FindPath();
-      if (!path.empty())
-        dijkstra_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_1).count();
+      auto path = dijkstra.FindPath();
+      dijkstra_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_1).count();
 
+      AStar a_star(maze);
       auto t_2 = std::chrono::steady_clock::now();
-      auto path_2 = cos_2.FindPath();
-      if (!path_2.empty())
-        a_star_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_2).count();
+      auto path_2 = a_star.FindPath();
+      a_star_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_2).count();
     }
     output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\n';
     printf("current maze size:%d\n", maze_size);

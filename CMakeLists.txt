@@ -13,6 +13,7 @@ set(plane_dir
         plane/cell_type.h
         maze/maze_generator.h maze/maze_generator.cpp
         utility/coord.h utility/coord.cpp
+        utility/clock.h utility/clock.cpp
         CoA_settings.h)
 
 set(sfml_window_dir
@@ -35,6 +36,8 @@ set(random_walk_dir
 set(maze_painter_dir
         maze_painter/maze_painter.h maze_painter/maze_painter.cpp)
 
+set(clock_dir
+        )
 
 add_subdirectory(SFML)
 
@@ -91,7 +94,8 @@ add_executable(maze_generator maze/maze_generator_example.cpp
 add_executable(graph_example sfml_window/graph_example.cpp
         ${plane_dir}
         ${sfml_window_dir})
-
+add_executable(clock_example utility/clock_example.cpp
+        ${plane_dir})
 
 set(executables CoA a_star_example dijkstra_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
 
