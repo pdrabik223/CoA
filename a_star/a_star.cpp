@@ -6,6 +6,7 @@
 #include <algorithm>
 
 AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
+
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)
@@ -96,27 +97,25 @@ std::vector<Coord> AStar::FindPath() {
 }
 
 bool AStar::UpdateGs() {
+  START_CLOCK("UpdateGs");
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
     open.push_back(&GetCell(s));
 
-  //  for (auto o : open) {
-  //    o->g = 0;
-  //  }
-
   std::vector<Cell *> successors;
   while (not open.empty()) {
 
     Cell *q = PopSmallestH(open);
-
-    for (const auto kP : q->nodes)
-      if (not kP->IsDiscovered()) {
-        successors.push_back(kP);
-        kP->UpdateG();
-        if (kP->cell_type == CellState::FINISH) return true;
-      }
-
+    {
+      START_CLOCK("AStar_Inner_Loop");
+      for (const auto kP : q->nodes)
+        if (not kP->IsDiscovered()) {
+          successors.push_back(kP);
+          kP->UpdateG();
+          if (kP->cell_type == CellState::FINISH) return true;
+        }
+    }
     for (const auto kS : successors) {
       open.push_back(kS);
     }
@@ -153,6 +152,7 @@ void AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme)
 }
 
 void AStar::ClearGraph() {
+  START_CLOCK("ClearGraph");
   for (auto &g : copy_plane_) {
     g.Clear();
   }
@@ -199,7 +199,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   return false;
 }
 void AStar::GeneratePath() {
-
+  START_CLOCK("GeneratePath");
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {
@@ -223,6 +223,7 @@ void AStar::GeneratePath() {
 }
 
 double AStar::EuclideanDistance(const Coord &position) {
+  START_CLOCK("AStar_EuclideanDistance");
   double smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
@@ -233,7 +234,7 @@ double AStar::EuclideanDistance(const Coord &position) {
   return smallest_distance;
 }
 Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
-
+  START_CLOCK("AStar_PopSmallestH");
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++)

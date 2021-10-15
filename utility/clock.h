@@ -7,10 +7,11 @@
 
 #include <chrono>
 #include <map>
+#include <stack>
 #include <string>
 #include <utility>
 
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 
 #if DEBUG_MODE
 #define START_CLOCK(x) Clock timer(x)
@@ -27,12 +28,14 @@ class Clock {
   Clock(const Clock &other) = delete;
   Clock &operator=(const Clock &other) = delete;
   ~Clock();
-
+  void Stop();
+  void Start();
   static void SaveToFile(const std::string &filename);
 
  protected:
   ///for no timings will simply store value in microseconds
   static std::map<std::string, long long unsigned int> timings_;
+  static std::stack<Clock *> clocks_;
   std::string clock_name_;
   std::chrono::time_point<std::chrono::high_resolution_clock> time_point_;
 };
