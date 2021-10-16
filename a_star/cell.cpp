@@ -3,9 +3,9 @@
 //
 
 #include "cell.h"
-#include "../clock/clock.h"
 
 double Cell::GetH() const {
+
   return h;
 }
 
@@ -19,6 +19,7 @@ Cell::Cell(const Cell &other) {
   cell_type = other.cell_type;
 }
 Cell &Cell::operator=(const Cell &other) {
+
   if (this == &other) return *this;
 
   g = other.g;
@@ -31,6 +32,7 @@ Cell &Cell::operator=(const Cell &other) {
   return *this;
 }
 unsigned Cell::GetG() const {
+
   return g;
 }
 Cell *Cell::GetSmallestG() {
@@ -44,6 +46,7 @@ Cell *Cell::GetSmallestG() {
   return nodes[smallest_g];
 }
 void Cell::Connect(Cell &new_cell) {
+
   nodes.emplace_back(&new_cell);
 }
 void Cell::UpdateG() {
@@ -52,6 +55,7 @@ void Cell::UpdateG() {
     if (node->g + 1 < g) g = node->g + 1;
 }
 void Cell::Clear() {
+
   if (cell_type == CellState::START)
     g = 0;
   else
@@ -66,6 +70,7 @@ Cell::~Cell() {
   }
 }
 Cell::Cell(CellState cell_type, const Coord &position) : cell_type(cell_type), placement(position) {
+
   if (cell_type == CellState::START) {
     g = 0;
   }

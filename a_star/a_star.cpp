@@ -7,7 +7,6 @@
 #include <algorithm>
 
 AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
-
   copy_plane_.reserve(other.GetHeight() * other.GetWidth());
 
   for (int y = 0; y < other.GetHeight(); y++)
@@ -87,44 +86,6 @@ std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &col
 
   return shortest_path_;
 }
-std::vector<Coord> AStar::FindPath() {
-  START_TRACER;
-  ClearGraph();
-
-  if (not UpdateGs()) return {};
-
-  GeneratePath();
-
-  return shortest_path_;
-}
-
-bool AStar::UpdateGs() {
-  START_TRACER;
-  std::vector<Cell *> open;
-
-  for (const auto &s : starting_points_)
-    open.push_back(&GetCell(s));
-
-  std::vector<Cell *> successors;
-  while (not open.empty()) {
-
-    Cell *q = PopSmallestH(open);
-    {
-
-      for (const auto kP : q->nodes)
-        if (not kP->IsDiscovered()) {
-          successors.push_back(kP);
-          kP->UpdateG();
-          if (kP->cell_type == CellState::FINISH) return true;
-        }
-    }
-    for (const auto kS : successors) {
-      open.push_back(kS);
-    }
-    successors.clear();
-  }
-  return false;
-}
 
 void AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
   Coord final_point;
@@ -153,13 +114,6 @@ void AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme)
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 
-void AStar::ClearGraph() {
-  START_TRACER;
-  for (auto &g : copy_plane_) {
-    g.Clear();
-  }
-  shortest_path_.clear();
-}
 bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   std::vector<Cell *> open;
@@ -200,8 +154,57 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   }
   return false;
 }
+
+std::vector<Coord> AStar::FindPath() {
+  START_CLOCK;
+  ClearGraph();
+
+  if (not UpdateGs()) return {};
+
+  GeneratePath();
+
+  return shortest_path_;
+}
+
+bool AStar::UpdateGs() {
+  START_CLOCK;
+  std::vector<Cell *> open;
+  open.reserve(100);
+  for (const auto &s : starting_points_)
+    open.push_back(&GetCell(s));
+
+  std::vector<Cell *> successors;
+  while (not open.empty()) {
+
+    Cell *q = PopSmallestH(open);
+    {
+
+      for (const auto kP : q->nodes)
+        if (not kP->IsDiscovered()) {
+          successors.push_back(kP);
+          kP->UpdateG();
+          kP->h = EuclideanDistance(kP->placement);
+          if (kP->cell_type == CellState::FINISH) return true;
+        }
+    }
+    for (const auto kS : successors) {
+      open.push_back(kS);
+    }
+    successors.clear();
+  }
+  return false;
+}
+
+void AStar::ClearGraph() {
+  START_CLOCK;
+  for (auto &g : copy_plane_) {
+    g.Clear();
+  }
+  shortest_path_.clear();
+}
+
 void AStar::GeneratePath() {
-  START_TRACER;
+  START_CLOCK;
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {
@@ -228,30 +231,29 @@ void AStar::GeneratePath() {
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
 double AStar::ComputeH(Cell *target) {
-  START_TRACER;
+  START_CLOCK;
   return EuclideanDistance(target->placement);
 }
 
 double AStar::EuclideanDistance(const Coord &position) {
-  START_TRACER;
+  START_CLOCK;
   double smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
-    double distance = sqrt(pow(position.x - f.x, 2) + pow(position.y - f.y, 2));
+    double distance = pow(position.x - f.x, 2) + pow(position.y - f.y, 2);
     if (distance < smallest_distance) smallest_distance = distance;
   }
 
   return smallest_distance;
 }
 Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
-  START_TRACER;
+  START_CLOCK;
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++)
-    if (ComputeH(open_set[i]) < ComputeH(open_set[smallest_h])) smallest_h = i;
+    if (open_set[i]->h < open_set[smallest_h]->h) smallest_h = i;
 
   Cell *temp = open_set[smallest_h];
   open_set.erase(open_set.begin() + smallest_h);
-
   return temp;
 }
