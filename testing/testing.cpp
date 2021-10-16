@@ -3,11 +3,11 @@
 //
 
 #include "../a_star/a_star.h"
+#include "../clock/tracer.h"
 #include "../dijkstra/dijkstra.h"
 #include "../maze/maze_generator.h"
 #include "../plane/plane.h"
 #include <fstream>
-
 void AStarCMaze();
 void AStarRandom();
 void AStarMaze();
@@ -17,8 +17,9 @@ void MessageMe(int maze_nr, const std::string &maze_type, const std::string &alg
 }
 int main() {
   srand(time(NULL));
+  START_TRACER;
   AStarRandom();
-  SAVE_TIMINGS("timings.txt");
+  SAVE_TRACINGS("release_son");
   return 1;
 }
 
@@ -29,7 +30,7 @@ void AStarRandom() {
   int min_maze_size = 10;
   int max_maze_size = 210;
   int maze_size_jump = 10;
-  int no_tests = 50;
+  int no_tests = 1;
 
   //  output_file << "no different maze sizes: " << (max_maze_size - min_maze_size) / 5 << "\n average time" << no_tests << "\n";
   //  output_file << "maze size \\ dijkstra time [ms] \t A* time \n";
@@ -54,7 +55,7 @@ void AStarRandom() {
       a_star_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_2).count();
     }
 
-    //    output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\n';
+    output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\n';
     printf("current maze size:%d\n", maze_size);
   }
 

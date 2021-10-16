@@ -3,7 +3,7 @@
 //
 
 #include "cell.h"
-#include "../utility/clock.h"
+#include "../clock/clock.h"
 
 double Cell::GetH() const {
   return h;

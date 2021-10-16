@@ -3,6 +3,7 @@
 //
 
 #include "a_star.h"
+#include "../clock/tracer.h"
 #include <algorithm>
 
 AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {
@@ -87,7 +88,7 @@ std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &col
   return shortest_path_;
 }
 std::vector<Coord> AStar::FindPath() {
-  START_CLOCK("AStar::FindPath");
+  START_TRACER;
   ClearGraph();
 
   if (not UpdateGs()) return {};
@@ -98,7 +99,7 @@ std::vector<Coord> AStar::FindPath() {
 }
 
 bool AStar::UpdateGs() {
-  START_CLOCK("AStar::UpdateGs");
+  START_TRACER;
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -153,7 +154,7 @@ void AStar::GeneratePath(Window &window_handle, const ColorScheme &color_scheme)
 }
 
 void AStar::ClearGraph() {
-  START_CLOCK("AStar::ClearGraph");
+  START_TRACER;
   for (auto &g : copy_plane_) {
     g.Clear();
   }
@@ -200,7 +201,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   return false;
 }
 void AStar::GeneratePath() {
-  START_CLOCK("AStar::GeneratePath");
+  START_TRACER;
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {
@@ -214,10 +215,9 @@ void AStar::GeneratePath() {
     if (GetCell(shortest_path_.back()).cell_type == CellState::START) break;
 
     Cell *next;
-    {
-      Clock timer_2("AStar::GetSmallestG");
-      next = GetCell(shortest_path_.back()).GetSmallestG();
-    }
+
+    next = GetCell(shortest_path_.back()).GetSmallestG();
+
     if (not next) {
       shortest_path_.clear();
       return;
@@ -227,9 +227,13 @@ void AStar::GeneratePath() {
   }
   std::reverse(shortest_path_.begin(), shortest_path_.end());
 }
+double AStar::ComputeH(Cell *target) {
+  START_TRACER;
+  return EuclideanDistance(target->placement);
+}
 
 double AStar::EuclideanDistance(const Coord &position) {
-  START_CLOCK("AStar::EuclideanDistance");
+  START_TRACER;
   double smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
@@ -240,7 +244,7 @@ double AStar::EuclideanDistance(const Coord &position) {
   return smallest_distance;
 }
 Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
-  START_CLOCK("AStar::PopSmallestH");
+  START_TRACER;
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++)
@@ -250,8 +254,4 @@ Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
   open_set.erase(open_set.begin() + smallest_h);
 
   return temp;
-}
-double AStar::ComputeH(Cell *target) {
-  START_CLOCK("AStar::ComputeH");
-  return EuclideanDistance(target->placement);
 }

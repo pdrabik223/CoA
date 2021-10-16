@@ -2,8 +2,8 @@
 // Created by piotr on 15/10/2021.
 //
 
-#ifndef COA_CLOCK_CLOCK_H_
-#define COA_CLOCK_CLOCK_H_
+#ifndef COA_CLOCK_CLOCK_H
+#define COA_CLOCK_CLOCK_H
 
 #include <chrono>
 #include <map>
@@ -12,11 +12,17 @@
 #include <utility>
 
 #define DEBUG_MODE true
+#define AUTO_FUNCTION_NAMES true
 
 #if DEBUG_MODE
+#if AUTO_FUNCTION_NAMES
+#define START_CLOCK Clock timer(__FILE__, __func__)
+#else
 #define START_CLOCK(x) Clock timer(x)
+#endif
 #define SAVE_TIMINGS(x) Clock::SaveToFile(x)
 #else
+
 #define START_CLOCK(x)
 #define SAVE_TIMINGS(x)
 #endif
@@ -25,6 +31,7 @@ class Clock {
  public:
   Clock() = delete;
   Clock(std::string clock_name);
+  Clock(const std::string &file_name, const std::string &function_name);
   Clock(const Clock &other) = delete;
   Clock &operator=(const Clock &other) = delete;
   ~Clock();
