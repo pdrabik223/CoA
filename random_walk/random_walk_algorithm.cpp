@@ -79,7 +79,7 @@ std::vector<Coord> RandomWalk::FindPath(Window &window_handle, const ColorScheme
 
   ClearGraph();
 
-  UpdateGs(window_handle, color_scheme);
+  if (not UpdateGs(window_handle, color_scheme)) return {};
 
   GeneratePath(window_handle, color_scheme);
 
@@ -88,40 +88,35 @@ std::vector<Coord> RandomWalk::FindPath(Window &window_handle, const ColorScheme
 std::vector<Coord> RandomWalk::FindPath() {
   ClearGraph();
 
-  UpdateGs();
+  if (not UpdateGs()) return {};
 
   GeneratePath();
 
   return shortest_path_;
 }
 
-void RandomWalk::UpdateGs() {
+bool RandomWalk::UpdateGs() {
   std::vector<Cell *> open;
-
+  open.reserve(width_ * height_);
   for (const auto &s : starting_points_)
     open.push_back(&GetCell(s));
 
   for (auto o : open) {
     o->g = 0;
   }
-
-  std::vector<Cell *> successors;
+  Cell *q;
   while (not open.empty()) {
 
-    Cell *q = PopRandomCell(open);
+    q = PopRandomCell(open);
 
     for (const auto kP : q->nodes)
       if (not kP->IsDiscovered()) {
-        successors.push_back(kP);
+        open.push_back(kP);
         kP->UpdateG();
-        if (kP->cell_type == CellState::FINISH) return;
+        if (kP->cell_type == CellState::FINISH) return true;
       }
-
-    for (const auto kS : successors) {
-      open.push_back(kS);
-    }
-    successors.clear();
   }
+  return false;
 }
 
 void RandomWalk::GeneratePath(Window &window_handle, const ColorScheme &color_scheme) {
@@ -157,7 +152,7 @@ void RandomWalk::ClearGraph() {
   }
   shortest_path_.clear();
 }
-void RandomWalk::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+bool RandomWalk::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   std::vector<Cell *> open;
 
@@ -179,7 +174,7 @@ void RandomWalk::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
       if (not kP->IsDiscovered()) {
         successors.push_back(kP);
         kP->UpdateG();
-        if (kP->cell_type == CellState::FINISH) return;
+        if (kP->cell_type == CellState::FINISH) return true;
       }
 
     WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
@@ -195,6 +190,7 @@ void RandomWalk::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
 
     successors.clear();
   }
+  return false;
 }
 void RandomWalk::GeneratePath() {
   Coord final_point;

@@ -99,6 +99,7 @@ std::vector<Coord> Dijkstra::FindPath() {
 bool Dijkstra::UpdateGs() {
 
   std::vector<Cell *> open;
+  open.reserve(width_ * height_);
 
   for (const auto &s : starting_points_)
     open.push_back(&GetCell(s));

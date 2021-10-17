@@ -178,7 +178,6 @@ bool AStar::UpdateGs() {
   while (not open.empty()) {
     q = PopSmallestH(open);
     {
-
       for (Cell *k_p : q->nodes) {
         if (not k_p->IsDiscovered()) {
           open.push_back(k_p);

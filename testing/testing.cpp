@@ -7,6 +7,7 @@
 #include "../dijkstra/dijkstra.h"
 #include "../maze/maze_generator.h"
 #include "../plane/plane.h"
+#include "../random_walk/random_walk_algorithm.h"
 #include <fstream>
 void AStarRandom();
 
@@ -24,7 +25,7 @@ int main() {
 
 void AStarRandom() {
   std::fstream output_file;
-  output_file.open("../testing/RandomMaze.txt", std::ios::out);
+  output_file.open("../testing/Data.txt", std::ios::out);
 
   int min_maze_size = 10;
   int max_maze_size = 210;
@@ -35,12 +36,14 @@ void AStarRandom() {
     output_file << maze_size << '\t';
     double a_star_time_sum = 0;
     double dijkstra_time_sum = 0;
+    double random_time_sum = 0;
+
     for (int i = 0; i < no_tests; ++i) {
-      //      MazeGenerator maze_generator(maze_size, maze_size);
-      //      maze_generator.GenSquareMaze();
-      Plane test(maze_size, maze_size, 0);
-      test.SetCell({0, 0}, CellState::FINISH);
-      test.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
+      MazeGenerator maze_generator(maze_size, maze_size);
+      maze_generator.GenCircularMaze();
+      Plane test = maze_generator.GetPlane();
+      //      test.SetCell({0, 0}, CellState::FINISH);
+      //      test.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
 
       AStar a_star(test);
       auto t_2 = std::chrono::steady_clock::now();
@@ -51,9 +54,14 @@ void AStarRandom() {
       auto t_1 = std::chrono::steady_clock::now();
       auto path = dijkstra.FindPath();
       dijkstra_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_1).count();
+
+      RandomWalk random(test);
+      auto t_3 = std::chrono::steady_clock::now();
+      auto path_3 = random.FindPath();
+      random_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_3).count();
     }
 
-    output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\n';
+    output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\t' << (random_time_sum / no_tests) << '\n';
     printf("current maze size:%d\n", maze_size);
   }
 

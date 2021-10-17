@@ -32,27 +32,18 @@ class RandomWalk {
   }
 
  private:
-  bool GenerateGraph();
-  bool GenerateGraph(Window &window_handle, const ColorScheme &color_scheme);
-
   void GeneratePath();
   void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
 
-  /// \param position center of returned "square"
-  /// \return neighbouring cells to cell under specified position
-  std::vector<Coord> GenNeighbours(const Coord &position);
-
   Cell *PopRandomCell(std::vector<Cell *> &positions);
-
-  bool SearchBreakingPoint(const std::vector<Coord> &possible_routs, bool &path_has_been_found);
 
   Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
 
   void ClearGraph();
 
   void ConnectNeighbours(const Coord &position);
-  void UpdateGs();
-  void UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
+  bool UpdateGs();
+  bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 
  protected:
   /// x axis
