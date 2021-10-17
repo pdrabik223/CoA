@@ -14,7 +14,11 @@ int main() {
   srand(time(NULL));
 
   AStarRandom();
-  SAVE_TIMINGS("release.txt");
+  //  SAVE_TIMINGS("i_v0.txt");
+  //  system("root");
+  //  std::this_thread::sleep_for(std::chrono::seconds(3));
+  //  system(".x root_incrementer.cpp ");
+  //  system(".q");
   return 1;
 }
 
@@ -23,26 +27,27 @@ void AStarRandom() {
   output_file.open("../testing/RandomMaze.txt", std::ios::out);
 
   int min_maze_size = 10;
-  int max_maze_size = 440;
-  int maze_size_jump = 40;
-  int no_tests = 50;
+  int max_maze_size = 210;
+  int maze_size_jump = 5;
+  int no_tests = 100;
 
   for (int maze_size = min_maze_size; maze_size < max_maze_size; maze_size += maze_size_jump) {
     output_file << maze_size << '\t';
     double a_star_time_sum = 0;
     double dijkstra_time_sum = 0;
     for (int i = 0; i < no_tests; ++i) {
-      Plane maze(maze_size, maze_size, 10);
+      //      MazeGenerator maze_generator(maze_size, maze_size);
+      //      maze_generator.GenSquareMaze();
+      Plane test(maze_size, maze_size, 0);
+      test.SetCell({0, 0}, CellState::FINISH);
+      test.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
 
-      maze.SetCell({0, 0}, CellState::FINISH);
-      maze.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
-
-      AStar a_star(maze);
+      AStar a_star(test);
       auto t_2 = std::chrono::steady_clock::now();
       auto path_2 = a_star.FindPath();
       a_star_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_2).count();
 
-      Dijkstra dijkstra(maze);
+      Dijkstra dijkstra(test);
       auto t_1 = std::chrono::steady_clock::now();
       auto path = dijkstra.FindPath();
       dijkstra_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_1).count();

@@ -11,8 +11,8 @@
 #include <utility>
 #include <vector>
 
-#define DEBUG_MODE true
-#define AUTO_FUNCTION_NAMES true
+#define DEBUG_MODE false
+#define AUTO_FUNCTION_NAMES false
 
 #if DEBUG_MODE
 #if AUTO_FUNCTION_NAMES

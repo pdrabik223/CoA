@@ -86,7 +86,7 @@ std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &
   return shortest_path_;
 }
 std::vector<Coord> Dijkstra::FindPath() {
-  START_CLOCK;
+
   ClearGraph();
 
   if (not UpdateGs()) return {};
@@ -97,7 +97,7 @@ std::vector<Coord> Dijkstra::FindPath() {
 }
 
 bool Dijkstra::UpdateGs() {
-  START_CLOCK;
+
   std::vector<Cell *> open;
 
   for (const auto &s : starting_points_)
@@ -152,7 +152,7 @@ void Dijkstra::GeneratePath(Window &window_handle, const ColorScheme &color_sche
 }
 
 void Dijkstra::ClearGraph() {
-  START_CLOCK;
+
   for (auto &g : copy_plane_) {
     g.Clear();
   }
@@ -198,7 +198,7 @@ bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
   return false;
 }
 void Dijkstra::GeneratePath() {
-  START_CLOCK;
+
   Coord final_point;
   for (const auto &s : final_points_)
     if (GetCell(s).IsDiscovered()) {

@@ -40,6 +40,12 @@ Clock::Clock(const std::string &file_name, const std::string &function_name) : c
   clocks_.push(this);
   Start();
 }
+Clock::Clock(int line) : clock_name_(std::to_string(line)) {
+  if (!clocks_.empty()) clocks_.top()->Stop();
+  clocks_.push(this);
+  Start();
+}
+
 Clock::Clock(std::string clock_name) : clock_name_(std::move(clock_name)) {
   if (!clocks_.empty()) clocks_.top()->Stop();
   clocks_.push(this);
