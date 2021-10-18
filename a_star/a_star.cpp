@@ -3,7 +3,7 @@
 //
 
 #include "a_star.h"
-#include "../clock/tracer.h"
+#include "pm_include.h"
 #include <algorithm>
 
 AStar::AStar(const Plane &other) : width_(other.GetWidth()), height_(other.GetHeight()) {

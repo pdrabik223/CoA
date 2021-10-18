@@ -3,11 +3,11 @@
 //
 
 #include "../a_star/a_star.h"
-#include "../clock/tracer.h"
 #include "../dijkstra/dijkstra.h"
 #include "../maze/maze_generator.h"
 #include "../plane/plane.h"
 #include "../random_walk/random_walk_algorithm.h"
+#include "pm_include.h"
 #include <fstream>
 void AStarRandom();
 

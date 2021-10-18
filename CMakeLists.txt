@@ -13,8 +13,6 @@ set(plane_dir
         plane/cell_type.h
         maze/maze_generator.h maze/maze_generator.cpp
         utility/coord.h utility/coord.cpp
-        clock/clock.h clock/clock.cpp
-        clock/tracer.h clock/tracer.cpp
         CoA_settings.h)
 
 set(sfml_window_dir
@@ -41,6 +39,7 @@ set(clock_dir
         )
 
 add_subdirectory(SFML)
+add_subdirectory(pm-stl)
 
 add_executable(CoA CoA_main.cpp
         ${plane_dir}
@@ -95,15 +94,17 @@ add_executable(maze_generator maze/maze_generator_example.cpp
 add_executable(graph_example sfml_window/graph_example.cpp
         ${plane_dir}
         ${sfml_window_dir})
-add_executable(clock_example clock/clock_example.cpp
-        ${plane_dir})
+#add_executable(clock_example clock/clock_example.cpp
+#        ${plane_dir})
 
 set(executables CoA a_star_example dijkstra_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
 
-foreach(executable IN LISTS executables)
+foreach (executable IN LISTS executables)
     target_include_directories(${executable}
-            PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include)
-    endforeach()
+            PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include
+            PUBLIC ${PROJECT_SOURCE_DIR}/pm-stl
+            )
+endforeach ()
 
 foreach(executable IN LISTS executables)
     target_link_directories(${executable}
@@ -114,5 +115,6 @@ foreach(executable IN LISTS executables)
     target_link_libraries(${executable}
             sfml-graphics
             sfml-system
-            sfml-window)
+            sfml-window
+            pm_stl)
 endforeach()
