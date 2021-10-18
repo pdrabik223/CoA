@@ -233,3 +233,84 @@ void MazeGenerator::CheckBoundariesAndPush(const Coord &position, std::vector<Co
     push_target.push_back(position);
   }
 }
+
+enum Direction {
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT
+};
+Direction RotateRight(Direction current) {
+  switch (current) {
+
+    case UP:
+      return RIGHT;
+    case DOWN:
+      return LEFT;
+    case LEFT:
+      return UP;
+    case RIGHT:
+      return DOWN;
+  }
+}
+Coord ShiftPosition(const Coord &start, Direction direction, int length) {
+  switch (direction) {
+    case UP:
+      return {start.x, start.y - length};
+    case DOWN:
+      return {start.x, start.y + length};
+    case LEFT:
+      return {start.x - length, start.y};
+    case RIGHT:
+      return {start.x + length, start.y};
+  }
+}
+void MazeGenerator::RecursiveSnake() {
+
+  Direction current_direction = DOWN;
+  Coord start(plane_.GetWidth() / 2, plane_.GetHeight() / 2);
+  Coord stop;
+  int length = 1;
+
+  while (length < plane_.GetWidth() and length < plane_.GetHeight()) {
+    stop = ShiftPosition(start, current_direction, length);
+    DrawLine(start, stop);
+    start = stop;
+    current_direction = RotateRight(current_direction);
+
+    //    stop = ShiftPosition(start, current_direction, length);
+    //    DrawLine(start, stop);
+    //    start = stop;
+    //    current_direction = RotateRight(current_direction);
+    length += 1;
+  }
+
+  plane_.SetCell(stop, CellState::START);
+  plane_.SetCell({(int) plane_.GetWidth() / 2, (int) plane_.GetHeight() / 2}, CellState::FINISH);
+}
+void MazeGenerator::DrawLine(Coord start, Coord finish) {
+
+  assert((start.x != finish.x) xor (start.y != finish.y));
+
+  //  assert((start.x != finish.x) and (start.y != finish.y));
+  if (start.x == finish.x) {
+
+    if (start.y > finish.y)
+      std::swap(start, finish);
+
+    // horizontal line
+    int line_size = finish.y - start.y;
+    for (int p = start.y; p <= finish.y; p++) {
+      plane_.SetCell({start.x, p}, CellState::EMPTY);
+    }
+  } else if (start.y == finish.y) {
+    if (start.x > finish.x)
+      std::swap(start, finish);
+    int line_size = finish.x - start.x;
+
+    for (int p = start.x; p <= finish.x; p++) {
+      plane_.SetCell({p, start.y}, CellState::EMPTY);
+    }
+  } else
+    throw "not a line";
+}

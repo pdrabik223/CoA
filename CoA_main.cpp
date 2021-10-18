@@ -10,7 +10,7 @@
 
 #define RUN_BRUTEFORCE true
 #define RUN_RANDOM_WALK false
-#define RUN_DIJKSTRA true
+#define RUN_DIJKSTRA false
 
 #define USE_RANDOM_GEN true
 #define USE_SQUARE_MAZE false
@@ -170,78 +170,70 @@ int GenRandomWalkVisualsCMaze(Window &window, ColorScheme color_scheme) {
   }
   return 420;
 }
+int GenDijkstraVisualsSMaze(Window &window, ColorScheme color_scheme) {
 
+  for (int i = 0; i < 10; ++i) {
+    MazeGenerator sic(100, 100);
+    sic.GenSnailMaze();
+    Dijkstra cos(sic.GetPlane());
+
+    auto path = cos.FindPath(window, color_scheme);
+
+    auto t1 = std::chrono::steady_clock::now();
+    cos.FindPath();
+    MessageMe(i, "snail maze", "Brute force", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+  }
+  return 420;
+}
+int GenAStarVisualsSMaze(Window &window, ColorScheme color_scheme) {
+
+  for (int i = 0; i < 10; ++i) {
+    MazeGenerator sic(100, 100);
+    sic.GenSnailMaze();
+
+    AStar cos(sic.GetPlane());
+
+    auto path = cos.FindPath(window, color_scheme);
+    //    std::cout << "queue size: " << window.GetQueueSize();
+    auto t1 = std::chrono::steady_clock::now();
+    cos.FindPath();
+    MessageMe(i, "snail maze", "AStar", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+  }
+  return 420;
+}
+int GenRandomWalkVisualsSMaze(Window &window, ColorScheme color_scheme) {
+
+  for (int i = 0; i < 10; ++i) {
+    MazeGenerator sic(100, 100);
+    sic.GenSnailMaze();
+
+    RandomWalk cos(sic.GetPlane());
+
+    auto path = cos.FindPath(window, color_scheme);
+
+    auto t1 = std::chrono::steady_clock::now();
+    cos.FindPath();
+    MessageMe(i, "snail maze", "Random Walk", std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count(), path.size());
+  }
+  return 420;
+}
 int main() {
   srand(time(NULL));
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
 
-#if USE_RANDOM_GEN
-#if RUN_BRUTEFORCE
   Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_1(GenDijkstraVisuals, std::ref(screen_1), color_scheme);
-#endif
+  std::thread generator_1(GenDijkstraVisualsSMaze, std::ref(screen_1), color_scheme);
 
-#if RUN_RANDOM_WALK
-  Window screen_1(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme);
-#endif
-
-#if RUN_DIJKSTRA
-  Window screen_2(Coord(0, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenAStarVisuals, std::ref(screen_1), color_scheme);
-#endif
-#endif
-
-#if USE_SQUARE_MAZE
-#if RUN_BRUTEFORCE
   Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenDijkstraVisualsMaze, std::ref(screen_2), color_scheme);
-#endif
+  std::thread generator_2(GenRandomWalkVisualsSMaze, std::ref(screen_2), color_scheme);
 
-#if RUN_RANDOM_WALK
-  Window screen_2(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenRandomWalkVisualsMaze, std::ref(screen_2), color_scheme);
-#endif
-
-#if RUN_DIJKSTRA
-  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_2(GenAStarVisualsMaze, std::ref(screen_2), color_scheme);
-#endif
-#endif
-
-#if USE_CIRCULAR_MAZE
-#if RUN_BRUTEFORCE
   Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_3(GenDijkstraVisualsCMaze, std::ref(screen_3), color_scheme);
-#endif
+  std::thread generator_3(GenAStarVisualsSMaze, std::ref(screen_3), color_scheme);
 
-#if RUN_RANDOM_WALK
-  Window screen_3(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_3(GenRandomWalkVisualsCMaze, std::ref(screen_3), color_scheme);
-#endif
-
-#if RUN_DIJKSTRA
-  Window screen_3(Coord(WINDOW_SIZE * 2, 0), WINDOW_SIZE, WINDOW_SIZE);
-  std::thread generator_3(GenAStarVisualsCMaze, std::ref(screen_3), color_scheme);
-#endif
-#endif
-
-#if USE_SQUARE_MAZE or USE_CIRCULAR_MAZE or USE_RANDOM_GEN
-#if RUN_BRUTEFORCE
   generator_1.join();
-
-#endif
-
-#if RUN_RANDOM_WALK
   generator_2.join();
+  generator_3.join();
 
-#endif
-
-#if RUN_DIJKSTRA
-  generator_1.join();
-
-#endif
-#endif
   return 0;
 }

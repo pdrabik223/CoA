@@ -19,12 +19,11 @@ int main() {
 
   MazeGenerator maze(100, 100);
 
-  maze.GenCircularMaze();
+  maze.GenSnailMaze();
 
   auto plane = maze.GetPlane();
 
   ConsoleDisplay(plane);
-  plane.SetCell({0,0},CellState::EMPTY);
 
   WindowPlane screen_texture(plane);
 

@@ -29,6 +29,7 @@ class Plane {
   void LoadFromFile(const std::string& file_name);
 
   void Clear();
+  void Fill(CellState fill_type);
 
  protected:
   /// x axis

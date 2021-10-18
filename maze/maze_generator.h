@@ -30,7 +30,6 @@ class MazeGenerator {
   MazeGenerator &operator=(const MazeGenerator &other) = default;
 
   void AddStartAndFinish();
-
   const Plane &GetPlane() const;
 
   void GenSquareMaze() {
@@ -39,7 +38,6 @@ class MazeGenerator {
     RecursiveDivision({{0, 0}, {(int) plane_.GetWidth() - 1, (int) plane_.GetHeight() - 1}}, 0);
     AddStartAndFinish();
   };
-  void RecursiveCircularDivision();
   void GenCircularMaze() {
     plane_.Clear();
     RecursiveCircularDivision();
@@ -51,11 +49,19 @@ class MazeGenerator {
     plane_.SetCell(center, CellState::FINISH);
     plane_.AddBorder(CellState::START);
   }
+  void GenSnailMaze() {
+    plane_.Fill(CellState::WALL);
+    RecursiveSnake();
+  }
 
  private:
+  void RecursiveSnake();
+  void RecursiveCircularDivision();
   void CheckBoundariesAndPush(const Coord &position, std::vector<Coord> &push_target);
   void RecursiveDivision(const Square &square, int depth);
   void DrawLine(const Coord &start, const Coord &finish, const Coord &breaking_point);
+  void DrawLine(Coord start, Coord finish);
+
   void DrawCircle(const Coord &center, std::vector<Coord> &target, int radius);
 
  protected:
