@@ -16,6 +16,7 @@ int main() {
 
   AStarRandom();
   //  SAVE_TIMINGS("i_v0.txt");
+  SAVE_TRACINGS("son");
   //  system("root");
   //  std::this_thread::sleep_for(std::chrono::seconds(3));
   //  system(".x root_incrementer.cpp ");

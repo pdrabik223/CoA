@@ -4,9 +4,9 @@
 
 #ifndef COA_PLANE_H
 #define COA_PLANE_H
-#include "../clock/clock.h"
 #include "../utility/coord.h"
 #include "cell_type.h"
+#include "pm_include.h"
 #include <ciso646>
 #include <vector>
 class Plane {

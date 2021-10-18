@@ -108,7 +108,9 @@ endforeach ()
 
 foreach(executable IN LISTS executables)
     target_link_directories(${executable}
-            PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src)
+            PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src
+            PUBLIC ${PROJECT_SOURCE_DIR}/pm-stl
+            )
 endforeach()
 
 foreach(executable IN LISTS executables)
@@ -116,5 +118,6 @@ foreach(executable IN LISTS executables)
             sfml-graphics
             sfml-system
             sfml-window
-            pm_stl)
+            pm_stl
+            )
 endforeach()
