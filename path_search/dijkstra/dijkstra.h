@@ -2,12 +2,12 @@
 // Created by piotr on 05/10/2021.
 //
 
-#ifndef COA_DIJKSTRA_DIJKSTRA_H_
-#define COA_DIJKSTRA_DIJKSTRA_H_
+#ifndef COA_PATH_SEARCH_DIJKSTRA_DIJKSTRA_H_
+#define COA_PATH_SEARCH_DIJKSTRA_DIJKSTRA_H_
+#include "../../plane/plane.h"
+#include "../../sfml_window/window.h"
+#include "../../sfml_window/window_plane.h"
 #include "../a_star/cell.h"
-#include "../plane/plane.h"
-#include "../sfml_window/window.h"
-#include "../sfml_window/window_plane.h"
 
 static void ConsoleDisplay(const std::vector<Coord> &path);
 
@@ -74,4 +74,4 @@ static void ConsoleDisplay(const std::vector<Coord> &path) {
 
 }
 
-#endif//COA_DIJKSTRA_DIJKSTRA_H_
+#endif//COA_PATH_SEARCH_DIJKSTRA_DIJKSTRA_H_

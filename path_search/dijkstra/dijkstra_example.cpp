@@ -1,7 +1,7 @@
 //
 // Created by piotr on 05/10/2021.
 //
-#include "../plane/plane.h"
+#include "../../plane/plane.h"
 #include "dijkstra.h"
 #include <iostream>
 int main() {

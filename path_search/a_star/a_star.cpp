@@ -156,7 +156,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 }
 
 std::vector<Coord> AStar::FindPath() {
-  START_TRACER("lele");
+  AUTO_CLOCK;
   ClearGraph();
 
   if (not UpdateGs()) return {};
@@ -166,7 +166,7 @@ std::vector<Coord> AStar::FindPath() {
   return shortest_path_;
 }
 bool AStar::UpdateGs() {
-  START_TRACER("lele2");
+
   std::vector<Cell *> open;
   open.reserve(width_ * 2);
 

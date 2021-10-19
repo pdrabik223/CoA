@@ -1,7 +1,7 @@
 //
 // Created by piotr on 09/10/2021.
 //
-#include "../plane/plane.h"
+#include "../../plane/plane.h"
 #include "random_walk_algorithm.h"
 int main() {
 

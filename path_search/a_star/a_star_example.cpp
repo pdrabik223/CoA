@@ -1,8 +1,7 @@
 //
 // Created by piotr on 07/10/2021.
 //
-#include "../brute_force/brute_force.h"
-#include "../plane/plane.h"
+#include "../../plane/plane.h"
 #include "a_star.h"
 #include <iostream>
 int main() {
@@ -24,7 +23,7 @@ int main() {
 
   ConsoleDisplay(sic,sample.FindPath());
 
-  ConsoleDisplay(sample.FindPath());
+  //  ConsoleDisplay(sample.FindPath());
 
   getchar();
 

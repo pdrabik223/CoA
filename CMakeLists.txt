@@ -22,15 +22,15 @@ set(sfml_window_dir
         sfml_window/graph.h sfml_window/graph.cpp)
 
 set(dijkstra_dir
-        dijkstra/dijkstra.h dijkstra/dijkstra.cpp
+        path_search/dijkstra/dijkstra.h path_search/dijkstra/dijkstra.cpp
         )
 
 set(a_star_dir
-        a_star/a_star.h a_star/a_star.cpp
-        a_star/cell.h a_star/cell.cpp)
+        path_search/a_star/a_star.h path_search/a_star/a_star.cpp
+        path_search/a_star/cell.h path_search/a_star/cell.cpp)
 
 set(random_walk_dir
-        random_walk/random_walk_algorithm.h random_walk/random_walk_algorithm.cpp)
+        path_search/random_walk/random_walk_algorithm.h path_search/random_walk/random_walk_algorithm.cpp)
 
 set(maze_painter_dir
         maze_painter/maze_painter.h maze_painter/maze_painter.cpp)
@@ -65,16 +65,16 @@ add_executable(saved_maze saved_mazes/saved_mazes.cpp
         ${a_star_dir}
         ${dijkstra_dir})
 
-add_executable(dijkstra_example dijkstra/dijkstra_example.cpp
+add_executable(dijkstra_example path_search/dijkstra/dijkstra_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${dijkstra_dir})
-add_executable(random_walk_example random_walk/random_walk_example.cpp
+add_executable(random_walk_example path_search/random_walk/random_walk_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${random_wald_dir})
 
-add_executable(a_star_example a_star/a_star_example.cpp
+add_executable(a_star_example path_search/a_star/a_star_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${a_star_dir})

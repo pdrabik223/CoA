@@ -2,10 +2,10 @@
 // Created by piotr on 06/10/2021.
 //
 
-#ifndef COA_A_STAR_A_STAR_H_
-#define COA_A_STAR_A_STAR_H_
-#include "../plane/plane.h"
-#include "../sfml_window/window.h"
+#ifndef COA_PATH_SEARCH_A_STAR_A_STAR_H_
+#define COA_PATH_SEARCH_A_STAR_A_STAR_H_
+#include "../../plane/plane.h"
+#include "../../sfml_window/window.h"
 #include "cell.h"
 #include <vector>
 
@@ -70,4 +70,4 @@ class AStar {
   Cell *PopSmallestH(std::vector<Cell *> &open_set);
 };
 
-#endif//COA_A_STAR_A_STAR_H_
+#endif//COA_PATH_SEARCH_A_STAR_A_STAR_H_
