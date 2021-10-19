@@ -76,9 +76,7 @@ class Generator {
  public:
   Generator(std::pair<MazeType, Algorythm> settings, Window &window, const ColorScheme &color_scheme) {
 
-    Window screen(WINDOW_SIZE, WINDOW_SIZE);
-
-    generator_thread_ = new std::thread(&Generator::MainLoop, this, settings, std::ref(screen), color_scheme);
+    generator_thread_ = new std::thread(&Generator::MainLoop, this, settings, std::ref(window), color_scheme);
   };
 
   void MainLoop(std::pair<MazeType, Algorythm> settings, Window &window, ColorScheme color_scheme) {
@@ -174,8 +172,7 @@ int main() {
 
   std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::A_STAR},
                                                           {MazeType::CIRCUlAR_MAZE, Algorythm::DIJKSTRA},
-                                                          {MazeType::SQUARE_MAZE, Algorythm::A_STAR},
-                                                          {MazeType::CIRCUlAR_MAZE, Algorythm::DIJKSTRA}};
+                                                          {MazeType::SQUARE_MAZE, Algorythm::A_STAR}};
   GlobalVisuals(settings);
 
   return 0;
