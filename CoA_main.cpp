@@ -2,9 +2,7 @@
 // Created by piotr on 04/10/2021.
 //
 #include "maze/maze_generator.h"
-#include "path_search/a_star/a_star.h"
-#include "path_search/dijkstra/dijkstra.h"
-#include "path_search/random_walk/random_walk_algorithm.h"
+#include "path_search/path_search.h"
 #include <iostream>
 #define WINDOW_SIZE 500
 

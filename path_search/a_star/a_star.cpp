@@ -156,7 +156,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 }
 
 std::vector<Coord> AStar::FindPath() {
-  AUTO_CLOCK;
+
   ClearGraph();
 
   if (not UpdateGs()) return {};

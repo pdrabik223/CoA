@@ -86,7 +86,7 @@ std::vector<Coord> Dijkstra::FindPath(Window &window_handle, const ColorScheme &
   return shortest_path_;
 }
 std::vector<Coord> Dijkstra::FindPath() {
-  AUTO_CLOCK;
+
   ClearGraph();
 
   if (not UpdateGs()) return {};

@@ -2,69 +2,77 @@
 // Created by piotr on 15/10/2021.
 //
 
-#include "../a_star/a_star.h"
-#include "../dijkstra/dijkstra.h"
 #include "../maze/maze_generator.h"
+#include "../path_search/path_search.h"
 #include "../plane/plane.h"
-#include "../random_walk/random_walk_algorithm.h"
 #include "pm_include.h"
+#include <array>
 #include <fstream>
-void AStarRandom();
+void PerformTest(const std::string &output_file_path);
+#define T_START std::chrono::high_resolution_clock::now()
+#define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
+
+void Save(int plane_size, int total_no_tests, std::array<double, 3> &timings, const std::string &file_path, bool add_new_line) {
+
+  for (auto &t : timings)
+    t = t / total_no_tests;
+
+  std::fstream f(file_path, std::ios::app);
+  f << plane_size << "\t";
+  for (auto t : timings)
+    f << t << "\t";
+  if (add_new_line) f << "\n";
+  f.close();
+
+  timings.fill(0);
+}
 
 int main() {
   srand(time(NULL));
 
-  AStarRandom();
-  //  SAVE_TIMINGS("i_v0.txt");
-  SAVE_TRACINGS("son");
-  //  system("root");
-  //  std::this_thread::sleep_for(std::chrono::seconds(3));
-  //  system(".x root_incrementer.cpp ");
-  //  system(".q");
+  PerformTest("../testing/test.txt");
+
   return 1;
 }
 
-void AStarRandom() {
-  std::fstream output_file;
-  output_file.open("../testing/Data.txt", std::ios::out);
+void PerformTest(const std::string &output_file_path) {
+
+  std::fstream f(output_file_path, std::ofstream::out | std::ofstream::trunc);
+  f.close();
 
   int min_maze_size = 10;
-  int max_maze_size = 210;
+  int max_maze_size = 50;
   int maze_size_jump = 5;
   int no_tests = 100;
 
+  std::array<double, 3> times;
+  times.fill(0);
   for (int maze_size = min_maze_size; maze_size < max_maze_size; maze_size += maze_size_jump) {
-    output_file << maze_size << '\t';
-    double a_star_time_sum = 0;
-    double dijkstra_time_sum = 0;
-    double random_time_sum = 0;
-
     for (int i = 0; i < no_tests; ++i) {
       MazeGenerator maze_generator(maze_size, maze_size);
-      maze_generator.GenCircularMaze();
-      Plane test = maze_generator.GetPlane();
-      //      test.SetCell({0, 0}, CellState::FINISH);
-      //      test.SetCell({maze_size / 2, maze_size / 2}, CellState::START);
+      maze_generator.GenRandomMaze(10);
 
-      AStar a_star(test);
-      auto t_2 = std::chrono::steady_clock::now();
-      auto path_2 = a_star.FindPath();
-      a_star_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_2).count();
-
-      Dijkstra dijkstra(test);
-      auto t_1 = std::chrono::steady_clock::now();
-      auto path = dijkstra.FindPath();
-      dijkstra_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_1).count();
-
-      RandomWalk random(test);
-      auto t_3 = std::chrono::steady_clock::now();
-      auto path_3 = random.FindPath();
-      random_time_sum += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_3).count();
+      AStar a_star(maze_generator.GetPlane());
+      RandomWalk random(maze_generator.GetPlane());
+      Dijkstra dijkstra(maze_generator.GetPlane());
+      {
+        auto t_0 = T_START;
+        a_star.FindPath();
+        times[0] += T_RECORD(t_0);
+      }
+      {
+        auto t_1 = T_START;
+        dijkstra.FindPath();
+        times[1] += T_RECORD(t_1);
+      }
+      {
+        auto t_2 = T_START;
+        random.FindPath();
+        times[2] += T_RECORD(t_2);
+      }
     }
 
-    output_file << (dijkstra_time_sum / no_tests) << '\t' << (a_star_time_sum / no_tests) << '\t' << (random_time_sum / no_tests) << '\n';
-    printf("current maze size:%d\n", maze_size);
+    printf("\rcurrent maze size:%d", maze_size);
+    Save(maze_size * max_maze_size, no_tests, times, output_file_path, maze_size + maze_size_jump < max_maze_size);
   }
-
-  output_file.close();
 }

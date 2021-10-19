@@ -53,6 +53,22 @@ class MazeGenerator {
     plane_.Fill(CellState::WALL);
     RecursiveSnake();
   }
+  void GenRandomMaze(int infill_percentage) {
+
+    for (int x = 0; x < plane_.GetWidth(); x++)
+      for (int y = 0; y < plane_.GetHeight(); ++y) {
+        if (rand() % 100 < infill_percentage)
+          plane_.SetCell({x, y}, CellState::WALL);
+        else
+          plane_.SetCell({x, y}, CellState::EMPTY);
+      }
+
+    plane_.SetCell({(int) plane_.GetWidth() / 2, (int) plane_.GetHeight() / 2}, CellState::START);
+
+    int x = rand() % 2 == 1 ? plane_.GetWidth() - 1 : 0;
+    int y = rand() % 2 == 1 ? plane_.GetHeight() - 1 : 0;
+    plane_.SetCell({x, y}, CellState::FINISH);
+  }
 
  private:
   void RecursiveSnake();
