@@ -6,8 +6,8 @@
 #define COA_PATH_SEARCH_A_STAR_A_STAR_H_
 #include "../../plane/plane.h"
 #include "../../sfml_window/window.h"
+#include "../cell.h"
 #include "../graph_base.h"
-#include "cell.h"
 #include <vector>
 class AStar : public GraphBase {
   enum DistanceFunction {

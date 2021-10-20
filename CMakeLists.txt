@@ -24,7 +24,7 @@ set(sfml_window_dir
 set(path_search_dir
         path_search/dijkstra/dijkstra.h path_search/dijkstra/dijkstra.cpp
         path_search/a_star/a_star.h path_search/a_star/a_star.cpp
-        path_search/a_star/cell.h path_search/a_star/cell.cpp
+        path_search/cell.h path_search/cell.cpp
         path_search/random_walk/random_walk_algorithm.h path_search/random_walk/random_walk_algorithm.cpp
         path_search/right_hand_rule/right_hand_rule.h path_search/right_hand_rule/right_hand_rule.cpp
         path_search/graph_base.h path_search/graph_base.cpp

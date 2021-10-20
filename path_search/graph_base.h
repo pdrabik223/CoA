@@ -7,9 +7,9 @@
 
 #include "../plane/plane.h"
 #include "../sfml_window/window.h"
-#include "a_star/cell.h"
+#include "cell.h"
 #include <vector>
-
+static void ConsoleDisplay(const std::vector<Coord> &path);
 class GraphBase {
  public:
   GraphBase(const Plane &other);
@@ -43,5 +43,17 @@ class GraphBase {
   std::vector<Coord> final_points_;
   std::vector<Coord> shortest_path_;
 };
-
+static void ConsoleDisplay(const std::vector<Coord> &path) {
+  if (path.size() > 15) {
+    printf("path is to big, path size: %d\n", path.size());
+    return;
+  }
+  if (path.empty()) {
+    printf("there's no path\n");
+    return;
+  }
+  for (int i = 0; i < path.size() - 1; i++)
+    printf("(%d,%d) -> ", path[i].x, path[i].y);
+  printf("(%d,%d)\n", path[path.size() - 1].x, path[path.size() - 1].y);
+}
 #endif//COA_PATH_SEARCH_GRAPH_BASE_H_

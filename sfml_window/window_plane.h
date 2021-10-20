@@ -5,7 +5,7 @@
 #ifndef COA_SFML_WINDOW_WINDOW_PLANE_H_
 #define COA_SFML_WINDOW_WINDOW_PLANE_H_
 
-#include "../path_search/a_star/cell.h"
+#include "../path_search/cell.h"
 #include "../plane/plane.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"

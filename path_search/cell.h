@@ -5,8 +5,8 @@
 #ifndef COA_A_STAR_CELL_H_
 #define COA_A_STAR_CELL_H_
 
-#include "../../plane/cell_type.h"
-#include "../../utility/coord.h"
+#include "../plane/cell_type.h"
+#include "../utility/coord.h"
 #include <iostream>
 #include <vector>
 

@@ -84,7 +84,7 @@ class Generator {
   void MainLoop(std::pair<MazeType, Algorythm> settings, Window &window, ColorScheme color_scheme) {
     std::chrono::steady_clock::time_point t_1;
     double time = 0;
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
     for (int i = 0; i < 10; ++i) {
       MazeGenerator maze(100, 100);
       switch (settings.first) {
@@ -178,14 +178,13 @@ void GlobalVisuals(std::vector<std::pair<MazeType, Algorythm>> settings) {
     generators.emplace_back(settings[i], *windows[i], color_scheme);
   }
 }
-#include <iomanip>
-#include <locale>
+
 int main() {
   srand(time(NULL));
 
-  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::A_STAR},
-                                                          {MazeType::PLANE_10, Algorythm::A_STAR},
-                                                          {MazeType::EMPTY_PLANE, Algorythm::A_STAR}};
+  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::RIGHT_HAND_RULE},
+                                                          {MazeType::PLANE_10, Algorythm::RIGHT_HAND_RULE},
+                                                          {MazeType::EMPTY_PLANE, Algorythm::RIGHT_HAND_RULE}};
   GlobalVisuals(settings);
 
   return 0;
