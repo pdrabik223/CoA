@@ -6,10 +6,10 @@
 #define COA_PATH_SEARCH_A_STAR_A_STAR_H_
 #include "../../plane/plane.h"
 #include "../../sfml_window/window.h"
+#include "../graph_base.h"
 #include "cell.h"
 #include <vector>
-
-class AStar {
+class AStar : public GraphBase {
   enum DistanceFunction {
     EUCLIDEAN_DISTANCE,
     MANHATTAN_DISTANCE
@@ -18,56 +18,36 @@ class AStar {
  public:
   AStar() = delete;
   /// constructs Sample object based of Plane
-  AStar(const Plane &other);
+  explicit AStar(const Plane &other);
+
   AStar(const AStar &other);
   AStar &operator=(const AStar &other);
 
   /// find path from start to finish
   /// \return list of connected coordinates
   /// if returned list is empty the path does not exist
-  std::vector<Coord> FindPath();
+  std::vector<Coord> FindPath() override;
 
   /// find path from start to finish
   /// \return list of connected coordinates
   /// if returned list is empty the path does not exist
-  std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme);
+  std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme) override;
 
-  ~AStar() { ClearGraph(); };
+  ~AStar() override { ClearGraph(); };
 
  private:
-  void GeneratePath();
-
-  void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
-
-  /// finds Manhattan distance between position and closest finish point
   double EuclideanDistance(const Coord &position);
 
+  /// finds Manhattan distance between position and closest finish point
   double ManhattanDistance(const Coord &position);
-
-  Cell &GetCell(const Coord &position) { return copy_plane_[position.ToInt(width_)]; };
-
+  bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 
-  void ClearGraph();
-  void ConnectNeighbours(const Coord &position);
-  bool UpdateGs();
-
   double ComputeH(Cell *target);
+  Cell *PopSmallestH(std::vector<Cell *> &open_set);
 
  protected:
-  /// x axis
-  unsigned width_;
-  /// y axis
-  unsigned height_;
-
-  std::vector<Cell> copy_plane_;
-
-  std::vector<Coord> starting_points_;
-  std::vector<Coord> final_points_;
-  std::vector<Coord> shortest_path_;
-
-  DistanceFunction used_distance_function_ = MANHATTAN_DISTANCE;
-  Cell *PopSmallestH(std::vector<Cell *> &open_set);
+  const DistanceFunction used_distance_function_ = MANHATTAN_DISTANCE;
 };
 
 #endif//COA_PATH_SEARCH_A_STAR_A_STAR_H_

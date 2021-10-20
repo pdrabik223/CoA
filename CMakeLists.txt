@@ -26,7 +26,10 @@ set(path_search_dir
         path_search/a_star/a_star.h path_search/a_star/a_star.cpp
         path_search/a_star/cell.h path_search/a_star/cell.cpp
         path_search/random_walk/random_walk_algorithm.h path_search/random_walk/random_walk_algorithm.cpp
-        path_search/path_search.h)
+        path_search/right_hand_rule/right_hand_rule.h path_search/right_hand_rule/right_hand_rule.cpp
+        path_search/graph_base.h path_search/graph_base.cpp
+        path_search/path_search.h
+        )
 
 set(maze_painter_dir
         maze_painter/maze_painter.h maze_painter/maze_painter.cpp)

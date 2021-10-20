@@ -26,7 +26,8 @@ enum class MazeType {
 enum class Algorythm {
   DIJKSTRA,
   A_STAR,
-  RANDOM_WALK
+  RANDOM_WALK,
+  RIGHT_HAND_RULE
 };
 
 void MessageMe(int maze_nr, std::pair<MazeType, Algorythm> settings, size_t time, int path_length) {
@@ -62,8 +63,9 @@ void MessageMe(int maze_nr, std::pair<MazeType, Algorythm> settings, size_t time
     case Algorythm::DIJKSTRA:
       algorithm = "Dijkstra";
       break;
-    case Algorythm::A_STAR: algorithm = "A*"; break;
+    case Algorythm::A_STAR: algorithm = "A*\t"; break;
     case Algorythm::RANDOM_WALK: algorithm = "Random Walk"; break;
+    case Algorythm::RIGHT_HAND_RULE: algorithm = "Right Hand Rule"; break;
   }
   std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
@@ -138,6 +140,15 @@ class Generator {
           time = T_RECORD(t_1);
           MessageMe(i, settings, time, path.size());
         } break;
+        case Algorythm::RIGHT_HAND_RULE: {
+          RHR right_hand_rule(maze.GetPlane());
+          auto path = right_hand_rule.FindPath(window, color_scheme);
+          t_1 = T_START;
+          right_hand_rule.FindPath();
+          time = T_RECORD(t_1);
+          MessageMe(i, settings, time, path.size());
+
+        } break;
       }
     }
   };
@@ -167,12 +178,14 @@ void GlobalVisuals(std::vector<std::pair<MazeType, Algorythm>> settings) {
     generators.emplace_back(settings[i], *windows[i], color_scheme);
   }
 }
+#include <iomanip>
+#include <locale>
 int main() {
   srand(time(NULL));
 
   std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::A_STAR},
-                                                          {MazeType::CIRCUlAR_MAZE, Algorythm::DIJKSTRA},
-                                                          {MazeType::SQUARE_MAZE, Algorythm::A_STAR}};
+                                                          {MazeType::PLANE_10, Algorythm::A_STAR},
+                                                          {MazeType::EMPTY_PLANE, Algorythm::A_STAR}};
   GlobalVisuals(settings);
 
   return 0;
