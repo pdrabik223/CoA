@@ -62,6 +62,7 @@ bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
   for (auto o : open) {
     o->g = 0;
   }
+
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
   std::vector<Cell *> successors;
@@ -77,15 +78,8 @@ bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
           if (kP->cell_type == CellState::FINISH) return true;
         }
       }
-    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-    std::vector<Coord> highlighted_positions;
 
-    highlighted_positions.reserve(successors.size());
-    for (const auto kS : successors) {
-      highlighted_positions.push_back(kS->placement);
-    }
-    highlights.HighlightCells(highlighted_positions);
-    window_handle.PushFrame(highlights);
+    HighlightPositions(window_handle, color_scheme, successors);
 
     open = successors;
     successors.clear();

@@ -106,3 +106,14 @@ GraphBase::GraphBase(const GraphBase &other) {
   for (const auto &f : other.shortest_path_)
     shortest_path_ = other.shortest_path_;
 }
+void GraphBase::HighlightPositions(Window &window_handle, const ColorScheme &color_scheme, const std::vector<Cell *> &successors) {
+  WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
+  std::vector<Coord> highlighted_positions;
+
+  highlighted_positions.reserve(successors.size());
+  for (const auto kS : successors) {
+    highlighted_positions.push_back(kS->placement);
+  }
+  highlights.HighlightCells(highlighted_positions);
+  window_handle.PushFrame(highlights);
+}

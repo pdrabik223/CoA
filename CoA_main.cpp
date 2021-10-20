@@ -4,6 +4,7 @@
 #include "maze/maze_generator.h"
 #include "path_search/path_search.h"
 #include <iostream>
+#include <memory>
 #define WINDOW_SIZE 500
 
 #define RUN_BRUTEFORCE true
@@ -36,33 +37,17 @@ void MessageMe(int maze_nr, std::pair<MazeType, Algorythm> settings, size_t time
   std::string algorithm;
   switch (settings.first) {
     case MazeType::EMPTY_PLANE: maze_type = "empty plane"; break;
-    case MazeType::PLANE_5:
-      maze_type = "infill 5%";
-      break;
-    case MazeType::PLANE_10:
-      maze_type = "infill 10%";
-      break;
-    case MazeType::PLANE_20:
-      maze_type = "infill 20%";
-      break;
-    case MazeType::PLANE_25:
-      maze_type = "infill 25%";
-      break;
-    case MazeType::CIRCUlAR_MAZE:
-      maze_type = "circular maze";
-      break;
-    case MazeType::SQUARE_MAZE:
-      maze_type = "square maze";
-      break;
-    case MazeType::SNAIL_MAZE:
-      maze_type = "snail maze";
-      break;
+    case MazeType::PLANE_5: maze_type = "infill 5%"; break;
+    case MazeType::PLANE_10: maze_type = "infill 10%"; break;
+    case MazeType::PLANE_20: maze_type = "infill 20%"; break;
+    case MazeType::PLANE_25: maze_type = "infill 25%"; break;
+    case MazeType::CIRCUlAR_MAZE: maze_type = "circular maze"; break;
+    case MazeType::SQUARE_MAZE: maze_type = "square maze"; break;
+    case MazeType::SNAIL_MAZE: maze_type = "snail maze"; break;
   }
 
   switch (settings.second) {
-    case Algorythm::DIJKSTRA:
-      algorithm = "Dijkstra";
-      break;
+    case Algorythm::DIJKSTRA: algorithm = "Dijkstra"; break;
     case Algorythm::A_STAR: algorithm = "A*\t"; break;
     case Algorythm::RANDOM_WALK: algorithm = "Random Walk"; break;
     case Algorythm::RIGHT_HAND_RULE: algorithm = "Right Hand Rule"; break;
@@ -83,73 +68,33 @@ class Generator {
 
   void MainLoop(std::pair<MazeType, Algorythm> settings, Window &window, ColorScheme color_scheme) {
     std::chrono::steady_clock::time_point t_1;
-    double time = 0;
+    double time;
 
     for (int i = 0; i < 10; ++i) {
       MazeGenerator maze(100, 100);
+      std::unique_ptr<GraphBase> engine;
       switch (settings.first) {
-        case MazeType::EMPTY_PLANE:
-          maze.GenRandomMaze(0);
-          break;
-        case MazeType::PLANE_5:
-          maze.GenRandomMaze(5);
-          break;
-        case MazeType::PLANE_10:
-          maze.GenRandomMaze(10);
-          break;
-        case MazeType::PLANE_20:
-          maze.GenRandomMaze(20);
-          break;
-        case MazeType::PLANE_25:
-          maze.GenRandomMaze(25);
-          break;
-        case MazeType::CIRCUlAR_MAZE:
-          maze.GenCircularMaze();
-          break;
-        case MazeType::SQUARE_MAZE:
-          maze.GenSquareMaze();
-          break;
-        case MazeType::SNAIL_MAZE:
-          maze.GenSnailMaze();
-          break;
+        case MazeType::EMPTY_PLANE: maze.GenRandomMaze(0); break;
+        case MazeType::PLANE_5: maze.GenRandomMaze(5); break;
+        case MazeType::PLANE_10: maze.GenRandomMaze(10); break;
+        case MazeType::PLANE_20: maze.GenRandomMaze(20); break;
+        case MazeType::PLANE_25: maze.GenRandomMaze(25); break;
+        case MazeType::CIRCUlAR_MAZE: maze.GenCircularMaze(); break;
+        case MazeType::SQUARE_MAZE: maze.GenSquareMaze(); break;
+        case MazeType::SNAIL_MAZE: maze.GenSnailMaze(); break;
       }
-
       switch (settings.second) {
-        case Algorythm::DIJKSTRA: {
-          Dijkstra dijstra(maze.GetPlane());
-          auto path = dijstra.FindPath(window, color_scheme);
-          t_1 = T_START;
-          dijstra.FindPath();
-          time = T_RECORD(t_1);
-          MessageMe(i, settings, time, path.size());
-        } break;
-        case Algorythm::A_STAR: {
-          AStar a_star(maze.GetPlane());
-          auto path = a_star.FindPath(window, color_scheme);
-          t_1 = T_START;
-          a_star.FindPath();
-          time = T_RECORD(t_1);
-          MessageMe(i, settings, time, path.size());
-
-        } break;
-        case Algorythm::RANDOM_WALK: {
-          RandomWalk random_walk(maze.GetPlane());
-          auto path = random_walk.FindPath(window, color_scheme);
-          t_1 = T_START;
-          random_walk.FindPath();
-          time = T_RECORD(t_1);
-          MessageMe(i, settings, time, path.size());
-        } break;
-        case Algorythm::RIGHT_HAND_RULE: {
-          RHR right_hand_rule(maze.GetPlane());
-          auto path = right_hand_rule.FindPath(window, color_scheme);
-          t_1 = T_START;
-          right_hand_rule.FindPath();
-          time = T_RECORD(t_1);
-          MessageMe(i, settings, time, path.size());
-
-        } break;
+        case Algorythm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(maze.GetPlane()))); break;
+        case Algorythm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(maze.GetPlane()))); break;
+        case Algorythm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(maze.GetPlane()))); break;
+        case Algorythm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(maze.GetPlane()))); break;
       }
+
+      auto path = engine->FindPath(window, color_scheme);
+      t_1 = T_START;
+      engine->FindPath();
+      time = T_RECORD(t_1);
+      MessageMe(i, settings, time, path.size());
     }
   };
 
@@ -182,8 +127,8 @@ void GlobalVisuals(std::vector<std::pair<MazeType, Algorythm>> settings) {
 int main() {
   srand(time(NULL));
 
-  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::RIGHT_HAND_RULE},
-                                                          {MazeType::PLANE_10, Algorythm::RIGHT_HAND_RULE},
+  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::DIJKSTRA},
+                                                          {MazeType::PLANE_10, Algorythm::A_STAR},
                                                           {MazeType::EMPTY_PLANE, Algorythm::RIGHT_HAND_RULE}};
   GlobalVisuals(settings);
 

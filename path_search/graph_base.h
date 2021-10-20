@@ -32,7 +32,7 @@ class GraphBase {
   void ClearGraph();
   void ConnectNeighbours(const Coord &position);
   Cell &GetCell(const Coord &position) { return this->copy_plane_[position.ToInt(width_)]; };
-
+  void HighlightPositions(Window &window_handle, const ColorScheme &color_scheme, const std::vector<Cell *> &successors);
   /// x axis
   unsigned width_;
   /// y axis
