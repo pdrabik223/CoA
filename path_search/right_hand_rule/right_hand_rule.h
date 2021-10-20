@@ -32,9 +32,10 @@ class RHR : public GraphBase {
  private:
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
   bool UpdateGs();
-  Cell *GenSuccessor(Cell *, Direction &current_direction);
-  Direction CalculateDirection(const Coord &c_1, const Coord &c_2, Direction current_direction);
-  RHR::Direction RotateRight(RHR::Direction direction);
+  Cell *PopSuccessor(std::vector<Cell *> &open, Direction &current_direction);
+  Direction CalculateDirection(const Coord &c_1, const Coord &c_2);
+  RHR::Direction RotateRight(Direction direction);
+  static RHR::Direction RotateLeft(Direction direction);
 
  protected:
 };

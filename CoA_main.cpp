@@ -127,8 +127,8 @@ void GlobalVisuals(std::vector<std::pair<MazeType, Algorythm>> settings) {
 int main() {
   srand(time(NULL));
 
-  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::DIJKSTRA},
-                                                          {MazeType::PLANE_10, Algorythm::A_STAR},
+  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::RIGHT_HAND_RULE},
+                                                          {MazeType::PLANE_10, Algorythm::RIGHT_HAND_RULE},
                                                           {MazeType::EMPTY_PLANE, Algorythm::RIGHT_HAND_RULE}};
   GlobalVisuals(settings);
 
