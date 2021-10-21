@@ -35,7 +35,7 @@ bool RHR::UpdateGs() {
     open.push_back(&GetCell(s));
 
   Cell *q;
-  Direction current_direction = CalculateDirection(open.back()->placement, final_points_.back());
+  Direction current_direction = CalculateDirectionAtBeginning(open.back()->placement, final_points_.back());
   while (not open.empty()) {
     q = PopSuccessor(open, current_direction);
     {
@@ -76,27 +76,73 @@ RHR::Direction RHR::CalculateDirection(const Coord &c_1, const Coord &c_2) {
       global_direction = Direction::UP;
     else
       global_direction = Direction::DOWN;
-  } else {
+  } else if (c_1.y == c_2.y) {
     if (c_1.x < c_2.x)
-      global_direction = Direction::LEFT;
-    else
       global_direction = Direction::RIGHT;
+    else
+      global_direction = Direction::LEFT;
+  } else
+    throw "exception";
+
+  return global_direction;
+}
+
+RHR::Direction RHR::CalculateDirectionAtBeginning(const Coord &c_1, const Coord &c_2) {
+  RHR::Direction global_direction;
+
+  if (c_1.x >= c_2.x) {// c_2 is on the left
+    if (c_1.y <= c_2.y)
+      global_direction = Direction::RIGHT;// left down
+    else
+      global_direction = Direction::UP;// left up
+  } else {                             // is on the right
+    if (c_1.y <= c_2.y)
+      global_direction = Direction::DOWN;// right down
+    else
+      global_direction = Direction::LEFT;// right up
   }
 
   return global_direction;
 }
 
 Cell *RHR::PopSuccessor(std::vector<Cell *> &open, RHR::Direction &current_direction) {
-
   std::array<Cell *, 4> neighbours{nullptr, nullptr, nullptr, nullptr};
+  Direction best_way = RotateLeft(RotateLeft(current_direction));
 
-  for (auto p : open.back()->nodes)
-    if (!p->IsDiscovered())
-      neighbours[(int) CalculateDirection(open.back()->placement, p->placement)] = p;
+  if (not open.back()->IsDiscovered()) {
+
+    auto q = open.back();
+    open.pop_back();
+
+    for (auto p : q->nodes)
+      if (p->IsDiscovered()) {
+        best_way = CalculateDirection(p->placement, q->placement);
+
+        for (auto k : q->nodes)
+          if (!k->IsDiscovered())
+            neighbours[(int) CalculateDirection(q->placement, k->placement)] = k;
+
+        if (neighbours[(int) RotateLeft(best_way)])
+          open.push_back(neighbours[(int) RotateLeft(best_way)]);
+
+        if (neighbours[(int) RotateRight(best_way)])
+          open.push_back(neighbours[(int) RotateRight(best_way)]);
+
+        if (neighbours[(int) best_way])
+          open.push_back(neighbours[(int) best_way]);
+
+        current_direction = best_way;
+
+        return q;
+      }
+    throw "exception";
+  }
+
+  for (auto q : open.back()->nodes)
+    if (!q->IsDiscovered())
+      neighbours[(int) CalculateDirection(open.back()->placement, q->placement)] = q;
 
   open.pop_back();
-
-  Direction best_way = RotateLeft(RotateLeft(current_direction));
 
   if (neighbours[(int) current_direction]) {
     best_way = current_direction;
@@ -104,14 +150,20 @@ Cell *RHR::PopSuccessor(std::vector<Cell *> &open, RHR::Direction &current_direc
     best_way = RotateRight(current_direction);
   } else if (neighbours[(int) RotateLeft(current_direction)]) {
     best_way = RotateLeft(current_direction);
-  }
+  } else
+    return nullptr;
 
-  for (int p = 0; p < neighbours.size(); ++p)
-    if (neighbours[p] and p != (int) best_way)
-      open.push_back(neighbours[p]);
+  if (neighbours[(int) RotateLeft(best_way)])
+    open.push_back(neighbours[(int) RotateLeft(best_way)]);
+
+  if (neighbours[(int) RotateRight(best_way)])
+    open.push_back(neighbours[(int) RotateRight(best_way)]);
+
+  if (neighbours[(int) best_way])
+    open.push_back(neighbours[(int) best_way]);
 
   current_direction = best_way;
-  return neighbours[(int) best_way];
+  return open.back();
 }
 bool RHR::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   std::vector<Cell *> open;
@@ -125,22 +177,23 @@ bool RHR::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   open.push_back(q);
 
-  Direction current_direction = CalculateDirection(q->placement, final_points_[rand() % final_points_.size()]);
+  Direction current_direction = CalculateDirectionAtBeginning(q->placement, final_points_[rand() % final_points_.size()]);
 
   while (not open.empty()) {
-    if (q) {
-      q->UpdateG();
-      //          successors.push_back(q);
-      if (q->cell_type == CellState::FINISH) return true;
-    }
 
-    HighlightPositions(window_handle, color_scheme, {q});
     q = PopSuccessor(open, current_direction);
+
+    if (q != nullptr) {
+      q->UpdateG();
+      if (q->cell_type == CellState::FINISH) return true;
+      HighlightPositions(window_handle, color_scheme, {q});
+    }
 
     //    for (const auto kS : successors)
     //      open.push_back(kS);
     //    successors.clear();
     //
   }
+
   return false;
 }

@@ -36,8 +36,7 @@ class RHR : public GraphBase {
   Direction CalculateDirection(const Coord &c_1, const Coord &c_2);
   RHR::Direction RotateRight(Direction direction);
   static RHR::Direction RotateLeft(Direction direction);
-
- protected:
+  static Direction CalculateDirectionAtBeginning(const Coord &c_1, const Coord &c_2);
 };
 
 #endif//COA_PATH_SEARCH_RIGHT_HAND_RULE_RHR_H_
