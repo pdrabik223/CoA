@@ -14,7 +14,10 @@ void PerformTest();
 #define T_START std::chrono::high_resolution_clock::now()
 #define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
 #define INT(x) (int) Algorythm::x
-
+void TestMe(std::array<unsigned, 4> &path_length,
+            std::array<unsigned, 4> &path_misses,
+            std::array<double, 4> &times,
+            const Plane &plane);
 std::vector<double> Average(std::array<double, 4> &values, int total_no_tests) {
   std::vector<double> output;
   output.reserve(values.size());
@@ -87,7 +90,7 @@ int main() {
 void PerformTest() {
 
   PRFileFormat timings_file("Time comparison for Square Maze", "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule"});
-  PRFileFormat path_lengths_file("Found path length Time comparison for Square Maze", "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule"});
+  PRFileFormat path_lengths_file("Found path length comparison for Square Maze", "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule"});
   PRFileFormat path_misses_file("Path misses comparison for Square Maze", "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule"});
 
   int min_maze_size = 10;
@@ -108,48 +111,56 @@ void PerformTest() {
       MazeGenerator maze_generator(maze_size, maze_size);
       maze_generator.GenSquareMaze();
 
-      Dijkstra dijkstra(maze_generator.GetPlane());
-      AStar a_star(maze_generator.GetPlane());
-      RandomWalk random(maze_generator.GetPlane());
-      RHR right_hand_rule(maze_generator.GetPlane());
-      {
-        auto time = T_START;
-        path_length[INT(DIJKSTRA)] = dijkstra.FindPath().size();
-        times[INT(DIJKSTRA)] += T_RECORD(time);
-      }
-      {
-        auto time = T_START;
-        path_length[INT(A_STAR)] = a_star.FindPath().size();
-        times[INT(A_STAR)] += T_RECORD(time);
+      TestMe(path_length, path_misses, times, maze_generator.GetPlane());
 
-        if (path_length[(int) Algorythm::DIJKSTRA] != 0 and path_length[INT(A_STAR)] == 0)
-          path_misses[INT(A_STAR)]++;
-      }
-      {
-        auto time = T_START;
-        path_length[INT(RANDOM_WALK)] = random.FindPath().size();
-        times[INT(RANDOM_WALK)] += T_RECORD(time);
-
-        if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RANDOM_WALK)] == 0)
-          path_misses[INT(RANDOM_WALK)]++;
-      }
-      {
-        auto time = T_START;
-        path_length[INT(RIGHT_HAND_RULE)] = right_hand_rule.FindPath().size();
-        times[INT(RIGHT_HAND_RULE)] += T_RECORD(time);
-
-        if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0)
-          path_misses[INT(RIGHT_HAND_RULE)]++;
-      }
       path_lengths.push_back(path_length);
     }
 
     printf("\rcurrent maze size:%d", maze_size);
 
-    timings_file.PushData(maze_size * max_maze_size, Average(times, no_tests));
+    timings_file.PushData(maze_size * maze_size, Average(times, no_tests));
 
-    path_lengths_file.PushData(maze_size * max_maze_size, Average(path_lengths, no_tests));
+    path_lengths_file.PushData(maze_size * maze_size, Average(path_lengths, no_tests));
 
-    path_misses_file.PushData(maze_size * max_maze_size, Convert(path_misses));
+    path_misses_file.PushData(maze_size * maze_size, Convert(path_misses));
+  }
+}
+void TestMe(std::array<unsigned, 4> &path_length,
+            std::array<unsigned, 4> &path_misses,
+            std::array<double, 4> &times,
+            const Plane &plane) {
+
+  Dijkstra dijkstra(plane);
+  AStar a_star(plane);
+  RandomWalk random(plane);
+  RHR right_hand_rule(plane);
+  {
+    auto time = T_START;
+    path_length[INT(DIJKSTRA)] = dijkstra.FindPath().size();
+    times[INT(DIJKSTRA)] += T_RECORD(time);
+  }
+  {
+    auto time = T_START;
+    path_length[INT(A_STAR)] = a_star.FindPath().size();
+    times[INT(A_STAR)] += T_RECORD(time);
+
+    if (path_length[(int) Algorythm::DIJKSTRA] != 0 and path_length[INT(A_STAR)] == 0)
+      path_misses[INT(A_STAR)]++;
+  }
+  {
+    auto time = T_START;
+    path_length[INT(RANDOM_WALK)] = random.FindPath().size();
+    times[INT(RANDOM_WALK)] += T_RECORD(time);
+
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RANDOM_WALK)] == 0)
+      path_misses[INT(RANDOM_WALK)]++;
+  }
+  {
+    auto time = T_START;
+    path_length[INT(RIGHT_HAND_RULE)] = right_hand_rule.FindPath().size();
+    times[INT(RIGHT_HAND_RULE)] += T_RECORD(time);
+
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0)
+      path_misses[INT(RIGHT_HAND_RULE)]++;
   }
 }

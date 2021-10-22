@@ -30,7 +30,7 @@ void PRFileFormat::Save() {
 
   ClearFile();
 
-  std::fstream f(directory_path + "pr_id" + std::to_string(file_id), std::ios::app);
+  std::fstream f(directory_path + "pr_id" + std::to_string(file_id) + ".txt", std::ios::app);
   file_id++;
 
   f << RemoveSpace(graph_label) << "\n";
@@ -53,7 +53,7 @@ void PRFileFormat::Save() {
 }
 
 void PRFileFormat::ClearFile() {
-  std::fstream f(directory_path + "pr_id" + std::to_string(file_id), std::ios::out | std::ios::trunc);
+  std::fstream f(directory_path + "pr_id" + std::to_string(file_id) + ".txt", std::ios::out | std::ios::trunc);
   f.close();
 }
 
@@ -62,20 +62,28 @@ void PRFileFormat::PushData(int x, const std::vector<double> &y) {
   arguments.push_back(x);
   values.push_back(y);
 }
-void PRFileFormat::Load(std::string path) {
-  std::fstream f(path, std::ios::in);
+void PRFileFormat::Load(const std::string &path) {
+  std::ifstream f(path, std::ios::in);
+
   if (f.bad()) {
     f.close();
     throw "bad file path";
   }
-  f >> AddSpace(graph_label);
-  f >> AddSpace(x_axis_name);
-  f >> AddSpace(y_axis_name);
+  std::getline(f, graph_label);
+
+  AddSpace(graph_label);
+  std::getline(f, x_axis_name);
+  AddSpace(x_axis_name);
+  std::getline(f, y_axis_name);
+  AddSpace(y_axis_name);
+
   int datasets_count;
   f >> datasets_count;
+  std::string label;
+  std::getline(f, label, '\t');
+
   for (int i = 0; i < datasets_count; i++) {
-    std::string label;
-    f >> label;
+    std::getline(f, label, '\t');
     datasets_labels.push_back(AddSpace(label));
   }
 
