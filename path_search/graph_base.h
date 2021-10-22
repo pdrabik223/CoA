@@ -10,6 +10,14 @@
 #include "cell.h"
 #include <vector>
 static void ConsoleDisplay(const std::vector<Coord> &path);
+
+enum class Algorythm {
+  DIJKSTRA,
+  A_STAR,
+  RANDOM_WALK,
+  RIGHT_HAND_RULE
+};
+
 class GraphBase {
  public:
   GraphBase(const Plane &other);

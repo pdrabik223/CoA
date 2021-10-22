@@ -24,12 +24,6 @@ enum class MazeType {
   SQUARE_MAZE,
   SNAIL_MAZE
 };
-enum class Algorythm {
-  DIJKSTRA,
-  A_STAR,
-  RANDOM_WALK,
-  RIGHT_HAND_RULE
-};
 
 void MessageMe(int maze_nr, std::pair<MazeType, Algorythm> settings, size_t time, int path_length) {
 

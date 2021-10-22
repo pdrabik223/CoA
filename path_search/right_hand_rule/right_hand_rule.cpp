@@ -27,26 +27,32 @@ std::vector<Coord> RHR::FindPath() {
 }
 
 bool RHR::UpdateGs() {
-
   std::vector<Cell *> open;
   open.reserve(width_ * 2);
 
-  for (const auto &s : starting_points_)
-    open.push_back(&GetCell(s));
+  std::vector<Cell *> successors;
 
-  Cell *q;
-  Direction current_direction = CalculateDirectionAtBeginning(open.back()->placement, final_points_.back());
+  Cell *q = &GetCell(starting_points_.back());
+
+  open.push_back(q);
+
+  Direction current_direction = CalculateDirectionAtBeginning(q->placement, final_points_[rand() % final_points_.size()]);
+
   while (not open.empty()) {
+
     q = PopSuccessor(open, current_direction);
-    {
-      if (q != nullptr)
-        if (not q->IsDiscovered()) {
-          open.push_back(q);
-          q->UpdateG();
-          if (q->cell_type == CellState::FINISH) return true;
-        }
+
+    if (q != nullptr) {
+      q->UpdateG();
+      if (q->cell_type == CellState::FINISH) return true;
     }
+
+    //    for (const auto kS : successors)
+    //      open.push_back(kS);
+    //    successors.clear();
+    //
   }
+
   return false;
 }
 

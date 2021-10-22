@@ -1,10 +1,9 @@
 //
 // Created by piotr on 09/10/2021.
 //
-#include "../a_star/a_star.h"
-#include "../dijkstra/dijkstra.h"
-#include "../random_walk/random_walk_algorithm.h"
+#include "../path_search/path_search.h"
 
+#include "../sfml_window/window.h"
 #include "maze_painter.h"
 #include <iostream>
 #define WINDOW_SIZE 500

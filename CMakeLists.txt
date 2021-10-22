@@ -9,25 +9,38 @@ endif ()
 set(CMAKE_CXX_STANDARD 14)
 
 set(plane_dir
-        plane/plane.h plane/plane.cpp
+        plane/plane.h
+        plane/plane.cpp
         plane/cell_type.h
-        maze/maze_generator.h maze/maze_generator.cpp
-        utility/coord.h utility/coord.cpp
+        maze/maze_generator.h
+        maze/maze_generator.cpp
+        utility/coord.h
+        utility/coord.cpp
         CoA_settings.h)
 
 set(sfml_window_dir
-        sfml_window/window.h sfml_window/window.cpp
-        sfml_window/window_plane.h sfml_window/window_plane.cpp
-        sfml_window/color_scheme.h sfml_window/color_scheme.cpp
-        sfml_window/graph.h sfml_window/graph.cpp)
+        sfml_window/window.h
+        sfml_window/window.cpp
+        sfml_window/window_plane.h
+        sfml_window/window_plane.cpp
+        sfml_window/color_scheme.h
+        sfml_window/color_scheme.cpp
+        sfml_window/graph.h
+        sfml_window/graph.cpp)
 
 set(path_search_dir
-        path_search/dijkstra/dijkstra.h path_search/dijkstra/dijkstra.cpp
-        path_search/a_star/a_star.h path_search/a_star/a_star.cpp
-        path_search/cell.h path_search/cell.cpp
-        path_search/random_walk/random_walk_algorithm.h path_search/random_walk/random_walk_algorithm.cpp
-        path_search/right_hand_rule/right_hand_rule.h path_search/right_hand_rule/right_hand_rule.cpp
-        path_search/graph_base.h path_search/graph_base.cpp
+        path_search/dijkstra/dijkstra.h
+        path_search/dijkstra/dijkstra.cpp
+        path_search/a_star/a_star.h
+        path_search/a_star/a_star.cpp
+        path_search/cell.h
+        path_search/cell.cpp
+        path_search/random_walk/random_walk_algorithm.h
+        path_search/random_walk/random_walk_algorithm.cpp
+        path_search/right_hand_rule/right_hand_rule.h
+        path_search/right_hand_rule/right_hand_rule.cpp
+        path_search/graph_base.h
+        path_search/graph_base.cpp
         path_search/path_search.h
         )
 
@@ -49,6 +62,8 @@ add_executable(tests testing/testing.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${path_search_dir}
+        testing/pr_file_format.h
+        testing/pr_file_format.cpp
         )
 add_executable(plane_example plane/plane_example.cpp
         ${plane_dir})
@@ -85,8 +100,6 @@ add_executable(maze_generator maze/maze_generator_example.cpp
 add_executable(graph_example sfml_window/graph_example.cpp
         ${plane_dir}
         ${sfml_window_dir})
-#add_executable(clock_example clock/clock_example.cpp
-#        ${plane_dir})
 
 set(executables CoA a_star_example dijkstra_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
 
