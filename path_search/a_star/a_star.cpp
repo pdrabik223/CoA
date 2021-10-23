@@ -84,16 +84,14 @@ bool AStar::UpdateGs() {
 
   while (not open.empty()) {
     q = PopSmallestH(open);
-    {
-      for (Cell *k_p : q->nodes) {
-        if (not k_p->IsDiscovered()) {
-          open.push_back(k_p);
-          k_p->UpdateG();
-          k_p->h = EuclideanDistance(k_p->placement);
-          if (k_p->cell_type == CellState::FINISH) return true;
-        }
+
+    for (Cell *k_p : q->nodes)
+      if (not k_p->IsDiscovered()) {
+        open.push_back(k_p);
+        k_p->UpdateG();
+        k_p->h = EuclideanDistance(k_p->placement);
+        if (k_p->cell_type == CellState::FINISH) return true;
       }
-    }
   }
 
   return false;

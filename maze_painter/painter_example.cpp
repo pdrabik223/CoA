@@ -3,78 +3,91 @@
 //
 #include "../path_search/path_search.h"
 
-#include "../sfml_window/window.h"
 #include "maze_painter.h"
+#include <conio.h>
 #include <iostream>
 #define WINDOW_SIZE 500
-int Loop(Window &window) {
-  window.MainLoop();
-  return 0;
+
+void MessageMe(Algorythm algorythm, size_t time, int path_length) {
+
+  std::string maze_type;
+  std::string algorithm;
+
+  switch (algorythm) {
+    case Algorythm::DIJKSTRA: algorithm = "Dijkstra"; break;
+    case Algorythm::A_STAR: algorithm = "A*\t"; break;
+    case Algorythm::RANDOM_WALK: algorithm = "Random Walk"; break;
+    case Algorythm::RIGHT_HAND_RULE: algorithm = "Right Hand Rule"; break;
+  }
+  std::cout << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
+            << "path length: " << path_length << "\n";
 }
 
-int GenBrutForceVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
+#define T_START std::chrono::high_resolution_clock::now()
+#define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
 
-  Dijkstra cos(maze);
+class Generator {
+ public:
+  Generator(std::pair<Plane, Algorythm> &settings, Window &window, const ColorScheme &color_scheme) {
 
-  auto path = cos.FindPath(window, color_scheme);
+    generator_thread_ = new std::thread(&Generator::MainLoop, this, std::ref(settings), std::ref(window), color_scheme);
+  };
 
-  auto t1 = std::chrono::steady_clock::now();
-  cos.FindPath();
-  std::clog << "algorithm: Dijkstra\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
+  void MainLoop(std::pair<Plane, Algorythm> &settings, Window &window, ColorScheme color_scheme) {
+    std::chrono::steady_clock::time_point t_1;
+    double time;
 
-  return 1;
+    std::unique_ptr<GraphBase> engine;
+
+    switch (settings.second) {
+      case Algorythm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
+      case Algorythm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
+      case Algorythm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
+      case Algorythm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
+    }
+
+    auto path = engine->FindPath(window, color_scheme);
+    t_1 = T_START;
+    engine->FindPath();
+    time = T_RECORD(t_1);
+    MessageMe(settings.second, time, path.size());
+  };
+
+  ~Generator() {
+    generator_thread_->join();
+    delete generator_thread_;
+  }
+
+  std::thread *generator_thread_;
+};
+
+void GlobalVisuals(std::vector<std::pair<Plane, Algorythm>> &settings) {
+
+  std::vector<Window *> windows;
+  windows.reserve(settings.size());
+  std::vector<Generator> generators;
+  generators.reserve(settings.size());
+
+  ColorScheme color_scheme;
+  color_scheme.LoadGreenSet();
+
+  for (int i = 0; i < settings.size(); ++i) {
+
+    windows.push_back(new Window({{i * WINDOW_SIZE, 0}, WINDOW_SIZE, WINDOW_SIZE}));
+
+    generators.emplace_back(settings[i], *windows[i], color_scheme);
+  }
 }
-int GenAStarVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
-
-  AStar cos(maze);
-
-  auto path = cos.FindPath(window, color_scheme);
-
-  auto t1 = std::chrono::steady_clock::now();
-  cos.FindPath();
-  std::clog << "algorithm: AStar\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
-  return 2;
-}
-int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
-
-  RandomWalk cos(maze);
-
-  auto path = cos.FindPath(window, color_scheme);
-
-  auto t1 = std::chrono::steady_clock::now();
-  cos.FindPath();
-  std::clog << "algorithm: Random Walk\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
-
-  return 3;
-}
-
 int main() {
 
   MazePainter maze(800, 800, 20, 20);
   maze.MainLoop();
   maze.GetPlane().SaveToFile("../saved_mazes/test.txt");
-  Plane cos("../saved_mazes/test.txt");
 
-  ColorScheme color_scheme;
-  color_scheme.LoadGreenSet();
+  std::vector<std::pair<Plane, Algorythm>> settings = {{maze.GetPlane(), Algorythm::RIGHT_HAND_RULE}};
 
-  Window screen_1(WINDOW_SIZE, WINDOW_SIZE);
-
-  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-
-  Window screen_3(Coord(0, WINDOW_SIZE), WINDOW_SIZE, WINDOW_SIZE);
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme, cos);
-  std::thread generator_2(GenBrutForceVisuals, std::ref(screen_2), color_scheme, cos);
-  std::thread generator_3(GenAStarVisuals, std::ref(screen_3), color_scheme, cos);
-
-  generator_1.join();
-  generator_2.join();
-  generator_3.join();
-
-  //  system("pause");
+  GlobalVisuals(settings);
+  getch();
 
   return 0;
 }

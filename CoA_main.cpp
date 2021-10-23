@@ -7,13 +7,6 @@
 #include <memory>
 #define WINDOW_SIZE 500
 
-#define RUN_BRUTEFORCE true
-#define RUN_RANDOM_WALK false
-#define RUN_DIJKSTRA false
-
-#define USE_RANDOM_GEN true
-#define USE_SQUARE_MAZE false
-#define USE_CIRCULAR_MAZE false
 enum class MazeType {
   EMPTY_PLANE,
   PLANE_5,

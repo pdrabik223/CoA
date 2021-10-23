@@ -115,35 +115,12 @@ Cell *RHR::PopSuccessor(std::vector<Cell *> &open, RHR::Direction &current_direc
   std::array<Cell *, 4> neighbours{nullptr, nullptr, nullptr, nullptr};
   Direction best_way = RotateLeft(RotateLeft(current_direction));
 
-  if (not open.back()->IsDiscovered()) {
-
-    auto q = open.back();
-    open.pop_back();
-
-    for (auto p : q->nodes)
-      if (p->IsDiscovered()) {
-        best_way = CalculateDirection(p->placement, q->placement);
-
-        for (auto k : q->nodes)
-          if (!k->IsDiscovered())
-            neighbours[(int) CalculateDirection(q->placement, k->placement)] = k;
-
-        if (neighbours[(int) RotateLeft(best_way)])
-          open.push_back(neighbours[(int) RotateLeft(best_way)]);
-
-        if (neighbours[(int) RotateRight(best_way)])
-          open.push_back(neighbours[(int) RotateRight(best_way)]);
-
-        if (neighbours[(int) best_way])
-          open.push_back(neighbours[(int) best_way]);
-
-        current_direction = best_way;
-
-        return q;
-      }
-    throw "exception";
-  }
-
+  if (open.back()->IsDiscovered())
+    return Discovered(open, current_direction, neighbours, best_way);
+  else
+    return NotDiscovered(neighbours, best_way, open);
+}
+Cell *RHR::Discovered(std::vector<Cell *> &open, RHR::Direction &current_direction, std::array<Cell *, 4> &neighbours, RHR::Direction &best_way) {
   for (auto q : open.back()->nodes)
     if (!q->IsDiscovered())
       neighbours[(int) CalculateDirection(open.back()->placement, q->placement)] = q;
@@ -159,6 +136,31 @@ Cell *RHR::PopSuccessor(std::vector<Cell *> &open, RHR::Direction &current_direc
   } else
     return nullptr;
 
+  AppendSurrounding(neighbours, open, best_way, current_direction);
+
+  return open.back();
+}
+Cell *RHR::NotDiscovered(std::array<Cell *, 4> &neighbours, RHR::Direction &current_direction, std::vector<Cell *> &open) {
+  Direction best_way = RotateLeft(RotateLeft(current_direction));
+  auto q = open.back();
+  open.pop_back();
+
+  for (auto p : q->nodes)
+    if (p->IsDiscovered()) {
+      best_way = CalculateDirection(p->placement, q->placement);
+
+      for (auto k : q->nodes)
+        if (!k->IsDiscovered())
+          neighbours[(int) CalculateDirection(q->placement, k->placement)] = k;
+
+      AppendSurrounding(neighbours, open, best_way, current_direction);
+
+      return q;
+    }
+  throw "exception";
+}
+void RHR::AppendSurrounding(const std::array<Cell *, 4> &neighbours, std::vector<Cell *> &open, RHR::Direction &best_way, Direction &current_direction) {
+
   if (neighbours[(int) RotateLeft(best_way)])
     open.push_back(neighbours[(int) RotateLeft(best_way)]);
 
@@ -167,9 +169,7 @@ Cell *RHR::PopSuccessor(std::vector<Cell *> &open, RHR::Direction &current_direc
 
   if (neighbours[(int) best_way])
     open.push_back(neighbours[(int) best_way]);
-
   current_direction = best_way;
-  return open.back();
 }
 bool RHR::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   std::vector<Cell *> open;
@@ -194,11 +194,6 @@ bool RHR::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
       if (q->cell_type == CellState::FINISH) return true;
       HighlightPositions(window_handle, color_scheme, {q});
     }
-
-    //    for (const auto kS : successors)
-    //      open.push_back(kS);
-    //    successors.clear();
-    //
   }
 
   return false;
