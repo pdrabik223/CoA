@@ -2,75 +2,48 @@
 // Created by piotr on 12/10/2021.
 //
 
-#include "../a_star/a_star.h"
-#include "../brute_force/brute_force.h"
-#include "../random_walk/random_walk_algorithm.h"
+#include "../path_search/path_search.h"
 
 #include <iostream>
 #define WINDOW_SIZE 500
-int Loop(Window &window) {
-  window.MainLoop();
-  return 0;
-}
 
-int GenBrutForceVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
+class Generator {
+ public:
+  Generator(std::pair<Plane, Algorythm> settings, Window &window, const ColorScheme &color_scheme) {
 
-  BruteForce cos(maze);
+    generator_thread_ = new std::thread(&Generator::MainLoop, this, settings, std::ref(window), color_scheme);
+  };
 
-  auto path = cos.FindPath(window, color_scheme);
+  void MainLoop(std::pair<Plane, Algorythm> settings, Window &window, ColorScheme color_scheme) {
 
-  auto t1 = std::chrono::steady_clock::now();
-  cos.FindPath();
-  std::clog << "algorithm: BruteForce\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
+    std::unique_ptr<GraphBase> engine;
 
-  return 1;
-}
-int GenDijkstraVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
+    switch (settings.second) {
+      case Algorythm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
+      case Algorythm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
+      case Algorythm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
+      case Algorythm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
+    }
 
-  AStar cos(maze);
+    auto path = engine->FindPath(window, color_scheme);
+  };
 
-  auto path = cos.FindPath(window, color_scheme);
+  ~Generator() {
+    generator_thread_->join();
+    delete generator_thread_;
+  }
 
-  auto t1 = std::chrono::steady_clock::now();
-  cos.FindPath();
-  std::clog << "algorithm: Dijkstra\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
-  return 2;
-}
-int GenRandomWalkVisuals(Window &window, ColorScheme color_scheme, Plane maze) {
-
-  RandomWalk cos(maze);
-
-  auto path = cos.FindPath(window, color_scheme);
-
-  auto t1 = std::chrono::steady_clock::now();
-  cos.FindPath();
-  std::clog << "algorithm: Random Walk\ttime: " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t1).count() << "ms\tpath length: " << path.size() << "\n";
-
-  return 3;
-}
+  std::thread *generator_thread_;
+};
 
 int main() {
 
-  Plane cos("../saved_mazes/difference.txt");
+  Plane cos("../saved_mazes/rhr3.txt");
 
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
-
-  Window screen_1(WINDOW_SIZE, WINDOW_SIZE);
-
-  Window screen_2(Coord(WINDOW_SIZE, 0), WINDOW_SIZE, WINDOW_SIZE);
-
-  Window screen_3(Coord(0, WINDOW_SIZE), WINDOW_SIZE, WINDOW_SIZE);
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-  std::thread generator_1(GenRandomWalkVisuals, std::ref(screen_1), color_scheme, cos);
-  std::thread generator_2(GenBrutForceVisuals, std::ref(screen_2), color_scheme, cos);
-  std::thread generator_3(GenDijkstraVisuals, std::ref(screen_3), color_scheme, cos);
-
-  generator_1.join();
-  generator_2.join();
-  generator_3.join();
+  Window screen(800, 800);
+  Generator main({cos, Algorythm::RIGHT_HAND_RULE}, screen, color_scheme);
 
   return 0;
 }
