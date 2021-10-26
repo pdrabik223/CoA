@@ -6,9 +6,9 @@
 #define COA_PLANE_H
 #include "../utility/coord.h"
 #include "cell_type.h"
+#include "pm_include.h"
 #include <ciso646>
 #include <vector>
-
 class Plane {
  public:
   Plane() : width_(0), height_(0){};
@@ -29,6 +29,7 @@ class Plane {
   void LoadFromFile(const std::string& file_name);
 
   void Clear();
+  void Fill(CellState fill_type);
 
  protected:
   /// x axis

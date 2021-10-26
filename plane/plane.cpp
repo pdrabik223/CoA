@@ -91,3 +91,8 @@ void Plane::Clear() {
     c = CellState::EMPTY;
   }
 }
+void Plane::Fill(CellState fill_type) {
+  for (auto &c : plane_) {
+    c = fill_type;
+  }
+}

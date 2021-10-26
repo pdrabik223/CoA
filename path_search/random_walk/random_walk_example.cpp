@@ -1,10 +1,8 @@
 //
-// Created by piotr on 07/10/2021.
+// Created by piotr on 09/10/2021.
 //
-#include "../brute_force/brute_force.h"
-#include "../plane/plane.h"
-#include "dijkstra.h"
-#include <iostream>
+#include "../../plane/plane.h"
+#include "random_walk_algorithm.h"
 int main() {
 
   Plane sic(20, 20, 10);
@@ -18,13 +16,12 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  dijkstra::Dijkstra sample(sic);
+  RandomWalk sample(sic);
 
   printf("\nsolution:\n");
 
   ConsoleDisplay(sic,sample.FindPath());
 
-  ConsoleDisplay(sample.FindPath());
 
   getchar();
 

@@ -30,7 +30,6 @@ class MazeGenerator {
   MazeGenerator &operator=(const MazeGenerator &other) = default;
 
   void AddStartAndFinish();
-
   const Plane &GetPlane() const;
 
   void GenSquareMaze() {
@@ -39,7 +38,6 @@ class MazeGenerator {
     RecursiveDivision({{0, 0}, {(int) plane_.GetWidth() - 1, (int) plane_.GetHeight() - 1}}, 0);
     AddStartAndFinish();
   };
-  void RecursiveCircularDivision();
   void GenCircularMaze() {
     plane_.Clear();
     RecursiveCircularDivision();
@@ -51,11 +49,35 @@ class MazeGenerator {
     plane_.SetCell(center, CellState::FINISH);
     plane_.AddBorder(CellState::START);
   }
+  void GenSnailMaze() {
+    plane_.Fill(CellState::WALL);
+    RecursiveSnake();
+  }
+  void GenRandomMaze(int infill_percentage) {
+
+    for (int x = 0; x < plane_.GetWidth(); x++)
+      for (int y = 0; y < plane_.GetHeight(); ++y) {
+        if (rand() % 100 < infill_percentage)
+          plane_.SetCell({x, y}, CellState::WALL);
+        else
+          plane_.SetCell({x, y}, CellState::EMPTY);
+      }
+
+    plane_.SetCell({(int) plane_.GetWidth() / 2, (int) plane_.GetHeight() / 2}, CellState::START);
+
+    int x = rand() % 2 == 1 ? plane_.GetWidth() - 1 : 0;
+    int y = rand() % 2 == 1 ? plane_.GetHeight() - 1 : 0;
+    plane_.SetCell({x, y}, CellState::FINISH);
+  }
 
  private:
+  void RecursiveSnake();
+  void RecursiveCircularDivision();
   void CheckBoundariesAndPush(const Coord &position, std::vector<Coord> &push_target);
   void RecursiveDivision(const Square &square, int depth);
   void DrawLine(const Coord &start, const Coord &finish, const Coord &breaking_point);
+  void DrawLine(Coord start, Coord finish);
+
   void DrawCircle(const Coord &center, std::vector<Coord> &target, int radius);
 
  protected:

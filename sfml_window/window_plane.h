@@ -5,9 +5,8 @@
 #ifndef COA_SFML_WINDOW_WINDOW_PLANE_H_
 #define COA_SFML_WINDOW_WINDOW_PLANE_H_
 
-#include "../dijkstra/cell.h"
+#include "../path_search/cell.h"
 #include "../plane/plane.h"
-#include "../brute_force/cell.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Event.hpp"
@@ -22,20 +21,17 @@ class WindowPlane {
  public:
   WindowPlane() = delete;
   WindowPlane(const Plane &plane);
-  WindowPlane(const Plane &plane, const ColorScheme& color_scheme);
+  WindowPlane(const Plane &plane, const ColorScheme &color_scheme);
 
   WindowPlane(int width, int height) : width_(width), height_(height) { grid_.reserve(height_ * width_); }
   WindowPlane(const std::vector<Cell> &plane, int width, int height);
-  WindowPlane(const std::vector<Cell> &plane, int width, int height, const ColorScheme& color_scheme);
 
-  WindowPlane(const std::vector<dijkstra::Cell> &plane, int width, int height,const ColorScheme& color_scheme);
+  WindowPlane(const std::vector<Cell> &plane, int width, int height, const ColorScheme &color_scheme);
   WindowPlane(const WindowPlane &other) = default;
   WindowPlane &operator=(const WindowPlane &other) = default;
 
-  void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(0,0,0));
+  void HighlightCells(const std::vector<Coord> &plane, sf::Color highlight_color = sf::Color(0, 0, 0));
   void DrawToWindow(sf::RenderWindow &window);
-
-
 
  protected:
   /// x axis

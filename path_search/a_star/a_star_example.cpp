@@ -1,9 +1,9 @@
 //
-// Created by piotr on 09/10/2021.
+// Created by piotr on 07/10/2021.
 //
-#include "../plane/plane.h"
-#include "../sample_algorithm/sample.h"
-#include "random_walk_algorithm.h"
+#include "../../plane/plane.h"
+#include "a_star.h"
+#include <iostream>
 int main() {
 
   Plane sic(20, 20, 10);
@@ -17,13 +17,13 @@ int main() {
 
   ConsoleDisplay(sic);
 
-  RandomWalkAlgorithm sample(sic);
+  AStar sample(sic);
 
   printf("\nsolution:\n");
 
   ConsoleDisplay(sic,sample.FindPath());
 
-  ConsoleDisplay(sample.FindPath());
+  //  ConsoleDisplay(sample.FindPath());
 
   getchar();
 

@@ -6,7 +6,7 @@
 
 void Window::MainLoop() {
   sf::ContextSettings settings;
-  settings.antialiasingLevel = 10;
+  settings.antialiasingLevel = 8;
 
   sf::RenderWindow window(sf::VideoMode(width_, height_), "CoA",
                           sf::Style::None, settings);
@@ -46,8 +46,11 @@ void Window::MainLoop() {
   }
 }
 
-Window::Window(int width, int height) : height_(height), width_(width), position_(0, 0) {}
+Window::Window(int width, int height) : height_(height), width_(width), position_(0, 0) {
+  screen_thread_ = new std::thread(&Window::MainLoop, this);
+}
 Window::Window(const Coord &position, int width, int height) : height_(height), width_(width), position_(position) {
+  screen_thread_ = new std::thread(&Window::MainLoop, this);
 }
 
 WindowPlane Window::PopFrame() {
@@ -72,14 +75,12 @@ int Window::GetQueueSize() {
 }
 void Window::SetWindowLabel(const std::string &label) {
   current_window_title_ = label;
-  update_title_ = true;
 }
 Window &Window::operator=(const Window &other) {
   if (this == &other) return *this;
   width_ = other.width_;
   height_ = other.height_;
   current_window_title_ = other.current_window_title_;
-  update_title_ = false;
   event_ = other.event_;
   frame_queue_ = other.frame_queue_;
   return *this;
@@ -88,7 +89,6 @@ Window::Window(const Window &other) {
   width_ = other.width_;
   height_ = other.height_;
   current_window_title_ = other.current_window_title_;
-  update_title_ = false;
   event_ = other.event_;
   frame_queue_ = other.frame_queue_;
 }
