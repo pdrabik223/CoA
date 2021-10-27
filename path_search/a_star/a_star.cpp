@@ -34,9 +34,6 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   for (const auto &s : starting_points_)
     open.push_back(&GetCell(s));
 
-  for (auto o : open) {
-    o->g = 0;
-  }
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
   std::vector<Cell *> successors;
 

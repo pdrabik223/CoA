@@ -84,7 +84,7 @@ int main() {
   maze.MainLoop();
   maze.GetPlane().SaveToFile("../saved_mazes/test.txt");
 
-  std::vector<std::pair<Plane, Algorythm>> settings = {{maze.GetPlane(), Algorythm::RIGHT_HAND_RULE}};
+  std::vector<std::pair<Plane, Algorythm>> settings = {{maze.GetPlane(), Algorythm::A_STAR}};
 
   GlobalVisuals(settings);
   getch();

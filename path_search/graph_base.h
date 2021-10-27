@@ -15,7 +15,8 @@ enum class Algorythm {
   DIJKSTRA,
   A_STAR,
   RANDOM_WALK,
-  RIGHT_HAND_RULE
+  RIGHT_HAND_RULE,
+  DEPTH_FIRST
 };
 
 class GraphBase {

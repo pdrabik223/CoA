@@ -75,6 +75,7 @@ class Generator {
         case Algorythm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(maze.GetPlane()))); break;
         case Algorythm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(maze.GetPlane()))); break;
         case Algorythm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(maze.GetPlane()))); break;
+        case Algorythm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(maze.GetPlane()))); break;
       }
 
       auto path = engine->FindPath(window, color_scheme);
@@ -114,9 +115,9 @@ void GlobalVisuals(std::vector<std::pair<MazeType, Algorythm>> settings) {
 int main() {
   srand(time(NULL));
 
-  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::RIGHT_HAND_RULE},
-                                                          {MazeType::PLANE_10, Algorythm::RIGHT_HAND_RULE},
-                                                          {MazeType::EMPTY_PLANE, Algorythm::RIGHT_HAND_RULE}};
+  std::vector<std::pair<MazeType, Algorythm>> settings = {{MazeType::SQUARE_MAZE, Algorythm::DEPTH_FIRST},
+                                                          {MazeType::PLANE_10, Algorythm::DEPTH_FIRST},
+                                                          {MazeType::EMPTY_PLANE, Algorythm::DEPTH_FIRST}};
   GlobalVisuals(settings);
 
   return 0;

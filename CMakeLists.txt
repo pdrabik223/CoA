@@ -39,6 +39,8 @@ set(path_search_dir
         path_search/random_walk/random_walk_algorithm.cpp
         path_search/right_hand_rule/right_hand_rule.h
         path_search/right_hand_rule/right_hand_rule.cpp
+        path_search/depth_first/depth_first.h
+        path_search/depth_first/depth_first.cpp
         path_search/graph_base.h
         path_search/graph_base.cpp
         path_search/path_search.h

@@ -1,22 +1,20 @@
 //
-// Created by piotr on 05/10/2021.
+// Created by piotr on 27/10/2021.
 //
 
-#ifndef COA_PATH_SEARCH_DIJKSTRA_DIJKSTRA_H_
-#define COA_PATH_SEARCH_DIJKSTRA_DIJKSTRA_H_
+#ifndef COA_PATH_SEARCH_DEPTH_FIRST_H_
+#define COA_PATH_SEARCH_DEPTH_FIRST_H_
 
 #include "../graph_base.h"
+class DepthFirst : public GraphBase {
 
-/// for now there only can be one start and one finish cell
-/// this is BFS breadth first search
-
-class Dijkstra : public GraphBase {
  public:
-  Dijkstra() = delete;
+  DepthFirst() = delete;
+
   /// constructs Sample object based of Plane
-  explicit Dijkstra(const Plane &other) : GraphBase(other){};
-  Dijkstra(const Dijkstra &other) = default;
-  Dijkstra &operator=(const Dijkstra &other) = default;
+  explicit DepthFirst(const Plane &other) : GraphBase(other){};
+  DepthFirst(const DepthFirst &other) = default;
+  DepthFirst &operator=(const DepthFirst &other) = default;
 
   /// find path from start to finish
   /// \return list of connected coordinates
@@ -28,16 +26,15 @@ class Dijkstra : public GraphBase {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme) override;
 
-  ~Dijkstra() override {
+  ~DepthFirst() override {
     ClearGraph();
   }
 
  private:
-
   bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 
+  Cell *PopDeepest(std::vector<Cell *> &open_set);
 };
 
-
-#endif//COA_PATH_SEARCH_DIJKSTRA_DIJKSTRA_H_
+#endif//COA_PATH_SEARCH_DEPTH_FIRST_H_

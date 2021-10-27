@@ -33,10 +33,6 @@ bool Dijkstra::UpdateGs() {
   for (const auto &s : starting_points_)
     open.push_back(&GetCell(s));
 
-  for (auto o : open) {
-    o->g = 0;
-  }
-
   std::vector<Cell *> successors;
   while (not open.empty()) {
 

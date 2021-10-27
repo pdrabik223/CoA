@@ -54,7 +54,6 @@ void Cell::UpdateG() {
     if (node->g + 1 < g) g = node->g + 1;
 }
 void Cell::Clear() {
-
   if (cell_type == CellState::START)
     g = 0;
   else

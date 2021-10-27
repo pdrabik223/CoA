@@ -21,7 +21,7 @@ class AStar : public GraphBase {
   explicit AStar(const Plane &other);
 
   AStar(const AStar &other);
-  AStar &operator=(const AStar &other);
+  AStar &operator=(const AStar &other) = default;
 
   /// find path from start to finish
   /// \return list of connected coordinates
