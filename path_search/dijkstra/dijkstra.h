@@ -9,6 +9,7 @@
 
 /// for now there only can be one start and one finish cell
 /// this is BFS breadth first search
+/// because all weights are equal
 
 class Dijkstra : public GraphBase {
  public:

@@ -41,6 +41,8 @@ set(path_search_dir
         path_search/right_hand_rule/right_hand_rule.cpp
         path_search/depth_first/depth_first.h
         path_search/depth_first/depth_first.cpp
+        path_search/greedy_best_first/greedy_best_first.h
+        path_search/greedy_best_first/greedy_best_first.cpp
         path_search/graph_base.h
         path_search/graph_base.cpp
         path_search/path_search.h

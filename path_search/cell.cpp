@@ -59,7 +59,6 @@ void Cell::Clear() {
   else
     g = CELL_MAX;
 }
-void Cell::SetH(const double &h) { this->h = h; }
 Cell::~Cell() {
 
   nodes.clear();

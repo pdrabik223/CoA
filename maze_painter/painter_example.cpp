@@ -80,7 +80,7 @@ void GlobalVisuals(std::vector<std::pair<Plane, Algorythm>> &settings) {
 }
 int main() {
 
-  MazePainter maze(800, 800, 20, 20);
+  MazePainter maze(800, 800, 80, 80);
   maze.MainLoop();
   maze.GetPlane().SaveToFile("../saved_mazes/test.txt");
 

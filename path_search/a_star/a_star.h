@@ -40,6 +40,8 @@ class AStar : public GraphBase {
 
   /// finds Manhattan distance between position and closest finish point
   double ManhattanDistance(const Coord &position);
+
+  double PDistance(const Coord &position);
   bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 
@@ -47,6 +49,7 @@ class AStar : public GraphBase {
   Cell *PopSmallestH(std::vector<Cell *> &open_set);
 
  protected:
+  double max_distance_;
   const DistanceFunction used_distance_function_ = MANHATTAN_DISTANCE;
 };
 

@@ -42,7 +42,8 @@ void Window::MainLoop() {
     if (GetQueueSize() != 0) {
       PopFrame().DrawToWindow(window);
       window.display();
-    }
+    } else
+      std::this_thread::sleep_for(std::chrono::milliseconds(16));
   }
 }
 
