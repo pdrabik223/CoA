@@ -5,29 +5,6 @@
 #include "random_walk_algorithm.h"
 #include <algorithm>
 
-RandomWalk &RandomWalk::operator=(const RandomWalk &other) {
-
-  if (&other == this) return *this;
-
-  width_ = other.width_;
-  height_ = other.height_;
-  copy_plane_.reserve(width_ * height_);
-
-  for (int i = 0; i < width_ * height_; i++)
-    copy_plane_.emplace_back(other.copy_plane_[i]);
-
-  for (const auto &f : other.starting_points_)
-    starting_points_ = other.starting_points_;
-
-  for (const auto &f : other.final_points_)
-    final_points_ = other.final_points_;
-
-  for (const auto &f : other.shortest_path_)
-    shortest_path_ = other.shortest_path_;
-
-  return *this;
-}
-
 std::vector<Coord> RandomWalk::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
 
   ClearGraph();
@@ -92,22 +69,13 @@ bool RandomWalk::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
 
     for (const auto kP : q->nodes)
       if (not kP->IsDiscovered()) {
-        successors.push_back(kP);
         kP->UpdateG();
         if (kP->cell_type == CellState::FINISH) return true;
+        successors.push_back(kP);
+        open.push_back(kP);
       }
 
-    WindowPlane highlights(copy_plane_, width_, height_, color_scheme);
-    std::vector<Coord> highlighted_positions;
-    highlighted_positions.reserve(successors.size());
-    for (const auto kS : successors)
-      highlighted_positions.push_back(kS->placement);
-    highlights.HighlightCells(highlighted_positions);
-    window_handle.PushFrame(highlights);
-
-    for (const auto kS : successors)
-      open.push_back(kS);
-
+    HighlightPositions(window_handle, color_scheme, successors);
     successors.clear();
   }
   return false;

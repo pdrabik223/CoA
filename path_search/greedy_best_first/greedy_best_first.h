@@ -12,8 +12,7 @@ class GreedyBestFirst : public GraphBase {
   GreedyBestFirst() = delete;
   /// constructs Sample object based of Plane
   explicit GreedyBestFirst(const Plane &other) : GraphBase(other){};
-
-  GreedyBestFirst(const GreedyBestFirst &other) : GraphBase(other){};
+  GreedyBestFirst(const GreedyBestFirst &other) = default;
   GreedyBestFirst &operator=(const GreedyBestFirst &other) = default;
 
   /// find path from start to finish
