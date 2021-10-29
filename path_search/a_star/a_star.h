@@ -20,7 +20,8 @@ class AStar : public GraphBase {
   /// constructs Sample object based of Plane
   explicit AStar(const Plane &other);
 
-  AStar(const AStar &other);
+  AStar(const AStar &other) = default;
+
   AStar &operator=(const AStar &other) = default;
 
   /// find path from start to finish
@@ -42,10 +43,10 @@ class AStar : public GraphBase {
   double ManhattanDistance(const Coord &position);
 
   double PDistance(const Coord &position);
+
   bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 
-  double ComputeH(Cell *target);
   Cell *PopSmallestH(std::vector<Cell *> &open_set);
 
  protected:

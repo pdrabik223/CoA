@@ -14,8 +14,6 @@ int Abs(int x) {
 
 AStar::AStar(const Plane &other) : GraphBase(other) {}
 
-AStar::AStar(const AStar &other) : GraphBase(other) {}
-
 std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
 
   ClearGraph();
@@ -116,10 +114,13 @@ double AStar::ManhattanDistance(const Coord &position) {
 }
 
 double AStar::PDistance(const Coord &position) {
-  double smallest_distance = 100000000;
+  unsigned smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
-    double distance = Abs(position.x - f.x) > Abs(position.y - f.y) ? Abs(position.x - f.x) : Abs(position.y - f.y);
+    unsigned d_x = Abs(position.x - f.x);
+    unsigned d_y = Abs(position.y - f.y);
+
+    unsigned distance = d_x > d_y ? d_x : d_y;
     if (distance < smallest_distance) smallest_distance = distance;
   }
 
@@ -131,10 +132,7 @@ Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++) {
-
-    double d_h = open_set[i]->h - open_set[smallest_h]->h;
-    double g_h = open_set[i]->g - open_set[smallest_h]->g;
-    if (d_h < 0) smallest_h = i;
+    if (open_set[i]->h - open_set[smallest_h]->h < 0) smallest_h = i;
   }
 
   Cell *temp = open_set[smallest_h];
