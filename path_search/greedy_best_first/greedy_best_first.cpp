@@ -35,7 +35,7 @@ bool GreedyBestFirst::UpdateGs(Window &window_handle, const ColorScheme &color_s
 
     for (const auto kP : q->nodes)
       if (not kP->IsDiscovered()) {
-        kP->g = q->g+1;
+        kP->UpdateG();
         kP->h = EuclideanDistance(kP->placement);
         if (kP->cell_type == CellState::FINISH) return true;
         successors.push_back(kP);

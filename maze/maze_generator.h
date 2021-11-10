@@ -7,6 +7,17 @@
 
 #include "../plane/plane.h"
 
+enum class MazeType {
+  EMPTY_PLANE,
+  PLANE_5,
+  PLANE_10,
+  PLANE_20,
+  PLANE_25,
+  CIRCUlAR_MAZE,
+  SQUARE_MAZE,
+  SNAIL_MAZE
+};
+
 struct SquareMazeInfo {
   unsigned hole_size = 1;
   Coord min_cavity_size = {5, 5};
@@ -26,6 +37,20 @@ class MazeGenerator {
  public:
   MazeGenerator() = delete;
   MazeGenerator(const int width, const int height) : plane_(width, height, 0){};
+  MazeGenerator(const int width, const int height, MazeType maze_type) : plane_(width, height, 0) {
+
+    switch (maze_type) {
+      case MazeType::EMPTY_PLANE: GenRandomMaze(0); break;
+      case MazeType::PLANE_5: GenRandomMaze(5); break;
+      case MazeType::PLANE_10: GenRandomMaze(10); break;
+      case MazeType::PLANE_20: GenRandomMaze(20); break;
+      case MazeType::PLANE_25: GenRandomMaze(25); break;
+      case MazeType::CIRCUlAR_MAZE: GenCircularMaze(); break;
+      case MazeType::SQUARE_MAZE: GenSquareMaze(); break;
+      case MazeType::SNAIL_MAZE: GenSnailMaze(); break;
+    }
+  };
+
   MazeGenerator(const MazeGenerator &other) = default;
   MazeGenerator &operator=(const MazeGenerator &other) = default;
 

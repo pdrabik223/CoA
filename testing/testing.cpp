@@ -13,7 +13,7 @@
 void PerformTest();
 #define T_START std::chrono::high_resolution_clock::now()
 #define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
-#define INT(x) (int) Algorythm::x
+#define INT(x) (int) Algorithm::x
 void TestMe(std::array<unsigned, 4> &path_length,
             std::array<unsigned, 4> &path_misses,
             std::array<double, 4> &times,
@@ -144,7 +144,7 @@ void TestMe(std::array<unsigned, 4> &path_length,
     path_length[INT(A_STAR)] = a_star.FindPath().size();
     times[INT(A_STAR)] += T_RECORD(time);
 
-    if (path_length[(int) Algorythm::DIJKSTRA] != 0 and path_length[INT(A_STAR)] == 0)
+    if (path_length[(int) Algorithm::DIJKSTRA] != 0 and path_length[INT(A_STAR)] == 0)
       path_misses[INT(A_STAR)]++;
   }
   {

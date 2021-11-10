@@ -52,7 +52,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
     for (Cell *k_p : q->nodes)
       if (not k_p->IsDiscovered()) {
-        k_p->g = q->g + 1;
+        k_p->UpdateG();
         k_p->h = PDistance(k_p->placement);
         if (k_p->cell_type == CellState::FINISH) return true;
         open.push_back(k_p);

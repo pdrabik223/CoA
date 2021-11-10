@@ -69,26 +69,11 @@ add_executable(tests testing/testing.cpp
         ${sfml_window_dir}
         ${path_search_dir}
         testing/pr_file_format.h
-        testing/pr_file_format.cpp
-        )
+        testing/pr_file_format.cpp)
 add_executable(plane_example plane/plane_example.cpp
         ${plane_dir})
 
 add_executable(saved_maze saved_mazes/saved_mazes.cpp
-        ${plane_dir}
-        ${sfml_window_dir}
-        ${path_search_dir})
-
-add_executable(dijkstra_example path_search/dijkstra/dijkstra_example.cpp
-        ${plane_dir}
-        ${sfml_window_dir}
-        ${path_search_dir})
-add_executable(random_walk_example path_search/random_walk/random_walk_example.cpp
-        ${plane_dir}
-        ${sfml_window_dir}
-        ${path_search_dir})
-
-add_executable(a_star_example path_search/a_star/a_star_example.cpp
         ${plane_dir}
         ${sfml_window_dir}
         ${path_search_dir})
@@ -107,27 +92,51 @@ add_executable(graph_example sfml_window/graph_example.cpp
         ${plane_dir}
         ${sfml_window_dir})
 
-set(executables CoA a_star_example dijkstra_example random_walk_example maze_painter maze_generator graph_example saved_maze tests)
+set(executables CoA maze_painter maze_generator graph_example saved_maze tests)
 
 foreach (executable IN LISTS executables)
     target_include_directories(${executable}
             PUBLIC ${PROJECT_SOURCE_DIR}/sfml/include
             PUBLIC ${PROJECT_SOURCE_DIR}/pm-stl
             )
-endforeach ()
-
-foreach(executable IN LISTS executables)
     target_link_directories(${executable}
             PUBLIC ${PROJECT_SOURCE_DIR}/sfml/src
             PUBLIC ${PROJECT_SOURCE_DIR}/pm-stl
             )
-endforeach()
-
-foreach(executable IN LISTS executables)
     target_link_libraries(${executable}
             sfml-graphics
             sfml-system
             sfml-window
             pm_stl
             )
-endforeach()
+endforeach ()
+
+set(debug_files_to_copy
+        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-graphics-d-2.dll
+        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-window-d-2.dll
+        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-system-d-2.dll
+        )
+
+set(release_files_to_copy
+        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-graphics-2.dll
+        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-window-2.dll
+        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-system-2.dll
+        )
+
+foreach (file IN LISTS debug_files_to_copy)
+    add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${file}
+            ${PROJECT_SOURCE_DIR}/cmake-build-debug/
+    )
+endforeach ()
+
+foreach (file IN LISTS release_files_to_copy)
+    add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${file}
+            ${PROJECT_SOURCE_DIR}/cmake-build-release/
+    )
+endforeach ()

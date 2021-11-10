@@ -8,18 +8,20 @@
 #include <iostream>
 #define WINDOW_SIZE 500
 
-void MessageMe(Algorythm algorythm, size_t time, int path_length) {
+void MessageMe(Algorithm algorithm, size_t time, int path_length) {
 
   std::string maze_type;
-  std::string algorithm;
+  std::string algorithm_message;
 
-  switch (algorythm) {
-    case Algorythm::DIJKSTRA: algorithm = "Dijkstra"; break;
-    case Algorythm::A_STAR: algorithm = "A*\t"; break;
-    case Algorythm::RANDOM_WALK: algorithm = "Random Walk"; break;
-    case Algorythm::RIGHT_HAND_RULE: algorithm = "Right Hand Rule"; break;
+  switch (algorithm) {
+    case Algorithm::DIJKSTRA: algorithm_message = "Dijkstra"; break;
+    case Algorithm::A_STAR: algorithm_message = "A*\t"; break;
+    case Algorithm::RANDOM_WALK: algorithm_message = "Random Walk"; break;
+    case Algorithm::RIGHT_HAND_RULE: algorithm_message = "Right Hand Rule"; break;
+    case Algorithm::DEPTH_FIRST: algorithm_message = "Deep first"; break;
+    case Algorithm::GREEDY_BEST_FIRST: algorithm_message = "Greedy deep first"; break;
   }
-  std::cout << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
+  std::cout << "\talgorithm: " << algorithm_message << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
 }
 
@@ -28,22 +30,23 @@ void MessageMe(Algorythm algorythm, size_t time, int path_length) {
 
 class Generator {
  public:
-  Generator(std::pair<Plane, Algorythm> &settings, Window &window, const ColorScheme &color_scheme) {
+  Generator(std::pair<Plane, Algorithm> &settings, Window &window, const ColorScheme &color_scheme) {
 
     generator_thread_ = new std::thread(&Generator::MainLoop, this, std::ref(settings), std::ref(window), color_scheme);
   };
 
-  void MainLoop(std::pair<Plane, Algorythm> &settings, Window &window, ColorScheme color_scheme) {
+  void MainLoop(std::pair<Plane, Algorithm> &settings, Window &window, ColorScheme color_scheme) {
     std::chrono::steady_clock::time_point t_1;
     double time;
 
     std::unique_ptr<GraphBase> engine;
 
     switch (settings.second) {
-      case Algorythm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
-      case Algorythm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
-      case Algorythm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
-      case Algorythm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
+      case Algorithm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
+      case Algorithm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
+      case Algorithm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
+      case Algorithm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
+      case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(settings.first))); break;
     }
 
     auto path = engine->FindPath(window, color_scheme);
@@ -61,7 +64,7 @@ class Generator {
   std::thread *generator_thread_;
 };
 
-void GlobalVisuals(std::vector<std::pair<Plane, Algorythm>> &settings) {
+void GlobalVisuals(std::vector<std::pair<Plane, Algorithm>> &settings) {
 
   std::vector<Window *> windows;
   windows.reserve(settings.size());
@@ -84,7 +87,9 @@ int main() {
   maze.MainLoop();
   maze.GetPlane().SaveToFile("../saved_mazes/test.txt");
 
-  std::vector<std::pair<Plane, Algorythm>> settings = {{maze.GetPlane(), Algorythm::A_STAR}};
+  std::vector<std::pair<Plane, Algorithm>> settings = {{maze.GetPlane(), Algorithm::A_STAR},
+                                                       {maze.GetPlane(), Algorithm::DIJKSTRA},
+                                                       {maze.GetPlane(), Algorithm::GREEDY_BEST_FIRST}};
 
   GlobalVisuals(settings);
   getch();

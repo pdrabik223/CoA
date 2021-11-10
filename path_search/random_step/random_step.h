@@ -40,7 +40,7 @@ class RandomStep : public GraphBase {
   Direction CalculateDirection(const Coord &c_1, const Coord &c_2);
   std::vector<Cell *> PopRandomPath(std::vector<Cell *> &positions);
 
-  bool UpdateGs();
+  bool UpdateGs() { return true; };
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 };
 

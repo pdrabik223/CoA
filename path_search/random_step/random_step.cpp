@@ -57,6 +57,7 @@ std::vector<Cell *> RandomStep::PopRandomPath(std::vector<Cell *> &open) {
   Cell *q = open.back();
 
   std::vector<Cell *> path;
+  return {};
 }
 RandomStep::Direction RandomStep::CalculateDirection(const Coord &c_1, const Coord &c_2) {
   RandomStep::Direction global_direction;

@@ -9,20 +9,22 @@
 
 class Generator {
  public:
-  Generator(std::pair<Plane, Algorythm> settings, Window &window, const ColorScheme &color_scheme) {
+  Generator(std::pair<Plane, Algorithm> settings, Window &window, const ColorScheme &color_scheme) {
 
     generator_thread_ = new std::thread(&Generator::MainLoop, this, settings, std::ref(window), color_scheme);
   };
 
-  void MainLoop(std::pair<Plane, Algorythm> settings, Window &window, ColorScheme color_scheme) {
+  void MainLoop(std::pair<Plane, Algorithm> settings, Window &window, ColorScheme color_scheme) {
 
     std::unique_ptr<GraphBase> engine;
 
     switch (settings.second) {
-      case Algorythm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
-      case Algorythm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
-      case Algorythm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
-      case Algorythm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
+      case Algorithm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
+      case Algorithm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
+      case Algorithm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
+      case Algorithm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
+      case Algorithm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(settings.first))); break;
+      case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(settings.first))); break;
     }
 
     auto path = engine->FindPath(window, color_scheme);
@@ -43,7 +45,7 @@ int main() {
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
   Window screen(800, 800);
-  Generator main({cos, Algorythm::A_STAR}, screen, color_scheme);
+  Generator main({cos, Algorithm::A_STAR}, screen, color_scheme);
 
   return 0;
 }

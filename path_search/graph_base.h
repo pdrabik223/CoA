@@ -11,13 +11,13 @@
 #include <vector>
 static void ConsoleDisplay(const std::vector<Coord> &path);
 
-enum class Algorythm {
+enum class Algorithm {
   DIJKSTRA,
   A_STAR,
   RANDOM_WALK,
   RIGHT_HAND_RULE,
   DEPTH_FIRST,
-  GREEDY_DEPTH_FIRST
+  GREEDY_BEST_FIRST
 };
 
 class GraphBase {
