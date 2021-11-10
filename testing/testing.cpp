@@ -14,11 +14,12 @@ void PerformTest();
 #define T_START std::chrono::high_resolution_clock::now()
 #define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
 #define INT(x) (int) Algorithm::x
-void TestMe(std::array<unsigned, 4> &path_length,
-            std::array<unsigned, 4> &path_misses,
-            std::array<double, 4> &times,
-            const Plane &plane);
-std::vector<double> Average(std::array<double, 4> &values, int total_no_tests) {
+void TimePlane(std::vector<unsigned> &path_length,
+               std::vector<unsigned> &path_misses,
+               std::vector<double> &times,
+               const Plane &plane);
+
+std::vector<double> Average(const std::vector<double> &values, int total_no_tests) {
   std::vector<double> output;
   output.reserve(values.size());
   for (auto &t : values)
@@ -26,14 +27,14 @@ std::vector<double> Average(std::array<double, 4> &values, int total_no_tests) {
   return output;
 }
 
-std::vector<double> Convert(const std::array<unsigned, 4> &values) {
+std::vector<double> Convert(const std::vector<unsigned> &values) {
   std::vector<double> output;
   output.reserve(values.size());
   for (int value : values)
     output.emplace_back((double) value);
   return output;
 }
-std::vector<double> Average(const std::array<unsigned, 4> &values, int total_no_tests) {
+std::vector<double> Average(const std::vector<unsigned> &values, int total_no_tests) {
   std::vector<double> output;
   output.reserve(values.size());
 
@@ -42,7 +43,7 @@ std::vector<double> Average(const std::array<unsigned, 4> &values, int total_no_
 
   return output;
 }
-std::vector<double> Average(const std::array<int, 4> &values, int total_no_tests) {
+std::vector<double> Average(const std::vector<int> &values, int total_no_tests) {
   std::vector<double> output;
 
   output.reserve(values.size());
@@ -51,19 +52,19 @@ std::vector<double> Average(const std::array<int, 4> &values, int total_no_tests
 
   return output;
 }
-std::vector<double> Average(const std::vector<std::array<unsigned, 4>> &path_lengths, int total_no_tests) {
+std::vector<double> Average(const std::vector<std::vector<unsigned>> &path_lengths, int total_no_tests) {
 
-  std::array<int, 4> averages{};
+  std::vector<double> averages;
+  for (int i = 0; i < path_lengths.begin()->size(); i++) averages.push_back(0);
+
   for (auto p : path_lengths) {
-    averages[0] += p[0];
-    averages[1] += p[1];
-    averages[2] += p[2];
-    averages[3] += p[3];
+    for (int i = 0; i < p.size(); i++)
+      averages[i] += p[i];
   }
 
   return Average(averages, total_no_tests);
 }
-void Save(int plane_size, const std::array<double, 4> &average_values, const std::string &file_path, bool add_new_line) {
+void Save(int plane_size, const std::vector<double> &average_values, const std::string &file_path, bool add_new_line) {
 
   std::fstream f(file_path, std::ios::app);
   f << plane_size << "\t";
@@ -89,29 +90,33 @@ int main() {
 
 void PerformTest() {
 
-  PRFileFormat timings_file("Time comparison for Square Maze", "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule"});
-  PRFileFormat path_lengths_file("Found path length comparison for Square Maze", "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule"});
-  PRFileFormat path_misses_file("Path misses comparison for Square Maze", "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule"});
+  PRFileFormat timings_file("Time comparison for Square Maze", "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
+  PRFileFormat path_lengths_file("Found path length comparison for Square Maze", "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
+  PRFileFormat path_misses_file("Path misses comparison for Square Maze", "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
 
   int min_maze_size = 10;
   int max_maze_size = 50;
   int maze_size_jump = 5;
   int no_tests = 100;
 
-  std::vector<std::array<unsigned, 4>> path_lengths;
-  std::array<unsigned, 4> path_length = {};
-  std::array<unsigned, 4> path_misses = {};
-  std::array<double, 4> times{};
+  std::vector<std::vector<unsigned>> path_lengths;
 
   for (int maze_size = min_maze_size; maze_size < max_maze_size; maze_size += maze_size_jump) {
-    times.fill(0);
-    path_misses.fill(0);
+
+    std::vector<unsigned> path_length = {};
+    std::vector<unsigned> path_misses = {};
+    std::vector<double> times{};
+
+    for (int i = 0; i < (int) Algorithm::SIZE; i++) {
+      path_length.push_back(0);
+      path_misses.push_back(0);
+      times.push_back(0.);
+    }
 
     for (int i = 0; i < no_tests; ++i) {
-      MazeGenerator maze_generator(maze_size, maze_size);
-      maze_generator.GenSquareMaze();
+      MazeGenerator maze_generator(maze_size, maze_size, MazeType::SQUARE_MAZE);
 
-      TestMe(path_length, path_misses, times, maze_generator.GetPlane());
+      TimePlane(path_length, path_misses, times, maze_generator.GetPlane());
 
       path_lengths.push_back(path_length);
     }
@@ -125,15 +130,23 @@ void PerformTest() {
     path_misses_file.PushData(maze_size * maze_size, Convert(path_misses));
   }
 }
-void TestMe(std::array<unsigned, 4> &path_length,
-            std::array<unsigned, 4> &path_misses,
-            std::array<double, 4> &times,
-            const Plane &plane) {
+
+/// generates time-to-solve data for given plane
+/// \param path_length
+/// \param path_misses
+/// \param times timings output
+/// \param plane tested maze
+void TimePlane(std::vector<unsigned> &path_length,
+               std::vector<unsigned> &path_misses,
+               std::vector<double> &times,
+               const Plane &plane) {
 
   Dijkstra dijkstra(plane);
   AStar a_star(plane);
   RandomWalk random(plane);
   RHR right_hand_rule(plane);
+  DepthFirst depth_first(plane);
+  GreedyBestFirst greedy_best_first(plane);
   {
     auto time = T_START;
     path_length[INT(DIJKSTRA)] = dijkstra.FindPath().size();
@@ -162,5 +175,21 @@ void TestMe(std::array<unsigned, 4> &path_length,
 
     if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0)
       path_misses[INT(RIGHT_HAND_RULE)]++;
+  }
+  {
+    auto time = T_START;
+    path_length[INT(DEPTH_FIRST)] = right_hand_rule.FindPath().size();
+    times[INT(DEPTH_FIRST)] += T_RECORD(time);
+
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(DEPTH_FIRST)] == 0)
+      path_misses[INT(DEPTH_FIRST)]++;
+  }
+  {
+    auto time = T_START;
+    path_length[INT(GREEDY_BEST_FIRST)] = right_hand_rule.FindPath().size();
+    times[INT(GREEDY_BEST_FIRST)] += T_RECORD(time);
+
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
+      path_misses[INT(GREEDY_BEST_FIRST)]++;
   }
 }

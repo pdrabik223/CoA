@@ -70,6 +70,7 @@ add_executable(tests testing/testing.cpp
         ${path_search_dir}
         testing/pr_file_format.h
         testing/pr_file_format.cpp)
+
 add_executable(plane_example plane/plane_example.cpp
         ${plane_dir})
 
@@ -91,6 +92,7 @@ add_executable(maze_generator maze/maze_generator_example.cpp
 add_executable(graph_example sfml_window/graph_example.cpp
         ${plane_dir}
         ${sfml_window_dir})
+
 
 set(executables CoA maze_painter maze_generator graph_example saved_maze tests)
 
@@ -118,9 +120,9 @@ set(debug_files_to_copy
         )
 
 set(release_files_to_copy
-        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-graphics-2.dll
-        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-window-2.dll
-        ${PROJECT_SOURCE_DIR}/cmake-build-debug/sfml/lib/sfml-system-2.dll
+        ${PROJECT_SOURCE_DIR}/cmake-build-release/sfml/lib/sfml-graphics-2.dll
+        ${PROJECT_SOURCE_DIR}/cmake-build-release/sfml/lib/sfml-window-2.dll
+        ${PROJECT_SOURCE_DIR}/cmake-build-release/sfml/lib/sfml-system-2.dll
         )
 
 foreach (file IN LISTS debug_files_to_copy)

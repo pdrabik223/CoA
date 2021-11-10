@@ -13,19 +13,9 @@ PRFileFormat::PRFileFormat(std::string graph_label, std::string x_axis_name, std
 PRFileFormat::~PRFileFormat() {
   Save();
 }
-std::string &RemoveSpace(std::string &text) {
-  for (auto &t : text)
-    if (t == ' ') t = '-';
 
-  return text;
-}
 
-std::string &AddSpace(std::string &text) {
-  for (auto &t : text)
-    if (t == '-') t = ' ';
 
-  return text;
-}
 void PRFileFormat::Save() {
 
   ClearFile();
@@ -33,20 +23,21 @@ void PRFileFormat::Save() {
   std::fstream f(directory_path + "pr_id" + std::to_string(file_id) + ".txt", std::ios::app);
   file_id++;
 
-  f << RemoveSpace(graph_label) << "\n";
-  f << RemoveSpace(x_axis_name) << "\n";
-  f << RemoveSpace(y_axis_name) << "\n";
-  f << datasets_labels.size() << "\t";
+  f << (graph_label) << "\n";
+  f << (x_axis_name) << "\n";
+  f << (y_axis_name) << "\n";
+  f << datasets_labels.size() << "\n";
+  f << values.size() << "\n";
 
   for (auto &l : datasets_labels)
-    f << RemoveSpace(l) << "\t";
+    f << l << "\n";
 
   for (int x = 0; x < arguments.size(); x++) {
-    f << "\n";
     f << arguments[x] << "\t";
     for (double v : values[x]) {
       f << v << "\t";
     }
+    f << "\n";
   }
 
   f.close();
@@ -57,11 +48,15 @@ void PRFileFormat::ClearFile() {
   f.close();
 }
 
+/// add another slice of data
+/// \param x  axis point
+/// \param y  axis points
 void PRFileFormat::PushData(int x, const std::vector<double> &y) {
   if (y.size() != datasets_labels.size()) throw "inconsistent value count";
   arguments.push_back(x);
   values.push_back(y);
 }
+
 void PRFileFormat::Load(const std::string &path) {
   std::ifstream f(path, std::ios::in);
 
@@ -70,28 +65,34 @@ void PRFileFormat::Load(const std::string &path) {
     throw "bad file path";
   }
   std::getline(f, graph_label);
+  // AddSpace(graph_label);
 
-  AddSpace(graph_label);
   std::getline(f, x_axis_name);
-  AddSpace(x_axis_name);
+  // AddSpace(x_axis_name);
+
   std::getline(f, y_axis_name);
-  AddSpace(y_axis_name);
+  // AddSpace(y_axis_name);
 
   int datasets_count;
   f >> datasets_count;
+
+  int values_count;
+  f >> values_count;
+
   std::string label;
-  std::getline(f, label, '\t');
+  std::getline(f, label);
 
   for (int i = 0; i < datasets_count; i++) {
-    std::getline(f, label, '\t');
-    datasets_labels.push_back(AddSpace(label));
+    std::getline(f, label);
+    datasets_labels.push_back(label);
   }
 
-  while (!f.eof()) {
+  for (int i = 0; i < values_count; ++i) {
     int arg;
     f >> arg;
     arguments.push_back(arg);
     std::vector<double> buffer;
+
     for (int v = 0; v < datasets_count; v++) {
       double val;
       f >> val;

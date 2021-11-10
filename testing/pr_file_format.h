@@ -10,7 +10,7 @@
 #include <vector>
 struct PRFileFormat {
   PRFileFormat() = delete;
-  PRFileFormat(std::string file_path) { Load(file_path); };
+  PRFileFormat(const std::string &file_path) { Load(file_path); };
   PRFileFormat(std::string graph_label, std::string x_axis_name, std::string y_axis_name, std::vector<std::string> datasets_labels);
   PRFileFormat(const PRFileFormat &other) = delete;
   PRFileFormat &operator=(const PRFileFormat &other) = delete;

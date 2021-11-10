@@ -17,7 +17,8 @@ enum class Algorithm {
   RANDOM_WALK,
   RIGHT_HAND_RULE,
   DEPTH_FIRST,
-  GREEDY_BEST_FIRST
+  GREEDY_BEST_FIRST,
+  SIZE
 };
 
 class GraphBase {
