@@ -2,13 +2,11 @@
 // Created by piotr on 05/10/2021.
 //
 
-#include "a_star.h"
-#include "pm_include.h"
-#include <algorithm>
+#include "greedy_pdistance.h"
 
-AStar::AStar(const Plane &other) : GraphBase(other) {}
+GreedyPDistance::GreedyPDistance(const Plane &other) : GraphBase(other) {}
 
-std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
+std::vector<Coord> GreedyPDistance::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
 
   ClearGraph();
 
@@ -19,7 +17,7 @@ std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &col
   return shortest_path_;
 }
 
-std::vector<Coord> AStar::FindPath() {
+std::vector<Coord> GreedyPDistance::FindPath() {
 
   ClearGraph();
 
@@ -30,7 +28,7 @@ std::vector<Coord> AStar::FindPath() {
   return shortest_path_;
 }
 
-bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
+bool GreedyPDistance::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   std::vector<Cell *> open;
 
@@ -59,7 +57,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
   }
   return false;
 }
-bool AStar::UpdateGs() {
+bool GreedyPDistance::UpdateGs() {
 
   std::vector<Cell *> open;
   open.reserve(width_ * 2);
@@ -75,7 +73,7 @@ bool AStar::UpdateGs() {
     for (Cell *k_p : q->nodes)
       if (not k_p->IsDiscovered()) {
         k_p->g = q->g + 1;
-        k_p->h = EuclideanDistance(k_p->placement);
+        k_p->h = PDistance(k_p->placement);
         if (k_p->cell_type == CellState::FINISH) return true;
         open.push_back(k_p);
       }
@@ -84,30 +82,7 @@ bool AStar::UpdateGs() {
   return false;
 }
 
-double AStar::EuclideanDistance(const Coord &position) {
-
-  double smallest_distance = 100000000;
-
-  for (auto &f : final_points_) {
-    double distance = sqrt(pow(position.x - f.x, 2) + pow(position.y - f.y, 2));
-    if (distance < smallest_distance) smallest_distance = distance;
-  }
-
-  return smallest_distance;
-}
-
-double AStar::ManhattanDistance(const Coord &position) {
-  double smallest_distance = 100000000;
-
-  for (auto &f : final_points_) {
-    double distance = Abs(position.x - f.x) + Abs(position.y - f.y);
-    if (distance < smallest_distance) smallest_distance = distance;
-  }
-
-  return smallest_distance;
-}
-
-double AStar::PDistance(const Coord &position) {
+double GreedyPDistance::PDistance(const Coord &position) {
   unsigned smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
@@ -121,12 +96,12 @@ double AStar::PDistance(const Coord &position) {
   return smallest_distance;
 }
 
-Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
+Cell *GreedyPDistance::PopSmallestH(std::vector<Cell *> &open_set) {
 
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++) {
-    if (open_set[i]->h + open_set[i]->g < open_set[smallest_h]->h + open_set[smallest_h]->g) smallest_h = i;
+    if (open_set[i]->h - open_set[smallest_h]->h < 0) smallest_h = i;
   }
 
   Cell *temp = open_set[smallest_h];

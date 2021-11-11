@@ -45,6 +45,8 @@ set(path_search_dir
         path_search/greedy_best_first/greedy_best_first.cpp
         path_search/random_step/random_step.h
         path_search/random_step/random_step.cpp
+        path_search/greedy_pdistance/greedy_pdistance.h
+        path_search/greedy_pdistance/greedy_pdistance.cpp
         path_search/graph_base.h
         path_search/graph_base.cpp
         path_search/path_search.h

@@ -18,6 +18,7 @@ enum class Algorithm {
   RIGHT_HAND_RULE,
   DEPTH_FIRST,
   GREEDY_BEST_FIRST,
+  GREEDY_P_DISTANCE,
   SIZE
 };
 
@@ -36,6 +37,12 @@ class GraphBase {
   virtual std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme) = 0;
 
   virtual ~GraphBase() { ClearGraph(); };
+
+  int Abs(int x) {
+    if (x < 0) return -x;
+    else
+      return x;
+  }
 
  protected:
   void GeneratePath();
@@ -68,4 +75,17 @@ static void ConsoleDisplay(const std::vector<Coord> &path) {
     printf("(%d,%d) -> ", path[i].x, path[i].y);
   printf("(%d,%d)\n", path[path.size() - 1].x, path[path.size() - 1].y);
 }
+
+static std::string ToString(Algorithm algorithm) {
+  switch (algorithm) {
+    case Algorithm::DIJKSTRA: return "Dijkstra";
+    case Algorithm::A_STAR: return "A*\t";
+    case Algorithm::RANDOM_WALK: return "Random Walk";
+    case Algorithm::RIGHT_HAND_RULE: return "Right Hand Rule";
+    case Algorithm::DEPTH_FIRST: return "Deep first";
+    case Algorithm::GREEDY_BEST_FIRST: return "Greedy deep first";
+    case Algorithm::GREEDY_P_DISTANCE: return "Greedy P distance";
+  }
+}
+
 #endif//COA_PATH_SEARCH_GRAPH_BASE_H_

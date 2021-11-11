@@ -10,16 +10,8 @@
 void MessageMe(int maze_nr, std::pair<MazeType, Algorithm> settings, size_t time, int path_length) {
 
   std::string maze_type = ToString(settings.first);
-  std::string algorithm;
+  std::string algorithm = ToString(settings.second);
 
-  switch (settings.second) {
-    case Algorithm::DIJKSTRA: algorithm = "Dijkstra"; break;
-    case Algorithm::A_STAR: algorithm = "A*\t"; break;
-    case Algorithm::RANDOM_WALK: algorithm = "Random Walk"; break;
-    case Algorithm::RIGHT_HAND_RULE: algorithm = "Right Hand Rule"; break;
-    case Algorithm::DEPTH_FIRST: algorithm = "Deep first"; break;
-    case Algorithm::GREEDY_BEST_FIRST: algorithm = "Greedy deep first"; break;
-  }
   std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
 }
@@ -49,6 +41,7 @@ class Generator {
         case Algorithm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(maze.GetPlane()))); break;
         case Algorithm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(maze.GetPlane()))); break;
         case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(maze.GetPlane()))); break;
+        case Algorithm::GREEDY_P_DISTANCE: engine = std::move(std::unique_ptr<GraphBase>(new GreedyPDistance(maze.GetPlane()))); break;
       }
 
       auto path = engine->FindPath(window, color_scheme);

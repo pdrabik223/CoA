@@ -1,28 +1,21 @@
 //
-// Created by piotr on 06/10/2021.
+// Created by piotr on 11/11/2021.
 //
 
-#ifndef COA_PATH_SEARCH_A_STAR_A_STAR_H_
-#define COA_PATH_SEARCH_A_STAR_A_STAR_H_
-#include "../../plane/plane.h"
-#include "../../sfml_window/window.h"
-#include "../cell.h"
+#ifndef COA_PATH_SEARCH_GREEDY_PDISTANCE_GREEDY_PDISTANCE_H_
+#define COA_PATH_SEARCH_GREEDY_PDISTANCE_GREEDY_PDISTANCE_H_
+
 #include "../graph_base.h"
 #include <vector>
-class AStar : public GraphBase {
-  enum DistanceFunction {
-    EUCLIDEAN_DISTANCE,
-    MANHATTAN_DISTANCE
-  };
-
+class GreedyPDistance : public GraphBase {
  public:
-  AStar() = delete;
+  GreedyPDistance() = delete;
   /// constructs Sample object based of Plane
-  explicit AStar(const Plane &other);
+  explicit GreedyPDistance(const Plane &other);
 
-  AStar(const AStar &other) = default;
+  GreedyPDistance(const GreedyPDistance &other) = default;
 
-  AStar &operator=(const AStar &other) = default;
+  GreedyPDistance &operator=(const GreedyPDistance &other) = default;
 
   /// find path from start to finish
   /// \return list of connected coordinates
@@ -34,14 +27,9 @@ class AStar : public GraphBase {
   /// if returned list is empty the path does not exist
   std::vector<Coord> FindPath(Window &window_handle, const ColorScheme &color_scheme) override;
 
-  ~AStar() override { ClearGraph(); };
+  ~GreedyPDistance() override { ClearGraph(); };
 
  private:
-  double EuclideanDistance(const Coord &position);
-
-  /// finds Manhattan distance between position and closest finish point
-  double ManhattanDistance(const Coord &position);
-
   double PDistance(const Coord &position);
 
   bool UpdateGs();
@@ -50,4 +38,4 @@ class AStar : public GraphBase {
   Cell *PopSmallestH(std::vector<Cell *> &open_set);
 };
 
-#endif//COA_PATH_SEARCH_A_STAR_A_STAR_H_
+#endif//COA_PATH_SEARCH_GREEDY_PDISTANCE_GREEDY_PDISTANCE_H_

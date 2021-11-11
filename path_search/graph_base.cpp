@@ -2,6 +2,7 @@
 // Created by piotr on 20/10/2021.
 //
 #include "graph_base.h"
+
 void GraphBase::ClearGraph() {
   for (auto &g : copy_plane_) {
     g.Clear();

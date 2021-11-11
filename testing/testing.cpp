@@ -103,10 +103,10 @@ int main() {
 
 void PerformTest(MazeType maze_type) {
 
-  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
-  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
-  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
+  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
 
   int min_maze_size = 10;
   int max_maze_size = 50;
@@ -166,6 +166,7 @@ void TimePlane(std::vector<unsigned> &path_length,
   RHR right_hand_rule(plane);
   DepthFirst depth_first(plane);
   GreedyBestFirst greedy_best_first(plane);
+  GreedyPDistance greedy_p_distance(plane);
 
   {
     auto time = T_START;
@@ -213,5 +214,13 @@ void TimePlane(std::vector<unsigned> &path_length,
 
     if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
       path_misses[INT(GREEDY_BEST_FIRST)]++;
+  }
+  {
+    auto time = T_START;
+    path_length[INT(GREEDY_P_DISTANCE)] = greedy_p_distance.FindPath().size();
+    times[INT(GREEDY_P_DISTANCE)] += T_RECORD(time);
+
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_P_DISTANCE)] == 0)
+      path_misses[INT(GREEDY_P_DISTANCE)]++;
   }
 }
