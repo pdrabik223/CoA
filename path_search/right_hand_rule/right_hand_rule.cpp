@@ -30,8 +30,6 @@ bool RHR::UpdateGs() {
   std::vector<Cell *> open;
   open.reserve(width_ * 2);
 
-  std::vector<Cell *> successors;
-
   Cell *q = &GetCell(starting_points_.back());
 
   open.push_back(q);
@@ -133,6 +131,8 @@ Cell *RHR::Discovered(std::vector<Cell *> &open, RHR::Direction &current_directi
     best_way = RotateRight(current_direction);
   } else if (neighbours[(int) RotateLeft(current_direction)]) {
     best_way = RotateLeft(current_direction);
+  } else if (neighbours[(int) RotateLeft(RotateLeft(current_direction))]) {
+    best_way = RotateLeft(RotateLeft(current_direction));
   } else
     return nullptr;
 
@@ -161,6 +161,9 @@ Cell *RHR::NotDiscovered(std::array<Cell *, 4> &neighbours, RHR::Direction &curr
 }
 void RHR::AppendSurrounding(const std::array<Cell *, 4> &neighbours, std::vector<Cell *> &open, RHR::Direction &best_way, Direction &current_direction) {
 
+  if (neighbours[(int) RotateLeft(RotateLeft(best_way))])
+    open.push_back(neighbours[(int) RotateLeft(RotateLeft(best_way))]);
+
   if (neighbours[(int) RotateLeft(best_way)])
     open.push_back(neighbours[(int) RotateLeft(best_way)]);
 
@@ -169,6 +172,7 @@ void RHR::AppendSurrounding(const std::array<Cell *, 4> &neighbours, std::vector
 
   if (neighbours[(int) best_way])
     open.push_back(neighbours[(int) best_way]);
+
   current_direction = best_way;
 }
 bool RHR::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
@@ -177,7 +181,6 @@ bool RHR::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
-  std::vector<Cell *> successors;
 
   Cell *q = &GetCell(starting_points_.back());
 
