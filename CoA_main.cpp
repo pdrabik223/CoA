@@ -9,18 +9,8 @@
 
 void MessageMe(int maze_nr, std::pair<MazeType, Algorithm> settings, size_t time, int path_length) {
 
-  std::string maze_type;
+  std::string maze_type = ToString(settings.first);
   std::string algorithm;
-  switch (settings.first) {
-    case MazeType::EMPTY_PLANE: maze_type = "empty plane"; break;
-    case MazeType::PLANE_5: maze_type = "infill 5%"; break;
-    case MazeType::PLANE_10: maze_type = "infill 10%"; break;
-    case MazeType::PLANE_20: maze_type = "infill 20%"; break;
-    case MazeType::PLANE_25: maze_type = "infill 25%"; break;
-    case MazeType::CIRCUlAR_MAZE: maze_type = "circular maze"; break;
-    case MazeType::SQUARE_MAZE: maze_type = "square maze"; break;
-    case MazeType::SNAIL_MAZE: maze_type = "snail maze"; break;
-  }
 
   switch (settings.second) {
     case Algorithm::DIJKSTRA: algorithm = "Dijkstra"; break;

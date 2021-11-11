@@ -30,10 +30,10 @@ bool RHR::UpdateGs() {
   std::vector<Cell *> open;
   open.reserve(width_ * 2);
 
-  Cell *q = &GetCell(starting_points_.back());
+  for (auto &s : starting_points_)
+    open.push_back(&GetCell(s));
 
-  open.push_back(q);
-
+  Cell *q = open.back();
   Direction current_direction = CalculateDirectionAtBeginning(q->placement, final_points_[rand() % final_points_.size()]);
 
   while (not open.empty()) {
@@ -181,10 +181,10 @@ bool RHR::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
 
   window_handle.PushFrame(WindowPlane(copy_plane_, width_, height_, color_scheme));
 
+  for (auto &s : starting_points_)
+    open.push_back(&GetCell(s));
 
-  Cell *q = &GetCell(starting_points_.back());
-
-  open.push_back(q);
+  Cell *q = open.back();
 
   Direction current_direction = CalculateDirectionAtBeginning(q->placement, final_points_[rand() % final_points_.size()]);
 

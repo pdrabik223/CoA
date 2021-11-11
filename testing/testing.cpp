@@ -10,10 +10,11 @@
 #include <fstream>
 #include <utility>
 
-void PerformTest();
+void PerformTest(MazeType maze_type);
 #define T_START std::chrono::high_resolution_clock::now()
 #define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
 #define INT(x) (int) Algorithm::x
+
 void TimePlane(std::vector<unsigned> &path_length,
                std::vector<unsigned> &path_misses,
                std::vector<double> &times,
@@ -93,17 +94,19 @@ int main() {
 
   srand(time(NULL));
 
-  PerformTest();
-
+  PerformTest(MazeType::SQUARE_MAZE);
+  //  PerformTest(MazeType::SNAIL_MAZE);
+  PerformTest(MazeType::EMPTY_PLANE);
+  PerformTest(MazeType::CIRCUlAR_MAZE);
   return 1;
 }
 
-void PerformTest() {
+void PerformTest(MazeType maze_type) {
 
-  PRFileFormat timings_file("Time complexity for Square Maze", "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
-  PRFileFormat path_lengths_file("Found path length for Square Maze", "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
-  PRFileFormat path_misses_file("Path misses for Square Maze", "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for Square Maze", "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
+  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
+  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
+  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First"});
 
   int min_maze_size = 10;
   int max_maze_size = 50;
@@ -127,7 +130,7 @@ void PerformTest() {
     }
 
     for (int i = 0; i < no_tests; ++i) {
-      MazeGenerator maze_generator(maze_size, maze_size, MazeType::SQUARE_MAZE);
+      MazeGenerator maze_generator(maze_size, maze_size, maze_type);
 
       TimePlane(path_length, path_misses, times, maze_generator.GetPlane());
 
@@ -146,6 +149,7 @@ void PerformTest() {
   }
 }
 
+int id = 0;
 /// generates time-to-solve data for given plane
 /// \param path_length
 /// \param path_misses
@@ -189,8 +193,10 @@ void TimePlane(std::vector<unsigned> &path_length,
     path_length[INT(RIGHT_HAND_RULE)] = right_hand_rule.FindPath().size();
     times[INT(RIGHT_HAND_RULE)] += T_RECORD(time);
 
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0)
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0) {
+      plane.SaveToFile("../saved_mazes/" + std::to_string(id++) + ".txt");
       path_misses[INT(RIGHT_HAND_RULE)]++;
+    }
   }
   {
     auto time = T_START;

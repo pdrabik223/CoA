@@ -111,4 +111,18 @@ class MazeGenerator {
   CircularMazeInfo circular_maze_info_;
 };
 
+static std::string ToString(MazeType maze_type) {
+
+  switch (maze_type) {
+    case MazeType::EMPTY_PLANE: return "Empty plane";
+    case MazeType::PLANE_5: return "Infill 5%";
+    case MazeType::PLANE_10: return "Infill 10%";
+    case MazeType::PLANE_20: return "Infill 20%";
+    case MazeType::PLANE_25: return "Infill 25%";
+    case MazeType::CIRCUlAR_MAZE: return "Circular maze";
+    case MazeType::SQUARE_MAZE: return "Square maze";
+    case MazeType::SNAIL_MAZE: return "Snail maze";
+  }
+}
+
 #endif//COA_MAZE_MAZE_GENERATOR_H_
