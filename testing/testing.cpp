@@ -64,6 +64,16 @@ std::vector<double> Average(const std::vector<std::vector<unsigned>> &path_lengt
 
   return Average(averages, total_no_tests);
 }
+std::vector<double> RelativeToDLS(std::vector<double> path_lengths) {
+
+  std::vector<double> relative = {0};
+
+  for (int i = 1; i < path_lengths.size(); i++)
+    relative.push_back(path_lengths[i] - path_lengths[0]);
+
+  return relative;
+}
+
 void Save(int plane_size, const std::vector<double> &average_values, const std::string &file_path, bool add_new_line) {
 
   std::fstream f(file_path, std::ios::app);
@@ -90,9 +100,10 @@ int main() {
 
 void PerformTest() {
 
-  PRFileFormat timings_file("Time comparison for Square Maze", "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
-  PRFileFormat path_lengths_file("Found path length comparison for Square Maze", "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
-  PRFileFormat path_misses_file("Path misses comparison for Square Maze", "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
+  PRFileFormat timings_file("Time complexity for Square Maze", "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
+  PRFileFormat path_lengths_file("Found path length for Square Maze", "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
+  PRFileFormat path_misses_file("Path misses for Square Maze", "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for Square Maze", "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Deep First", "Greedy Deep First"});
 
   int min_maze_size = 10;
   int max_maze_size = 50;
@@ -105,6 +116,8 @@ void PerformTest() {
 
     std::vector<unsigned> path_length = {};
     std::vector<unsigned> path_misses = {};
+    std::vector<unsigned> relative_path_length = {};
+
     std::vector<double> times{};
 
     for (int i = 0; i < (int) Algorithm::SIZE; i++) {
@@ -128,6 +141,8 @@ void PerformTest() {
     path_lengths_file.PushData(maze_size * maze_size, Average(path_lengths, no_tests));
 
     path_misses_file.PushData(maze_size * maze_size, Convert(path_misses));
+
+    relative_path_lengths_file.PushData(maze_size * maze_size, RelativeToDLS(Average(path_lengths, no_tests)));
   }
 }
 
@@ -147,6 +162,7 @@ void TimePlane(std::vector<unsigned> &path_length,
   RHR right_hand_rule(plane);
   DepthFirst depth_first(plane);
   GreedyBestFirst greedy_best_first(plane);
+
   {
     auto time = T_START;
     path_length[INT(DIJKSTRA)] = dijkstra.FindPath().size();
@@ -176,21 +192,20 @@ void TimePlane(std::vector<unsigned> &path_length,
     if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0)
       path_misses[INT(RIGHT_HAND_RULE)]++;
   }
-}
-{
-  auto time = T_START;
-  path_length[INT(DEPTH_FIRST)] = depth_first.FindPath().size();
-  times[INT(DEPTH_FIRST)] += T_RECORD(time);
+  {
+    auto time = T_START;
+    path_length[INT(DEPTH_FIRST)] = depth_first.FindPath().size();
+    times[INT(DEPTH_FIRST)] += T_RECORD(time);
 
-  if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(DEPTH_FIRST)] == 0)
-    path_misses[INT(DEPTH_FIRST)]++;
-}
-{
-  auto time = T_START;
-  path_length[INT(GREEDY_BEST_FIRST)] = greedy_best_first.FindPath().size();
-  times[INT(GREEDY_BEST_FIRST)] += T_RECORD(time);
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(DEPTH_FIRST)] == 0)
+      path_misses[INT(DEPTH_FIRST)]++;
+  }
+  {
+    auto time = T_START;
+    path_length[INT(GREEDY_BEST_FIRST)] = greedy_best_first.FindPath().size();
+    times[INT(GREEDY_BEST_FIRST)] += T_RECORD(time);
 
-  if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
-    path_misses[INT(GREEDY_BEST_FIRST)]++;
-}
+    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
+      path_misses[INT(GREEDY_BEST_FIRST)]++;
+  }
 }
