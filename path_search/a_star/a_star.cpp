@@ -47,7 +47,7 @@ bool AStar::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) {
     for (Cell *k_p : q->nodes)
       if (not k_p->IsDiscovered()) {
         k_p->UpdateG();
-        k_p->h = PDistance(k_p->placement);
+        k_p->h = EuclideanDistance(k_p->placement);
         if (k_p->cell_type == CellState::FINISH) return true;
         open.push_back(k_p);
         successors.push_back(k_p);
@@ -93,7 +93,7 @@ double AStar::EuclideanDistance(const Coord &position) {
     if (distance < smallest_distance) smallest_distance = distance;
   }
 
-  return smallest_distance;
+  return smallest_distance * 2;
 }
 
 double AStar::ManhattanDistance(const Coord &position) {
@@ -101,20 +101,6 @@ double AStar::ManhattanDistance(const Coord &position) {
 
   for (auto &f : final_points_) {
     double distance = Abs(position.x - f.x) + Abs(position.y - f.y);
-    if (distance < smallest_distance) smallest_distance = distance;
-  }
-
-  return smallest_distance;
-}
-
-double AStar::PDistance(const Coord &position) {
-  unsigned smallest_distance = 100000000;
-
-  for (auto &f : final_points_) {
-    unsigned d_x = Abs(position.x - f.x);
-    unsigned d_y = Abs(position.y - f.y);
-
-    unsigned distance = d_x > d_y ? d_x : d_y;
     if (distance < smallest_distance) smallest_distance = distance;
   }
 

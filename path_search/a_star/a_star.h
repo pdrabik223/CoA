@@ -4,16 +4,9 @@
 
 #ifndef COA_PATH_SEARCH_A_STAR_A_STAR_H_
 #define COA_PATH_SEARCH_A_STAR_A_STAR_H_
-#include "../../plane/plane.h"
-#include "../../sfml_window/window.h"
-#include "../cell.h"
 #include "../graph_base.h"
 #include <vector>
 class AStar : public GraphBase {
-  enum DistanceFunction {
-    EUCLIDEAN_DISTANCE,
-    MANHATTAN_DISTANCE
-  };
 
  public:
   AStar() = delete;
@@ -41,8 +34,6 @@ class AStar : public GraphBase {
 
   /// finds Manhattan distance between position and closest finish point
   double ManhattanDistance(const Coord &position);
-
-  double PDistance(const Coord &position);
 
   bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);

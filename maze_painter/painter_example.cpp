@@ -10,18 +10,7 @@
 
 void MessageMe(Algorithm algorithm, size_t time, int path_length) {
 
-  std::string maze_type;
-  std::string algorithm_message;
-
-  switch (algorithm) {
-    case Algorithm::DIJKSTRA: algorithm_message = "Dijkstra"; break;
-    case Algorithm::A_STAR: algorithm_message = "A*\t"; break;
-    case Algorithm::RANDOM_WALK: algorithm_message = "Random Walk"; break;
-    case Algorithm::RIGHT_HAND_RULE: algorithm_message = "Right Hand Rule"; break;
-    case Algorithm::DEPTH_FIRST: algorithm_message = "Deep first"; break;
-    case Algorithm::GREEDY_BEST_FIRST: algorithm_message = "Greedy deep first"; break;
-  }
-  std::cout << "\talgorithm: " << algorithm_message << "\ttime:" << time << "us\t"
+  std::cout << "\talgorithm: " << ToString(algorithm) << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
 }
 
@@ -47,6 +36,8 @@ class Generator {
       case Algorithm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
       case Algorithm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
       case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(settings.first))); break;
+      case Algorithm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(settings.first))); break;
+      case Algorithm::GREEDY_P_DISTANCE: engine = std::move(std::unique_ptr<GraphBase>(new GreedyPDistance(settings.first))); break;
     }
 
     auto path = engine->FindPath(window, color_scheme);
@@ -89,7 +80,7 @@ int main() {
 
   std::vector<std::pair<Plane, Algorithm>> settings = {{maze.GetPlane(), Algorithm::A_STAR},
                                                        {maze.GetPlane(), Algorithm::DIJKSTRA},
-                                                       {maze.GetPlane(), Algorithm::GREEDY_BEST_FIRST}};
+                                                       {maze.GetPlane(), Algorithm::GREEDY_P_DISTANCE}};
 
   GlobalVisuals(settings);
   getch();
