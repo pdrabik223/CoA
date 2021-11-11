@@ -40,12 +40,12 @@ class Generator {
 
 int main() {
 
-  Plane cos("../saved_mazes/simple_maze.txt");
+  Plane cos("../saved_mazes/0.txt");
 
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
   Window screen(800, 800);
-  Generator main({cos, Algorithm::A_STAR}, screen, color_scheme);
+  Generator main({cos, Algorithm::RIGHT_HAND_RULE}, screen, color_scheme);
 
   return 0;
 }
