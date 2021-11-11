@@ -176,20 +176,21 @@ void TimePlane(std::vector<unsigned> &path_length,
     if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0)
       path_misses[INT(RIGHT_HAND_RULE)]++;
   }
-  {
-    auto time = T_START;
-    path_length[INT(DEPTH_FIRST)] = right_hand_rule.FindPath().size();
-    times[INT(DEPTH_FIRST)] += T_RECORD(time);
+}
+{
+  auto time = T_START;
+  path_length[INT(DEPTH_FIRST)] = depth_first.FindPath().size();
+  times[INT(DEPTH_FIRST)] += T_RECORD(time);
 
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(DEPTH_FIRST)] == 0)
-      path_misses[INT(DEPTH_FIRST)]++;
-  }
-  {
-    auto time = T_START;
-    path_length[INT(GREEDY_BEST_FIRST)] = right_hand_rule.FindPath().size();
-    times[INT(GREEDY_BEST_FIRST)] += T_RECORD(time);
+  if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(DEPTH_FIRST)] == 0)
+    path_misses[INT(DEPTH_FIRST)]++;
+}
+{
+  auto time = T_START;
+  path_length[INT(GREEDY_BEST_FIRST)] = greedy_best_first.FindPath().size();
+  times[INT(GREEDY_BEST_FIRST)] += T_RECORD(time);
 
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
-      path_misses[INT(GREEDY_BEST_FIRST)]++;
-  }
+  if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
+    path_misses[INT(GREEDY_BEST_FIRST)]++;
+}
 }
