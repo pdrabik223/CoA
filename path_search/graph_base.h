@@ -15,7 +15,6 @@ enum class Algorithm {
   DIJKSTRA,
   A_STAR,
   RANDOM_WALK,
-  RIGHT_HAND_RULE,
   DEPTH_FIRST,
   GREEDY_BEST_FIRST,
   GREEDY_P_DISTANCE,
@@ -81,7 +80,6 @@ static std::string ToString(Algorithm algorithm) {
     case Algorithm::DIJKSTRA: return "Dijkstra";
     case Algorithm::A_STAR: return "A*\t";
     case Algorithm::RANDOM_WALK: return "Random Walk";
-    case Algorithm::RIGHT_HAND_RULE: return "Right Hand Rule";
     case Algorithm::DEPTH_FIRST: return "Deep first";
     case Algorithm::GREEDY_BEST_FIRST: return "Greedy deep first";
     case Algorithm::GREEDY_P_DISTANCE: return "Greedy P distance";

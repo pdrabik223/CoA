@@ -38,7 +38,6 @@ class Generator {
         case Algorithm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(maze.GetPlane()))); break;
         case Algorithm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(maze.GetPlane()))); break;
         case Algorithm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(maze.GetPlane()))); break;
-        case Algorithm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(maze.GetPlane()))); break;
         case Algorithm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(maze.GetPlane()))); break;
         case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(maze.GetPlane()))); break;
         case Algorithm::GREEDY_P_DISTANCE: engine = std::move(std::unique_ptr<GraphBase>(new GreedyPDistance(maze.GetPlane()))); break;
@@ -84,7 +83,7 @@ int main() {
   std::vector<std::pair<MazeType, Algorithm>> settings = {
       //      {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
       {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
-      {MazeType::EMPTY_PLANE, Algorithm::RIGHT_HAND_RULE}};
+      {MazeType::SQUARE_MAZE, Algorithm::DEPTH_FIRST}};
   GlobalVisuals(settings);
 
   return 0;
