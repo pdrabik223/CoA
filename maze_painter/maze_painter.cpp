@@ -28,16 +28,16 @@ void MazePainter::MainLoop() {
   window.setPosition(sf::Vector2i(0, 0));
   Coord mouse_position;
 
-
   DrawPlane(window);
   window.display();
   while (window.isOpen()) {
     // check all the window's events that were triggered since the last
     // iteration of the loop
     while (window.waitEvent(event_)) {
-      if (event_.type == sf::Event::Closed)
+      if (event_.type == sf::Event::Closed) {
         window.close();
-      else if (event_.type == sf::Event::KeyPressed) {
+        return;
+      } else if (event_.type == sf::Event::KeyPressed) {
         if (event_.key.code == sf::Keyboard::F) {
           current_brush_state_ = CellState::FINISH;
           DrawPlane(window);
@@ -51,15 +51,12 @@ void MazePainter::MainLoop() {
           brush_size_++;
           DrawPlane(window);
         } else if (event_.key.code == sf::Keyboard::Down) {
-          if (brush_size_ > 0) brush_size_--;
+          if (brush_size_ > 1) brush_size_--;
           DrawPlane(window);
-        }else if(event_.key.code == sf::Keyboard::Enter){
+        } else if (event_.key.code == sf::Keyboard::Enter) {
           window.close();
-
         }
-      }
-
-      else if (event_.type == sf::Event::MouseMoved) {
+      } else if (event_.type == sf::Event::MouseMoved) {
         DrawPlane(window);
       }
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -69,10 +66,8 @@ void MazePainter::MainLoop() {
           DrawFilledInCircle(mouse_position, painted_squares);
           for (auto &ps : painted_squares)
             plane_.SetCell(ps, current_brush_state_);
-
           DrawPlane(window);
         }
-
       } else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 
         if (PopulateMousePosition(window, mouse_position)) {
@@ -82,17 +77,21 @@ void MazePainter::MainLoop() {
 
           for (auto &ps : painted_squares)
             plane_.SetCell(ps, CellState::EMPTY);
-
           DrawPlane(window);
         }
+      } else if (event_.type == sf::Event::MouseWheelScrolled) {
+
+        if (event_.mouseWheelScroll.delta == -1) {
+
+          if (brush_size_ > 1)
+            brush_size_--;
+        } else if (event_.mouseWheelScroll.delta == 1)
+          brush_size_++;
+        DrawPlane(window);
       }
-
     }
-  DrawPlane(window);
   }
-
-
-window.close();
+  window.close();
 }
 void MazePainter::DrawPlane(sf::RenderWindow &window) {
   WindowPlane screen_texture(plane_, color_scheme_);
