@@ -17,9 +17,9 @@ int main() {
 
   //  screen.PushFrame(WindowPlane(100,100));
 
-  MazeGenerator maze(100, 100);
+  MazeGenerator maze(100, 100,{1, {50,50},50*50});
 
-  maze.GenSnailMaze();
+//  maze.GenSnailMaze();
 
   auto plane = maze.GetPlane();
 

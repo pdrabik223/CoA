@@ -21,9 +21,9 @@ void MazeGenerator::RecursiveDivision(const Square &square, int depth = 0) {
   //  if (square.first.x >= square.second.x) return;
   //  if (square.first.y >= square.second.y) return;
 
-  if (kSquareSize.x < maze_info_.min_cavity_size.x) return;
-  if (kSquareSize.y < maze_info_.min_cavity_size.y) return;
-  if (kSquareSize.x * kSquareSize.y < maze_info_.min_cavity_area) return;
+  if (kSquareSize.x < square_maze_info_.min_cavity_size.x) return;
+  if (kSquareSize.y < square_maze_info_.min_cavity_size.y) return;
+  if (kSquareSize.x * kSquareSize.y < square_maze_info_.min_cavity_area) return;
 
   bool horizontal_line = (depth % 2) == 1;
 
@@ -55,7 +55,7 @@ void MazeGenerator::RecursiveDivision(const Square &square, int depth = 0) {
     line_finish.x = square.second.x;
 
     do {
-      line_start.y = square.first.y + rand() % (kSquareSize.y - (maze_info_.min_cavity_size.y - 1)) + (maze_info_.min_cavity_size.y / 2);
+      line_start.y = square.first.y + rand() % (kSquareSize.y - (square_maze_info_.min_cavity_size.y - 1)) + (square_maze_info_.min_cavity_size.y / 2);
       line_finish.y = line_start.y;
       if (plane_.GetCell(line_start) == CellState::WALL and plane_.GetCell(line_finish) == CellState::WALL) break;
       loop_counter++;
@@ -89,7 +89,7 @@ void MazeGenerator::RecursiveDivision(const Square &square, int depth = 0) {
 
     do {
 
-      line_start.x = square.first.x + rand() % (kSquareSize.x - (maze_info_.min_cavity_size.x - 1)) + (maze_info_.min_cavity_size.x / 2);
+      line_start.x = square.first.x + rand() % (kSquareSize.x - (square_maze_info_.min_cavity_size.x - 1)) + (square_maze_info_.min_cavity_size.x / 2);
       line_finish.x = line_start.x;
 
       if (plane_.GetCell(line_start) == CellState::WALL and plane_.GetCell(line_finish) == CellState::WALL) break;
@@ -113,13 +113,13 @@ void MazeGenerator::RecursiveDivision(const Square &square, int depth = 0) {
   DrawLine(line_start, line_finish, breaking_point);
 
   const Coord kSquare1Size(square_1.second.x - square_1.first.x, square_1.second.y - square_1.first.y);
-  if (!(kSquare1Size.x < maze_info_.min_cavity_size.x or kSquare1Size.y < maze_info_.min_cavity_size.y or kSquare1Size.x * kSquare1Size.y < maze_info_.min_cavity_area)) {
+  if (!(kSquare1Size.x < square_maze_info_.min_cavity_size.x or kSquare1Size.y < square_maze_info_.min_cavity_size.y or kSquare1Size.x * kSquare1Size.y < square_maze_info_.min_cavity_area)) {
 
     RecursiveDivision(square_1, depth + 1);
   }
 
   const Coord kSquare2Size(square_2.second.x - square_2.first.x, square_2.second.y - square_2.first.y);
-  if (!(kSquare2Size.x < maze_info_.min_cavity_size.x or kSquare2Size.y < maze_info_.min_cavity_size.y or kSquare2Size.x * kSquare2Size.y < maze_info_.min_cavity_area)) {
+  if (!(kSquare2Size.x < square_maze_info_.min_cavity_size.x or kSquare2Size.y < square_maze_info_.min_cavity_size.y or kSquare2Size.x * kSquare2Size.y < square_maze_info_.min_cavity_area)) {
     RecursiveDivision(square_2, depth + 1);
   }
 }
@@ -186,16 +186,16 @@ void MazeGenerator::AddStartAndFinish() {
   bool side = rand() % 2;
 
   while (1 < 2) {
-    int start_x_shift = rand() % maze_info_.min_cavity_size.x;
-    int start_y_shift = rand() % maze_info_.min_cavity_size.y;
+    int start_x_shift = rand() % square_maze_info_.min_cavity_size.x;
+    int start_y_shift = rand() % square_maze_info_.min_cavity_size.y;
     if (plane_.GetCell({start_x_shift, start_y_shift}) == CellState::EMPTY) {
       plane_.SetCell({start_x_shift, start_y_shift}, CellState::START);
       break;
     }
   }
   while (1 < 2) {
-    int finish_x_shift = plane_.GetWidth() - 1 - rand() % maze_info_.min_cavity_size.x;
-    int finish_y_shift = plane_.GetHeight() - 1 - rand() % maze_info_.min_cavity_size.y;
+    int finish_x_shift = plane_.GetWidth() - 1 - rand() % square_maze_info_.min_cavity_size.x;
+    int finish_y_shift = plane_.GetHeight() - 1 - rand() % square_maze_info_.min_cavity_size.y;
 
     if (plane_.GetCell({finish_x_shift, finish_y_shift}) == CellState::EMPTY) {
       plane_.SetCell({finish_x_shift, finish_y_shift}, CellState::FINISH);
@@ -314,3 +314,4 @@ void MazeGenerator::DrawLine(Coord start, Coord finish) {
   } else
     throw "not a line";
 }
+//SquareMazeInfo::SquareMazeInfo(unsigned int hole_size, const Coord &min_cavity_size, int min_cavity_area) : hole_size(hole_size), min_cavity_size(min_cavity_size), min_cavity_area(min_cavity_area) {}

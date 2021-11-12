@@ -37,17 +37,19 @@ bool DepthFirst::UpdateGs() {
 
     for (Cell *k_p : q->nodes)
       if (not k_p->IsDiscovered()) {
-        open.push_back(k_p);
         k_p->UpdateG();
         if (k_p->cell_type == CellState::FINISH) return true;
+        open.push_back(k_p);
       }
   }
   return false;
 }
 Cell *DepthFirst::PopDeepest(std::vector<Cell *> &open_set) {
   int biggest_g = 0;
+
   for (int i = 1; i < open_set.size(); i++)
-    if (open_set[i]->g > open_set[biggest_g]->g) biggest_g = i;
+    if (open_set[i]->g > open_set[biggest_g]->g)
+      biggest_g = i;
 
   Cell *temp = open_set[biggest_g];
   open_set.erase(open_set.begin() + biggest_g);
@@ -74,12 +76,13 @@ bool DepthFirst::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
         successors.push_back(k_p);
         k_p->UpdateG();
         if (k_p->cell_type == CellState::FINISH) return true;
+        open.push_back(k_p);
       }
 
-    HighlightPositions(window_handle, color_scheme, successors);
+    //    for (const auto kS : successors)
+    //      open.push_back(kS);
 
-    for (const auto kS : successors)
-      open.push_back(kS);
+    HighlightPositions(window_handle, color_scheme, successors);
 
     successors.clear();
   }

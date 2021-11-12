@@ -12,8 +12,8 @@ set(plane_dir
         plane/plane.h
         plane/plane.cpp
         plane/cell_type.h
-        maze/maze_generator.h
-        maze/maze_generator.cpp
+        maze_generator/maze_generator.h
+        maze_generator/maze_generator.cpp
         utility/coord.h
         utility/coord.cpp
         CoA_settings.h)
@@ -87,7 +87,7 @@ add_executable(maze_painter maze_painter/painter_example.cpp
         ${maze_painter_dir}
         ${path_search_dir})
 
-add_executable(maze_generator maze/maze_generator_example.cpp
+add_executable(maze_generator maze_generator/maze_generator_example.cpp
         ${plane_dir}
         ${sfml_window_dir})
 

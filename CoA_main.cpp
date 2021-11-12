@@ -1,7 +1,7 @@
 //
 // Created by piotr on 04/10/2021.
 //
-#include "maze/maze_generator.h"
+#include "../maze_generator/maze_generator.h"
 #include "path_search/path_search.h"
 #include <iostream>
 #include <memory>
@@ -81,9 +81,10 @@ void GlobalVisuals(std::vector<std::pair<MazeType, Algorithm>> settings) {
 int main() {
   srand(time(NULL));
 
-  std::vector<std::pair<MazeType, Algorithm>> settings = {{MazeType::PLANE_10, Algorithm::A_STAR},
-                                                          {MazeType::SQUARE_MAZE, Algorithm::A_STAR},
-                                                          {MazeType::CIRCUlAR_MAZE, Algorithm::A_STAR}};
+  std::vector<std::pair<MazeType, Algorithm>> settings = {
+      //      {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
+      {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
+      {MazeType::EMPTY_PLANE, Algorithm::RIGHT_HAND_RULE}};
   GlobalVisuals(settings);
 
   return 0;

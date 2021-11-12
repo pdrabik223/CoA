@@ -5,6 +5,8 @@
 #ifndef COA_MAZE_MAZE_GENERATOR_H_
 #define COA_MAZE_MAZE_GENERATOR_H_
 
+#include <utility>
+
 #include "../plane/plane.h"
 
 enum class MazeType {
@@ -19,6 +21,7 @@ enum class MazeType {
 };
 
 struct SquareMazeInfo {
+  //  SquareMazeInfo(unsigned int hole_size, const Coord &min_cavity_size, int min_cavity_area);
   unsigned hole_size = 1;
   Coord min_cavity_size = {5, 5};
   int min_cavity_area = 25;
@@ -38,7 +41,6 @@ class MazeGenerator {
   MazeGenerator() = delete;
   MazeGenerator(const int width, const int height) : plane_(width, height, 0){};
   MazeGenerator(const int width, const int height, MazeType maze_type) : plane_(width, height, 0) {
-
     switch (maze_type) {
       case MazeType::EMPTY_PLANE: GenRandomMaze(0); break;
       case MazeType::PLANE_5: GenRandomMaze(5); break;
@@ -50,6 +52,9 @@ class MazeGenerator {
       case MazeType::SNAIL_MAZE: GenSnailMaze(); break;
     }
   };
+  MazeGenerator(const int width, const int height, const SquareMazeInfo &info) : plane_(width, height, 0), square_maze_info_(info) {
+    GenSquareMaze();
+  }
 
   MazeGenerator(const MazeGenerator &other) = default;
   MazeGenerator &operator=(const MazeGenerator &other) = default;
@@ -107,7 +112,7 @@ class MazeGenerator {
 
  protected:
   Plane plane_;
-  SquareMazeInfo maze_info_;
+  SquareMazeInfo square_maze_info_;
   CircularMazeInfo circular_maze_info_;
 };
 

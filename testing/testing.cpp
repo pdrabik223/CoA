@@ -2,7 +2,7 @@
 // Created by piotr on 15/10/2021.
 //
 
-#include "../maze/maze_generator.h"
+#include "../maze_generator/maze_generator.h"
 #include "../path_search/path_search.h"
 #include "pm_include.h"
 #include "pr_file_format.h"
@@ -10,15 +10,16 @@
 #include <fstream>
 #include <utility>
 
-void PerformTest(MazeType maze_type);
+void PlaneSizeCorrelation(MazeType maze_type);
+void MazeComplexityCorrelation(MazeType maze_type);
 #define T_START std::chrono::high_resolution_clock::now()
 #define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
 #define INT(x) (int) Algorithm::x
 
-void TimePlane(std::vector<unsigned> &path_length,
-               std::vector<unsigned> &path_misses,
-               std::vector<double> &times,
-               const Plane &plane);
+void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length,
+                                            std::vector<unsigned> &path_misses,
+                                            std::vector<double> &times,
+                                            const Plane &plane);
 
 std::vector<double> Average(const std::vector<double> &values, int total_no_tests) {
   std::vector<double> output;
@@ -94,28 +95,76 @@ int main() {
 
   srand(time(NULL));
 
-  PerformTest(MazeType::SQUARE_MAZE);
-  //  PerformTest(MazeType::SNAIL_MAZE);
-  PerformTest(MazeType::EMPTY_PLANE);
-  PerformTest(MazeType::CIRCUlAR_MAZE);
+  //  MazeComplexityCorrelation(MazeType::SQUARE_MAZE);
+  PlaneSizeCorrelation(MazeType::SNAIL_MAZE);
+  //  PlaneSizeCorrelation(MazeType::EMPTY_PLANE);
+  //  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE);
   return 1;
 }
+void MazeComplexityCorrelation(MazeType maze_type) {
+  if (maze_type != MazeType::SQUARE_MAZE) throw "bad Maze";
 
-void PerformTest(MazeType maze_type) {
+  PRFileFormat timings_file("Time complexity to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_lengths_file("Found path length to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_misses_file("Path misses to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+
+  const int kMazeSize = 100;
+  const int kMazeMinCavitySize = 5;
+  const int kMazeMaxCavitySize = 50;
+  const int kMazeCavitySizeJump = 5;
+  const int kNoTests = 100;
+
+  std::vector<std::vector<unsigned>> path_lengths;
+
+  for (int cavity_size = kMazeMaxCavitySize; cavity_size > kMazeMinCavitySize; cavity_size -= kMazeCavitySizeJump) {
+
+    std::vector<unsigned> path_length = {};
+    std::vector<unsigned> path_misses = {};
+    std::vector<unsigned> relative_path_length = {};
+
+    std::vector<double> times{};
+    for (int i = 0; i < (int) Algorithm::SIZE; i++) {
+      path_length.push_back(0);
+      path_misses.push_back(0);
+      times.push_back(0.);
+    }
+
+    for (int i = 0; i < kNoTests; ++i) {
+
+      MazeGenerator maze_generator(kMazeSize, kMazeSize, {1, {cavity_size, cavity_size}, cavity_size * cavity_size});
+
+      PlaneSizeCorrPerformTestsForGivenPlane(path_length, path_misses, times, maze_generator.GetPlane());
+
+      path_lengths.push_back(path_length);
+    }
+
+    printf("current cavity size:%d\n", cavity_size);
+
+    timings_file.PushData(cavity_size * cavity_size, Average(times, kNoTests));
+
+    path_lengths_file.PushData(cavity_size * cavity_size, Average(path_lengths, kNoTests));
+
+    path_misses_file.PushData(cavity_size * cavity_size, Convert(path_misses));
+
+    relative_path_lengths_file.PushData(cavity_size * cavity_size, RelativeToDLS(Average(path_lengths, kNoTests)));
+  }
+}
+void PlaneSizeCorrelation(MazeType maze_type) {
 
   PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
   PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
   PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
   PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
 
-  int min_maze_size = 10;
-  int max_maze_size = 50;
-  int maze_size_jump = 5;
-  int no_tests = 100;
+  const int kMinMazeSize = 10;
+  const int kMaxMazeSize = 50;
+  const int kMazeSizeJump = 5;
+  const int kNoTests = 100;
 
   std::vector<std::vector<unsigned>> path_lengths;
 
-  for (int maze_size = min_maze_size; maze_size < max_maze_size; maze_size += maze_size_jump) {
+  for (int maze_size = kMinMazeSize; maze_size < kMaxMazeSize; maze_size += kMazeSizeJump) {
 
     std::vector<unsigned> path_length = {};
     std::vector<unsigned> path_misses = {};
@@ -129,23 +178,23 @@ void PerformTest(MazeType maze_type) {
       times.push_back(0.);
     }
 
-    for (int i = 0; i < no_tests; ++i) {
+    for (int i = 0; i < kNoTests; ++i) {
       MazeGenerator maze_generator(maze_size, maze_size, maze_type);
 
-      TimePlane(path_length, path_misses, times, maze_generator.GetPlane());
+      PlaneSizeCorrPerformTestsForGivenPlane(path_length, path_misses, times, maze_generator.GetPlane());
 
       path_lengths.push_back(path_length);
     }
 
     printf("\rcurrent maze size:%d", maze_size);
 
-    timings_file.PushData(maze_size * maze_size, Average(times, no_tests));
+    timings_file.PushData(maze_size * maze_size, Average(times, kNoTests));
 
-    path_lengths_file.PushData(maze_size * maze_size, Average(path_lengths, no_tests));
+    path_lengths_file.PushData(maze_size * maze_size, Average(path_lengths, kNoTests));
 
     path_misses_file.PushData(maze_size * maze_size, Convert(path_misses));
 
-    relative_path_lengths_file.PushData(maze_size * maze_size, RelativeToDLS(Average(path_lengths, no_tests)));
+    relative_path_lengths_file.PushData(maze_size * maze_size, RelativeToDLS(Average(path_lengths, kNoTests)));
   }
 }
 
@@ -155,10 +204,10 @@ int id = 0;
 /// \param path_misses
 /// \param times timings output
 /// \param plane tested maze
-void TimePlane(std::vector<unsigned> &path_length,
-               std::vector<unsigned> &path_misses,
-               std::vector<double> &times,
-               const Plane &plane) {
+void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length,
+                                            std::vector<unsigned> &path_misses,
+                                            std::vector<double> &times,
+                                            const Plane &plane) {
 
   Dijkstra dijkstra(plane);
   AStar a_star(plane);
@@ -195,7 +244,7 @@ void TimePlane(std::vector<unsigned> &path_length,
     times[INT(RIGHT_HAND_RULE)] += T_RECORD(time);
 
     if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0) {
-      plane.SaveToFile("../saved_mazes/" + std::to_string(id++) + ".txt");
+      //      plane.SaveToFile("../saved_mazes/" + std::to_string(id++) + ".txt");
       path_misses[INT(RIGHT_HAND_RULE)]++;
     }
   }
