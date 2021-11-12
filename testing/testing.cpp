@@ -104,10 +104,10 @@ int main() {
 void MazeComplexityCorrelation(MazeType maze_type) {
   if (maze_type != MazeType::SQUARE_MAZE) throw "bad Maze";
 
-  PRFileFormat timings_file("Time complexity to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_lengths_file("Found path length to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_misses_file("Path misses to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat timings_file("Time complexity to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_lengths_file("Found path length to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_misses_file("Path misses to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
 
   const int kMazeSize = 100;
   const int kMazeMinCavitySize = 5;
@@ -152,10 +152,10 @@ void MazeComplexityCorrelation(MazeType maze_type) {
 }
 void PlaneSizeCorrelation(MazeType maze_type) {
 
-  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Right Hand Rule", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
 
   const int kMinMazeSize = 10;
   const int kMaxMazeSize = 50;
@@ -212,7 +212,6 @@ void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length,
   Dijkstra dijkstra(plane);
   AStar a_star(plane);
   RandomWalk random(plane);
-  RHR right_hand_rule(plane);
   DepthFirst depth_first(plane);
   GreedyBestFirst greedy_best_first(plane);
   GreedyPDistance greedy_p_distance(plane);
@@ -237,16 +236,6 @@ void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length,
 
     if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RANDOM_WALK)] == 0)
       path_misses[INT(RANDOM_WALK)]++;
-  }
-  {
-    auto time = T_START;
-    path_length[INT(RIGHT_HAND_RULE)] = right_hand_rule.FindPath().size();
-    times[INT(RIGHT_HAND_RULE)] += T_RECORD(time);
-
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RIGHT_HAND_RULE)] == 0) {
-      //      plane.SaveToFile("../saved_mazes/" + std::to_string(id++) + ".txt");
-      path_misses[INT(RIGHT_HAND_RULE)]++;
-    }
   }
   {
     auto time = T_START;

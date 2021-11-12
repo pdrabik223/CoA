@@ -22,7 +22,6 @@ class Generator {
       case Algorithm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
       case Algorithm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
       case Algorithm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
-      case Algorithm::RIGHT_HAND_RULE: engine = std::move(std::unique_ptr<GraphBase>(new RHR(settings.first))); break;
       case Algorithm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(settings.first))); break;
       case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(settings.first))); break;
     }
@@ -45,7 +44,7 @@ int main() {
   ColorScheme color_scheme;
   color_scheme.LoadGreenSet();
   Window screen(800, 800);
-  Generator main({cos, Algorithm::RIGHT_HAND_RULE}, screen, color_scheme);
+  Generator main({cos, Algorithm::RANDOM_WALK}, screen, color_scheme);
 
   return 0;
 }
