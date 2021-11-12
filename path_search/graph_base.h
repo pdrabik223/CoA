@@ -38,7 +38,7 @@ class GraphBase {
 
   virtual ~GraphBase() { ClearGraph(); };
 
-  int Abs(int x) {
+  static unsigned Abs(int x) {
     if (x < 0) return -x;
     else
       return x;

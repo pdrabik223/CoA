@@ -90,7 +90,8 @@ double GreedyPDistance::PDistance(const Coord &position) {
     unsigned d_y = Abs(position.y - f.y);
 
     unsigned distance = d_x > d_y ? d_x : d_y;
-    if (distance < smallest_distance) smallest_distance = distance;
+    if (distance < smallest_distance)
+      smallest_distance = distance;
   }
 
   return smallest_distance;
@@ -101,7 +102,7 @@ Cell *GreedyPDistance::PopSmallestH(std::vector<Cell *> &open_set) {
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++) {
-    if (open_set[i]->h - open_set[smallest_h]->h < 0) smallest_h = i;
+    if (open_set[i]->h < open_set[smallest_h]->h) smallest_h = i;
   }
 
   Cell *temp = open_set[smallest_h];
