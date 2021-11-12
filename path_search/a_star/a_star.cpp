@@ -93,7 +93,7 @@ double AStar::EuclideanDistance(const Coord &position) {
     if (distance < smallest_distance) smallest_distance = distance;
   }
 
-  return smallest_distance * 2;
+  return smallest_distance;
 }
 
 double AStar::ManhattanDistance(const Coord &position) {
