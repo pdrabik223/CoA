@@ -42,6 +42,18 @@ class PathSearch {
     }
   }
 
+  PathSearch(const Plane &maze, Algorithm algorithm, Neighbourhood neighbourhood) {
+
+    switch (algorithm) {
+      case Algorithm::DIJKSTRA: search_engine_ = std::move(std::unique_ptr<GraphBase>(new Dijkstra(maze, neighbourhood))); break;
+      case Algorithm::A_STAR: search_engine_ = std::move(std::unique_ptr<GraphBase>(new AStar(maze, neighbourhood))); break;
+      case Algorithm::RANDOM_WALK: search_engine_ = std::move(std::unique_ptr<GraphBase>(new RandomWalk(maze, neighbourhood))); break;
+      case Algorithm::DEPTH_FIRST: search_engine_ = std::move(std::unique_ptr<GraphBase>(new DepthFirst(maze, neighbourhood))); break;
+      case Algorithm::GREEDY_BEST_FIRST: search_engine_ = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(maze, neighbourhood))); break;
+      case Algorithm::GREEDY_P_DISTANCE: search_engine_ = std::move(std::unique_ptr<GraphBase>(new GreedyPDistance(maze, neighbourhood))); break;
+    }
+  }
+
   PathSearch(const Plane &maze, Algorithm algorithm) {
 
     switch (algorithm) {

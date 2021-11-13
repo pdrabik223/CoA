@@ -14,7 +14,7 @@ void MessageMe(int maze_nr, std::tuple<MazeType, Algorithm, Neighbourhood> setti
   std::string algorithm = ToString(std::get<1>(settings));
   std::string neighbourhood = ToString(std::get<2>(settings));
 
-  std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\tneighbourhood: " << neighbourhood << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
+  std::cout << "maze: " << maze_nr << "\tmaze type: " << maze_type << "\tneighbourhood: " << neighbourhood << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
 }
 class Generator {
@@ -70,8 +70,10 @@ int main() {
 
   std::vector<std::tuple<MazeType, Algorithm, Neighbourhood>> settings = {
       //      {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
-      {MazeType::EMPTY_PLANE, Algorithm::DIJKSTRA, Neighbourhood::VON_NEUMAN},
-      {MazeType::EMPTY_PLANE, Algorithm::DIJKSTRA, Neighbourhood::MOORE}};
+      {MazeType::CIRCUlAR_MAZE, Algorithm::A_STAR, Neighbourhood::MOORE},
+      {MazeType::CIRCUlAR_MAZE, Algorithm::GREEDY_P_DISTANCE, Neighbourhood::MOORE},
+      {MazeType::CIRCUlAR_MAZE, Algorithm::GREEDY_BEST_FIRST, Neighbourhood::MOORE}};
+
   GlobalVisuals(settings);
 
   return 0;
