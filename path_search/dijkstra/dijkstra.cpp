@@ -82,3 +82,4 @@ bool Dijkstra::UpdateGs(Window &window_handle, const ColorScheme &color_scheme) 
   }
   return false;
 }
+Dijkstra::Dijkstra(const Plane &other, Neighbourhood neighbourhood) : GraphBase(other, neighbourhood) {}

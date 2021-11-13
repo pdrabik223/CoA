@@ -10,6 +10,7 @@ class GreedyBestFirst : public GraphBase {
 
  public:
   GreedyBestFirst() = delete;
+  GreedyBestFirst(const Plane &other, Neighbourhood neighbourhood);
   /// constructs Sample object based of Plane
   explicit GreedyBestFirst(const Plane &other) : GraphBase(other){};
   GreedyBestFirst(const GreedyBestFirst &other) = default;

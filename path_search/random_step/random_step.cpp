@@ -76,3 +76,4 @@ RandomStep::Direction RandomStep::CalculateDirection(const Coord &c_1, const Coo
 
   return global_direction;
 }
+RandomStep::RandomStep(const Plane &other, Neighbourhood neighbourhood) : GraphBase(other, neighbourhood) {}

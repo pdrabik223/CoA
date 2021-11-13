@@ -7,7 +7,8 @@
 #include <algorithm>
 
 AStar::AStar(const Plane &other) : GraphBase(other) {}
-
+AStar::AStar(const Plane &other, Neighbourhood neighbourhood) : GraphBase(other, neighbourhood) {
+}
 std::vector<Coord> AStar::FindPath(Window &window_handle, const ColorScheme &color_scheme) {
 
   ClearGraph();

@@ -114,3 +114,4 @@ Cell *GreedyBestFirst::PopSmallestH(std::vector<Cell *> &open_set) {
   open_set.erase(open_set.begin() + smallest_h);
   return temp;
 }
+GreedyBestFirst::GreedyBestFirst(const Plane &other, Neighbourhood neighbourhood) : GraphBase(other, neighbourhood) {}

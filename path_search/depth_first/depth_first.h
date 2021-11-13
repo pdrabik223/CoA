@@ -10,7 +10,7 @@ class DepthFirst : public GraphBase {
 
  public:
   DepthFirst() = delete;
-
+  DepthFirst(const Plane &other, Neighbourhood neighbourhood);
   /// constructs Sample object based of Plane
   explicit DepthFirst(const Plane &other) : GraphBase(other){};
   DepthFirst(const DepthFirst &other) = default;

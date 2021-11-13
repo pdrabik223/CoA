@@ -10,6 +10,7 @@
 class GreedyPDistance : public GraphBase {
  public:
   GreedyPDistance() = delete;
+  GreedyPDistance(const Plane &other, Neighbourhood neighbourhood);
   /// constructs Sample object based of Plane
   explicit GreedyPDistance(const Plane &other);
 

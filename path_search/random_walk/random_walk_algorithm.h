@@ -11,6 +11,7 @@ class RandomWalk : public GraphBase {
 
  public:
   RandomWalk() = delete;
+  RandomWalk(const Plane &other, Neighbourhood neighbourhood);
   /// constructs Sample object based of Plane
   RandomWalk(const Plane &other) : GraphBase(other){};
   RandomWalk(const RandomWalk &other) = default;

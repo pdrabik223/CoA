@@ -9,7 +9,7 @@ void GraphBase::ClearGraph() {
   }
   shortest_path_.clear();
 }
-void GraphBase::ConnectNeighbours(const Coord &position) {
+void GraphBase::ConnectNeighboursVonNeuman(const Coord &position) {
   if (GetCell(position).cell_type == CellState::WALL) return;
   std::vector<Coord> potential_neighbours;
 
@@ -17,6 +17,26 @@ void GraphBase::ConnectNeighbours(const Coord &position) {
   potential_neighbours.emplace_back(position.x, position.y + 1);
   potential_neighbours.emplace_back(position.x - 1, position.y);
   potential_neighbours.emplace_back(position.x + 1, position.y);
+
+  for (const auto &pn : potential_neighbours)
+    if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_)
+      if (GetCell(pn).cell_type != CellState::WALL)
+        GetCell(position).Connect(GetCell(pn));
+}
+
+void GraphBase::ConnectNeighboursMoore(const Coord &position) {
+  if (GetCell(position).cell_type == CellState::WALL) return;
+  std::vector<Coord> potential_neighbours;
+
+  potential_neighbours.emplace_back(position.x, position.y - 1);
+  potential_neighbours.emplace_back(position.x, position.y + 1);
+  potential_neighbours.emplace_back(position.x - 1, position.y);
+  potential_neighbours.emplace_back(position.x + 1, position.y);
+
+  potential_neighbours.emplace_back(position.x - 1, position.y - 1);
+  potential_neighbours.emplace_back(position.x + 1, position.y - 1);
+  potential_neighbours.emplace_back(position.x - 1, position.y + 1);
+  potential_neighbours.emplace_back(position.x + 1, position.y + 1);
 
   for (const auto &pn : potential_neighbours)
     if (pn.x >= 0 and pn.y >= 0 and pn.y < height_ and pn.x < width_)
@@ -88,10 +108,38 @@ GraphBase::GraphBase(const Plane &other) : width_(other.GetWidth()), height_(oth
 
   if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
 
-  for (int y = 0; y < other.GetHeight(); y++)
-    for (int x = 0; x < other.GetWidth(); x++)
-      ConnectNeighbours({x, y});
+  if (neighbourhood_ == Neighbourhood::VON_NEUMAN)
+    for (int y = 0; y < other.GetHeight(); y++)
+      for (int x = 0; x < other.GetWidth(); x++)
+        ConnectNeighboursVonNeuman({x, y});
+  else
+    for (int y = 0; y < other.GetHeight(); y++)
+      for (int x = 0; x < other.GetWidth(); x++)
+        ConnectNeighboursMoore({x, y});
 }
+
+GraphBase::GraphBase(const Plane &other, Neighbourhood neighbourhood) : width_(other.GetWidth()), height_(other.GetHeight()), neighbourhood_(neighbourhood) {
+  copy_plane_.reserve(other.GetHeight() * other.GetWidth());
+
+  for (int y = 0; y < other.GetHeight(); y++)
+    for (int x = 0; x < other.GetWidth(); x++) {
+      copy_plane_.push_back({other.GetCell({x, y}), {x, y}});
+      if (other.GetCell({x, y}) == CellState::START) starting_points_.emplace_back(x, y);
+      if (other.GetCell({x, y}) == CellState::FINISH) final_points_.emplace_back(x, y);
+    }
+
+  if (starting_points_.empty() or final_points_.empty()) throw "bad plane error";
+
+  if (neighbourhood_ == Neighbourhood::VON_NEUMAN)
+    for (int y = 0; y < other.GetHeight(); y++)
+      for (int x = 0; x < other.GetWidth(); x++)
+        ConnectNeighboursVonNeuman({x, y});
+  else
+    for (int y = 0; y < other.GetHeight(); y++)
+      for (int x = 0; x < other.GetWidth(); x++)
+        ConnectNeighboursMoore({x, y});
+}
+
 GraphBase::GraphBase(const GraphBase &other) {
   copy_plane_.reserve(width_ * height_);
 

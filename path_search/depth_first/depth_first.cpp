@@ -88,3 +88,4 @@ bool DepthFirst::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
   }
   return false;
 }
+DepthFirst::DepthFirst(const Plane &other, Neighbourhood neighbourhood) : GraphBase(other, neighbourhood) {}

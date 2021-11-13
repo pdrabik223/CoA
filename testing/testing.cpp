@@ -96,18 +96,23 @@ int main() {
   srand(time(NULL));
 
   //  MazeComplexityCorrelation(MazeType::SQUARE_MAZE);
-  PlaneSizeCorrelation(MazeType::SNAIL_MAZE);
-  //  PlaneSizeCorrelation(MazeType::EMPTY_PLANE);
+  //  PlaneSizeCorrelation(MazeType::SNAIL_MAZE);
+  PlaneSizeCorrelation(MazeType::EMPTY_PLANE);
   //  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE);
   return 1;
 }
 void MazeComplexityCorrelation(MazeType maze_type) {
   if (maze_type != MazeType::SQUARE_MAZE) throw "bad Maze";
 
-  PRFileFormat timings_file("Time complexity to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_lengths_file("Found path length to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_misses_file("Path misses to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS to maze complexity for " + ToString(maze_type), "Maze cavity size [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  std::vector<std::string> dataset_labels;
+  dataset_labels.reserve((int) Algorithm::SIZE);
+  for (int i = 0; i < (int) Algorithm::SIZE; i++)
+    dataset_labels.push_back(ToString((Algorithm(i))));
+
+  PRFileFormat timings_file("Time complexity in MazeComplexityCorrelation for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", dataset_labels);
+  PRFileFormat path_lengths_file("Found path in MazeComplexityCorrelation length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", dataset_labels);
+  PRFileFormat path_misses_file("Path misses in MazeComplexityCorrelation for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", dataset_labels);
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS in MazeComplexityCorrelation for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", dataset_labels);
 
   const int kMazeSize = 100;
   const int kMazeMinCavitySize = 5;
@@ -152,10 +157,15 @@ void MazeComplexityCorrelation(MazeType maze_type) {
 }
 void PlaneSizeCorrelation(MazeType maze_type) {
 
-  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", {"Dijkstra", "A*", "Random Walk", "Depth First", "Greedy Depth First", "Greedy PDistance"});
+  std::vector<std::string> dataset_labels;
+  dataset_labels.reserve((int) Algorithm::SIZE);
+  for (int i = 0; i < (int) Algorithm::SIZE; i++)
+    dataset_labels.push_back(ToString((Algorithm(i))));
+
+  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", dataset_labels);
+  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", dataset_labels);
+  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", dataset_labels);
+  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", dataset_labels);
 
   const int kMinMazeSize = 10;
   const int kMaxMazeSize = 50;
@@ -209,56 +219,68 @@ void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length,
                                             std::vector<double> &times,
                                             const Plane &plane) {
 
-  Dijkstra dijkstra(plane);
-  AStar a_star(plane);
-  RandomWalk random(plane);
-  DepthFirst depth_first(plane);
-  GreedyBestFirst greedy_best_first(plane);
-  GreedyPDistance greedy_p_distance(plane);
+  for (int i = 0; i < (int) Algorithm::SIZE; i++) {
 
-  {
+    PathSearch engine(plane, (Algorithm) i);
     auto time = T_START;
-    path_length[INT(DIJKSTRA)] = dijkstra.FindPath().size();
-    times[INT(DIJKSTRA)] += T_RECORD(time);
-  }
-  {
-    auto time = T_START;
-    path_length[INT(A_STAR)] = a_star.FindPath().size();
-    times[INT(A_STAR)] += T_RECORD(time);
+    path_length[i] = engine.FindPath().size();
+    times[i] += T_RECORD(time);
 
-    if (path_length[(int) Algorithm::DIJKSTRA] != 0 and path_length[INT(A_STAR)] == 0)
-      path_misses[INT(A_STAR)]++;
+    if (path_length[(int) Algorithm::DIJKSTRA] != 0 and path_length[i] == 0)
+      path_misses[i]++;
   }
-  {
-    auto time = T_START;
-    path_length[INT(RANDOM_WALK)] = random.FindPath().size();
-    times[INT(RANDOM_WALK)] += T_RECORD(time);
 
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RANDOM_WALK)] == 0)
-      path_misses[INT(RANDOM_WALK)]++;
-  }
-  {
-    auto time = T_START;
-    path_length[INT(DEPTH_FIRST)] = depth_first.FindPath().size();
-    times[INT(DEPTH_FIRST)] += T_RECORD(time);
-
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(DEPTH_FIRST)] == 0)
-      path_misses[INT(DEPTH_FIRST)]++;
-  }
-  {
-    auto time = T_START;
-    path_length[INT(GREEDY_BEST_FIRST)] = greedy_best_first.FindPath().size();
-    times[INT(GREEDY_BEST_FIRST)] += T_RECORD(time);
-
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
-      path_misses[INT(GREEDY_BEST_FIRST)]++;
-  }
-  {
-    auto time = T_START;
-    path_length[INT(GREEDY_P_DISTANCE)] = greedy_p_distance.FindPath().size();
-    times[INT(GREEDY_P_DISTANCE)] += T_RECORD(time);
-
-    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_P_DISTANCE)] == 0)
-      path_misses[INT(GREEDY_P_DISTANCE)]++;
-  }
+  //
+  //  Dijkstra dijkstra(plane);
+  //  AStar a_star(plane);
+  //  RandomWalk random(plane);
+  //  DepthFirst depth_first(plane);
+  //  GreedyBestFirst greedy_best_first(plane);
+  //  GreedyPDistance greedy_p_distance(plane);
+  //
+  //  {
+  //    auto time = T_START;
+  //    path_length[INT(DIJKSTRA)] = dijkstra.FindPath().size();
+  //    times[INT(DIJKSTRA)] += T_RECORD(time);
+  //  }
+  //  {
+  //    auto time = T_START;
+  //    path_length[INT(A_STAR)] = a_star.FindPath().size();
+  //    times[INT(A_STAR)] += T_RECORD(time);
+  //
+  //    if (path_length[(int) Algorithm::DIJKSTRA] != 0 and path_length[INT(A_STAR)] == 0)
+  //      path_misses[INT(A_STAR)]++;
+  //  }
+  //  {
+  //    auto time = T_START;
+  //    path_length[INT(RANDOM_WALK)] = random.FindPath().size();
+  //    times[INT(RANDOM_WALK)] += T_RECORD(time);
+  //
+  //    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(RANDOM_WALK)] == 0)
+  //      path_misses[INT(RANDOM_WALK)]++;
+  //  }
+  //  {
+  //    auto time = T_START;
+  //    path_length[INT(DEPTH_FIRST)] = depth_first.FindPath().size();
+  //    times[INT(DEPTH_FIRST)] += T_RECORD(time);
+  //
+  //    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(DEPTH_FIRST)] == 0)
+  //      path_misses[INT(DEPTH_FIRST)]++;
+  //  }
+  //  {
+  //    auto time = T_START;
+  //    path_length[INT(GREEDY_BEST_FIRST)] = greedy_best_first.FindPath().size();
+  //    times[INT(GREEDY_BEST_FIRST)] += T_RECORD(time);
+  //
+  //    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_BEST_FIRST)] == 0)
+  //      path_misses[INT(GREEDY_BEST_FIRST)]++;
+  //  }
+  //  {
+  //    auto time = T_START;
+  //    path_length[INT(GREEDY_P_DISTANCE)] = greedy_p_distance.FindPath().size();
+  //    times[INT(GREEDY_P_DISTANCE)] += T_RECORD(time);
+  //
+  //    if (path_length[INT(DIJKSTRA)] != 0 and path_length[INT(GREEDY_P_DISTANCE)] == 0)
+  //      path_misses[INT(GREEDY_P_DISTANCE)]++;
+  //  }
 }

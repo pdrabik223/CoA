@@ -20,10 +20,15 @@ enum class Algorithm {
   GREEDY_P_DISTANCE,
   SIZE
 };
-
+enum class Neighbourhood {
+  VON_NEUMAN,
+  MOORE
+};
 class GraphBase {
  public:
   GraphBase(const Plane &other);
+  GraphBase(const Plane &other, Neighbourhood neighbourhood);
+
   GraphBase(const GraphBase &other);
   /// find path from start to finish
   /// \return list of connected coordinates
@@ -47,7 +52,8 @@ class GraphBase {
   void GeneratePath();
   void GeneratePath(Window &window_handle, const ColorScheme &color_scheme);
   void ClearGraph();
-  void ConnectNeighbours(const Coord &position);
+  void ConnectNeighboursVonNeuman(const Coord &position);
+  void ConnectNeighboursMoore(const Coord &position);
   Cell &GetCell(const Coord &position) { return this->copy_plane_[position.ToInt(width_)]; };
   void HighlightPositions(Window &window_handle, const ColorScheme &color_scheme, const std::vector<Cell *> &successors);
 
@@ -55,7 +61,7 @@ class GraphBase {
   unsigned width_;
   /// y axis
   unsigned height_;
-
+  Neighbourhood neighbourhood_ = Neighbourhood::VON_NEUMAN;
   std::vector<Cell> copy_plane_;
   std::vector<Coord> starting_points_;
   std::vector<Coord> final_points_;

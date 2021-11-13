@@ -14,6 +14,7 @@
 class Dijkstra : public GraphBase {
  public:
   Dijkstra() = delete;
+  Dijkstra(const Plane &other, Neighbourhood neighbourhood);
   /// constructs Sample object based of Plane
   explicit Dijkstra(const Plane &other) : GraphBase(other){};
   Dijkstra(const Dijkstra &other) = default;

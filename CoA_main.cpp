@@ -5,48 +5,36 @@
 #include "path_search/path_search.h"
 #include <iostream>
 #include <memory>
+#include <tuple>
 #define WINDOW_SIZE 500
 
-void MessageMe(int maze_nr, std::pair<MazeType, Algorithm> settings, size_t time, int path_length) {
+void MessageMe(int maze_nr, std::tuple<MazeType, Algorithm, Neighbourhood> settings, size_t time, int path_length) {
 
-  std::string maze_type = ToString(settings.first);
-  std::string algorithm = ToString(settings.second);
+  std::string maze_type = ToString(std::get<0>(settings));
+  std::string algorithm = ToString(std::get<1>(settings));
+  std::string neighbourhood = ToString(std::get<2>(settings));
 
-  std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
+  std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\tneighbourhood: " << neighbourhood << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
             << "path length: " << path_length << "\n";
 }
-
-#define T_START std::chrono::high_resolution_clock::now()
-#define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
-
 class Generator {
  public:
-  Generator(std::pair<MazeType, Algorithm> settings, Window &window, const ColorScheme &color_scheme) {
+  Generator(std::tuple<MazeType, Algorithm, Neighbourhood> settings, Window &window, const ColorScheme &color_scheme) {
 
     generator_thread_ = new std::thread(&Generator::MainLoop, this, settings, std::ref(window), color_scheme);
   };
 
-  void MainLoop(std::pair<MazeType, Algorithm> settings, Window &window, ColorScheme color_scheme) {
-    std::chrono::steady_clock::time_point t_1;
+  void MainLoop(std::tuple<MazeType, Algorithm, Neighbourhood> settings, Window &window, ColorScheme color_scheme) {
     double time;
 
     for (int i = 0; i < 10; ++i) {
-      MazeGenerator maze(100, 100, settings.first);
-      std::unique_ptr<GraphBase> engine;
+      MazeGenerator maze(100, 100, std::get<0>(settings));
+      PathSearch engine(maze, std::get<1>(settings), std::get<2>(settings));
 
-      switch (settings.second) {
-        case Algorithm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(maze.GetPlane()))); break;
-        case Algorithm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(maze.GetPlane()))); break;
-        case Algorithm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(maze.GetPlane()))); break;
-        case Algorithm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(maze.GetPlane()))); break;
-        case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(maze.GetPlane()))); break;
-        case Algorithm::GREEDY_P_DISTANCE: engine = std::move(std::unique_ptr<GraphBase>(new GreedyPDistance(maze.GetPlane()))); break;
-      }
+      auto path = engine.FindPath(window, color_scheme);
 
-      auto path = engine->FindPath(window, color_scheme);
-      t_1 = T_START;
-      engine->FindPath();
-      time = T_RECORD(t_1);
+      time = engine.TimePathSearch(path);
+
       MessageMe(i, settings, time, path.size());
     }
   };
@@ -59,7 +47,7 @@ class Generator {
   std::thread *generator_thread_;
 };
 
-void GlobalVisuals(std::vector<std::pair<MazeType, Algorithm>> settings) {
+void GlobalVisuals(std::vector<std::tuple<MazeType, Algorithm, Neighbourhood>> settings) {
 
   std::vector<Window *> windows;
   windows.reserve(settings.size());
@@ -80,10 +68,10 @@ void GlobalVisuals(std::vector<std::pair<MazeType, Algorithm>> settings) {
 int main() {
   srand(time(NULL));
 
-  std::vector<std::pair<MazeType, Algorithm>> settings = {
+  std::vector<std::tuple<MazeType, Algorithm, Neighbourhood>> settings = {
       //      {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
-      {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
-      {MazeType::SQUARE_MAZE, Algorithm::DEPTH_FIRST}};
+      {MazeType::EMPTY_PLANE, Algorithm::DIJKSTRA, Neighbourhood::VON_NEUMAN},
+      {MazeType::EMPTY_PLANE, Algorithm::DIJKSTRA, Neighbourhood::MOORE}};
   GlobalVisuals(settings);
 
   return 0;

@@ -109,3 +109,4 @@ Cell *GreedyPDistance::PopSmallestH(std::vector<Cell *> &open_set) {
   open_set.erase(open_set.begin() + smallest_h);
   return temp;
 }
+GreedyPDistance::GreedyPDistance(const Plane &other, Neighbourhood neighbourhood) : GraphBase(other, neighbourhood) {}

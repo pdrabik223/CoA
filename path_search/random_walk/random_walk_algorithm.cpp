@@ -89,3 +89,4 @@ Cell *RandomWalk::PopRandomCell(std::vector<Cell *> &open_set) {
 
   return temp;
 }
+RandomWalk::RandomWalk(const Plane &other, Neighbourhood neighbourhood) : GraphBase(other, neighbourhood) {}

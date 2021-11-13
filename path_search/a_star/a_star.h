@@ -10,8 +10,12 @@ class AStar : public GraphBase {
 
  public:
   AStar() = delete;
+
   /// constructs Sample object based of Plane
   explicit AStar(const Plane &other);
+
+  /// constructs Sample object based of Plane
+  explicit AStar(const Plane &other, Neighbourhood neighbourhood);
 
   AStar(const AStar &other) = default;
 

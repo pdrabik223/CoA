@@ -16,7 +16,7 @@ class RandomStep : public GraphBase {
 
  public:
   RandomStep() = delete;
-
+  RandomStep(const Plane &other, Neighbourhood neighbourhood);
   /// constructs Sample object based of Plane
   RandomStep(const Plane &other) : GraphBase(other){};
   RandomStep(const RandomStep &other) = default;

@@ -7,26 +7,35 @@
 #include <iostream>
 #define WINDOW_SIZE 500
 
+void MessageMe(int maze_nr, std::tuple<MazeType, Algorithm, Neighbourhood> settings, size_t time, int path_length) {
+
+  std::string maze_type = ToString(std::get<0>(settings));
+  std::string algorithm = ToString(std::get<1>(settings));
+  std::string neighbourhood = ToString(std::get<2>(settings));
+
+  std::cout << "maze nr: " << maze_nr << "\tmaze type: " << maze_type << "\tneighbourhood: " << neighbourhood << "\talgorithm: " << algorithm << "\ttime:" << time << "us\t"
+            << "path length: " << path_length << "\n";
+}
 class Generator {
  public:
-  Generator(std::pair<Plane, Algorithm> settings, Window &window, const ColorScheme &color_scheme) {
+  Generator(std::tuple<MazeType, Algorithm, Neighbourhood> settings, Window &window, const ColorScheme &color_scheme) {
 
     generator_thread_ = new std::thread(&Generator::MainLoop, this, settings, std::ref(window), color_scheme);
   };
 
-  void MainLoop(std::pair<Plane, Algorithm> settings, Window &window, ColorScheme color_scheme) {
+  void MainLoop(std::tuple<MazeType, Algorithm, Neighbourhood> settings, Window &window, ColorScheme color_scheme) {
+    double time;
 
-    std::unique_ptr<GraphBase> engine;
+    for (int i = 0; i < 10; ++i) {
+      MazeGenerator maze(100, 100, std::get<0>(settings));
+      PathSearch engine(maze, std::get<1>(settings), std::get<2>(settings));
 
-    switch (settings.second) {
-      case Algorithm::DIJKSTRA: engine = std::move(std::unique_ptr<GraphBase>(new Dijkstra(settings.first))); break;
-      case Algorithm::A_STAR: engine = std::move(std::unique_ptr<GraphBase>(new AStar(settings.first))); break;
-      case Algorithm::RANDOM_WALK: engine = std::move(std::unique_ptr<GraphBase>(new RandomWalk(settings.first))); break;
-      case Algorithm::DEPTH_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new DepthFirst(settings.first))); break;
-      case Algorithm::GREEDY_BEST_FIRST: engine = std::move(std::unique_ptr<GraphBase>(new GreedyBestFirst(settings.first))); break;
+      auto path = engine.FindPath(window, color_scheme);
+
+      time = engine.TimePathSearch(path);
+
+      MessageMe(i, settings, time, path.size());
     }
-
-    auto path = engine->FindPath(window, color_scheme);
   };
 
   ~Generator() {
@@ -36,7 +45,6 @@ class Generator {
 
   std::thread *generator_thread_;
 };
-
 int main() {
 
   Plane cos("../saved_mazes/0.txt");
