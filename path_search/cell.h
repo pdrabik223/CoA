@@ -36,6 +36,8 @@ struct Cell {
   double h = CELL_MAX;
   /// distance from cell to start
   unsigned g = CELL_MAX;
+  /// distance from cell to start + distance fom cell to finish
+  unsigned f = CELL_MAX;
 
   Coord placement;
   CellState cell_type;

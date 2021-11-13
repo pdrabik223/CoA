@@ -75,7 +75,7 @@ bool AStar::UpdateGs() {
 
     for (Cell *k_p : q->nodes)
       if (not k_p->IsDiscovered()) {
-        k_p->g = q->g + 1;
+        k_p->UpdateG();
         k_p->h = EuclideanDistance(k_p->placement);
         if (k_p->cell_type == CellState::FINISH) return true;
         open.push_back(k_p);
@@ -90,7 +90,7 @@ double AStar::EuclideanDistance(const Coord &position) {
   double smallest_distance = 100000000;
 
   for (auto &f : final_points_) {
-    double distance = sqrt(pow(position.x - f.x, 2) + pow(position.y - f.y, 2));
+    double distance = pow(position.x - f.x, 2) + pow(position.y - f.y, 2);
     if (distance < smallest_distance) smallest_distance = distance;
   }
 
@@ -111,9 +111,18 @@ double AStar::ManhattanDistance(const Coord &position) {
 Cell *AStar::PopSmallestH(std::vector<Cell *> &open_set) {
 
   int smallest_h = 0;
+  //  unsigned max_g = open_set.back()->g;
+  //  unsigned max_h = 100000;
+  //  for (auto h : open_set)
+  //    if (h->h < max_h) max_h = h->h;
+
+  double f_buffer = open_set[smallest_h]->h + open_set[smallest_h]->g;
 
   for (int i = 1; i < open_set.size(); i++) {
-    if (open_set[i]->h + open_set[i]->g < open_set[smallest_h]->h + open_set[smallest_h]->g) smallest_h = i;
+    if (open_set[i]->h + open_set[i]->g < f_buffer) {
+      smallest_h = i;
+      f_buffer = open_set[smallest_h]->h + open_set[smallest_h]->g;
+    }
   }
 
   Cell *temp = open_set[smallest_h];

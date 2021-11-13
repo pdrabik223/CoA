@@ -41,9 +41,9 @@ bool RandomWalk::UpdateGs() {
 
     for (const auto kP : q->nodes)
       if (not kP->IsDiscovered()) {
-        open.push_back(kP);
         kP->UpdateG();
         if (kP->cell_type == CellState::FINISH) return true;
+        open.push_back(kP);
       }
   }
   return false;

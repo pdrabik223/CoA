@@ -70,9 +70,9 @@ int main() {
 
   std::vector<std::tuple<MazeType, Algorithm, Neighbourhood>> settings = {
       //      {MazeType::EMPTY_PLANE, Algorithm::DEPTH_FIRST},
-      {MazeType::CIRCUlAR_MAZE, Algorithm::A_STAR, Neighbourhood::MOORE},
-      {MazeType::CIRCUlAR_MAZE, Algorithm::GREEDY_P_DISTANCE, Neighbourhood::MOORE},
-      {MazeType::CIRCUlAR_MAZE, Algorithm::GREEDY_BEST_FIRST, Neighbourhood::MOORE}};
+      {MazeType::EMPTY_PLANE, Algorithm::A_STAR, Neighbourhood::MOORE},
+      {MazeType::PLANE_20, Algorithm::A_STAR, Neighbourhood::MOORE},
+      {MazeType::PLANE_25, Algorithm::A_STAR, Neighbourhood::MOORE}};
 
   GlobalVisuals(settings);
 

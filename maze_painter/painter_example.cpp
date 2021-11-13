@@ -69,9 +69,9 @@ int main() {
   maze.GetPlane().SaveToFile("../saved_mazes/test.txt");
 
   std::vector<std::tuple<Plane, Algorithm, Neighbourhood>> settings = {
-      {maze.GetPlane(), Algorithm::GREEDY_BEST_FIRST, Neighbourhood::MOORE},
-      {maze.GetPlane(), Algorithm::A_STAR, Neighbourhood::MOORE},
-      {maze.GetPlane(), Algorithm::GREEDY_P_DISTANCE, Neighbourhood::MOORE}};
+      //      {maze.GetPlane(), Algorithm::GREEDY_BEST_FIRST, Neighbourhood::MOORE},
+      //      {maze.GetPlane(), Algorithm::A_STAR, Neighbourhood::MOORE},
+      {maze.GetPlane(), Algorithm::A_STAR, Neighbourhood::MOORE}};
 
   GlobalVisuals(settings);
   getch();

@@ -10,16 +10,13 @@
 #include <fstream>
 #include <utility>
 
-void PlaneSizeCorrelation(MazeType maze_type);
-void MazeComplexityCorrelation(MazeType maze_type);
+void PlaneSizeCorrelation(MazeType maze_type, Neighbourhood neighbourhood);
+void MazeComplexityCorrelation(MazeType maze_type, Neighbourhood neighbourhood);
 #define T_START std::chrono::high_resolution_clock::now()
 #define T_RECORD(t_1) std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - (t_1)).count()
 #define INT(x) (int) Algorithm::x
 
-void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length,
-                                            std::vector<unsigned> &path_misses,
-                                            std::vector<double> &times,
-                                            const Plane &plane);
+void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length, std::vector<unsigned> &path_misses, std::vector<double> &times, const Plane &plane, Neighbourhood neighbourhood);
 
 std::vector<double> Average(const std::vector<double> &values, int total_no_tests) {
   std::vector<double> output;
@@ -97,11 +94,12 @@ int main() {
 
   //  MazeComplexityCorrelation(MazeType::SQUARE_MAZE);
   //  PlaneSizeCorrelation(MazeType::SNAIL_MAZE);
-  PlaneSizeCorrelation(MazeType::EMPTY_PLANE);
+  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE, Neighbourhood::MOORE);
+  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE, Neighbourhood::VON_NEUMAN);
   //  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE);
   return 1;
 }
-void MazeComplexityCorrelation(MazeType maze_type) {
+void MazeComplexityCorrelation(MazeType maze_type, Neighbourhood neighbourhood) {
   if (maze_type != MazeType::SQUARE_MAZE) throw "bad Maze";
 
   std::vector<std::string> dataset_labels;
@@ -109,10 +107,10 @@ void MazeComplexityCorrelation(MazeType maze_type) {
   for (int i = 0; i < (int) Algorithm::SIZE; i++)
     dataset_labels.push_back(ToString((Algorithm(i))));
 
-  PRFileFormat timings_file("Time complexity in MazeComplexityCorrelation for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", dataset_labels);
-  PRFileFormat path_lengths_file("Found path in MazeComplexityCorrelation length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", dataset_labels);
-  PRFileFormat path_misses_file("Path misses in MazeComplexityCorrelation for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", dataset_labels);
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS in MazeComplexityCorrelation for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", dataset_labels);
+  PRFileFormat timings_file("Time dependency on maze complexity for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Time [ #mus ]", dataset_labels);
+  PRFileFormat path_lengths_file("Path length dependency on maze complexity for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Average path length", dataset_labels);
+  PRFileFormat relative_path_lengths_file("Path length relative to DLS dependency on maze complexity for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Difference in path lengths", dataset_labels);
+  PRFileFormat path_misses_file("Path misses dependency on maze complexity for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Total sum of missed path", dataset_labels);
 
   const int kMazeSize = 100;
   const int kMazeMinCavitySize = 5;
@@ -139,7 +137,7 @@ void MazeComplexityCorrelation(MazeType maze_type) {
 
       MazeGenerator maze_generator(kMazeSize, kMazeSize, {1, {cavity_size, cavity_size}, cavity_size * cavity_size});
 
-      PlaneSizeCorrPerformTestsForGivenPlane(path_length, path_misses, times, maze_generator.GetPlane());
+      PlaneSizeCorrPerformTestsForGivenPlane(path_length, path_misses, times, maze_generator.GetPlane(), neighbourhood);
 
       path_lengths.push_back(path_length);
     }
@@ -155,17 +153,17 @@ void MazeComplexityCorrelation(MazeType maze_type) {
     relative_path_lengths_file.PushData(cavity_size * cavity_size, RelativeToDLS(Average(path_lengths, kNoTests)));
   }
 }
-void PlaneSizeCorrelation(MazeType maze_type) {
+void PlaneSizeCorrelation(MazeType maze_type, Neighbourhood neighbourhood) {
 
   std::vector<std::string> dataset_labels;
   dataset_labels.reserve((int) Algorithm::SIZE);
   for (int i = 0; i < (int) Algorithm::SIZE; i++)
     dataset_labels.push_back(ToString((Algorithm(i))));
 
-  PRFileFormat timings_file("Time complexity for " + ToString(maze_type), "Maze area [j^2]", "Time [ #mus ]", dataset_labels);
-  PRFileFormat path_lengths_file("Found path length for " + ToString(maze_type), "Maze area [j^2]", "Average path length", dataset_labels);
-  PRFileFormat path_misses_file("Path misses for " + ToString(maze_type), "Maze area [j^2]", "Total sum of missed path", dataset_labels);
-  PRFileFormat relative_path_lengths_file("Found path length relative to DLS for " + ToString(maze_type), "Maze area [j^2]", "Difference in path lengths", dataset_labels);
+  PRFileFormat timings_file("Time dependency on maze size for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Time [ #mus ]", dataset_labels);
+  PRFileFormat path_lengths_file("Path length dependency on maze size for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Average path length", dataset_labels);
+  PRFileFormat relative_path_lengths_file("Path length relative to DLS dependency on maze size for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Difference in path lengths", dataset_labels);
+  PRFileFormat path_misses_file("Path misses dependency on maze size for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Total sum of missed path", dataset_labels);
 
   const int kMinMazeSize = 10;
   const int kMaxMazeSize = 50;
@@ -191,7 +189,7 @@ void PlaneSizeCorrelation(MazeType maze_type) {
     for (int i = 0; i < kNoTests; ++i) {
       MazeGenerator maze_generator(maze_size, maze_size, maze_type);
 
-      PlaneSizeCorrPerformTestsForGivenPlane(path_length, path_misses, times, maze_generator.GetPlane());
+      PlaneSizeCorrPerformTestsForGivenPlane(path_length, path_misses, times, maze_generator.GetPlane(), neighbourhood);
 
       path_lengths.push_back(path_length);
     }
@@ -214,14 +212,11 @@ int id = 0;
 /// \param path_misses
 /// \param times timings output
 /// \param plane tested maze
-void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length,
-                                            std::vector<unsigned> &path_misses,
-                                            std::vector<double> &times,
-                                            const Plane &plane) {
+void PlaneSizeCorrPerformTestsForGivenPlane(std::vector<unsigned> &path_length, std::vector<unsigned> &path_misses, std::vector<double> &times, const Plane &plane, Neighbourhood neighbourhood) {
 
   for (int i = 0; i < (int) Algorithm::SIZE; i++) {
 
-    PathSearch engine(plane, (Algorithm) i);
+    PathSearch engine(plane, (Algorithm) i, neighbourhood);
     auto time = T_START;
     path_length[i] = engine.FindPath().size();
     times[i] += T_RECORD(time);
