@@ -29,7 +29,7 @@ class GreedyBestFirst : public GraphBase {
   ~GreedyBestFirst() override { ClearGraph(); };
 
  private:
-  double EuclideanDistance(const Coord &position);
+  //  double EuclideanDistance(const Coord &position);
 
   bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);

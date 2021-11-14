@@ -31,7 +31,7 @@ class GreedyPDistance : public GraphBase {
   ~GreedyPDistance() override { ClearGraph(); };
 
  private:
-  double PDistance(const Coord &position);
+  //  double PDistance(const Coord &position);
 
   bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);

@@ -81,21 +81,21 @@ bool GreedyPDistance::UpdateGs() {
 
   return false;
 }
-
-double GreedyPDistance::PDistance(const Coord &position) {
-  unsigned smallest_distance = 100000000;
-
-  for (auto &f : final_points_) {
-    unsigned d_x = Abs(position.x - f.x);
-    unsigned d_y = Abs(position.y - f.y);
-
-    unsigned distance = d_x > d_y ? d_x : d_y;
-    if (distance < smallest_distance)
-      smallest_distance = distance;
-  }
-
-  return smallest_distance;
-}
+//
+//double GreedyPDistance::PDistance(const Coord &position) {
+//  unsigned smallest_distance = 100000000;
+//
+//  for (auto &f : final_points_) {
+//    unsigned d_x = Abs(position.x - f.x);
+//    unsigned d_y = Abs(position.y - f.y);
+//
+//    unsigned distance = d_x > d_y ? d_x : d_y;
+//    if (distance < smallest_distance)
+//      smallest_distance = distance;
+//  }
+//
+//  return smallest_distance;
+//}
 
 Cell *GreedyPDistance::PopSmallestH(std::vector<Cell *> &open_set) {
 

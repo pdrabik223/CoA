@@ -86,28 +86,25 @@ bool GreedyBestFirst::UpdateGs() {
   return false;
 }
 
-
-
-double GreedyBestFirst::EuclideanDistance(const Coord &position) {
-
-  double smallest_distance = 100000000;
-
-  for (auto &f : final_points_) {
-    double distance = pow(position.x - f.x, 2) + pow(position.y - f.y, 2);
-    if (distance < smallest_distance) smallest_distance = distance;
-  }
-
-  return smallest_distance;
-}
-
-
+//
+//double GreedyBestFirst::EuclideanDistance(const Coord &position) {
+//
+//  double smallest_distance = 100000000;
+//
+//  for (auto &f : final_points_) {
+//    double distance = pow(position.x - f.x, 2) + pow(position.y - f.y, 2);
+//    if (distance < smallest_distance) smallest_distance = distance;
+//  }
+//
+//  return smallest_distance;
+//}
 
 Cell *GreedyBestFirst::PopSmallestH(std::vector<Cell *> &open_set) {
 
   int smallest_h = 0;
 
   for (int i = 1; i < open_set.size(); i++)
-    if (open_set[i]->h  < open_set[smallest_h]->h  )
+    if (open_set[i]->h < open_set[smallest_h]->h)
       smallest_h = i;
 
   Cell *temp = open_set[smallest_h];

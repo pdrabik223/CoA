@@ -73,9 +73,9 @@ bool DepthFirst::UpdateGs(Window &window_handle, const ColorScheme &color_scheme
 
     for (Cell *k_p : q->nodes)
       if (not k_p->IsDiscovered()) {
-        successors.push_back(k_p);
         k_p->UpdateG();
         if (k_p->cell_type == CellState::FINISH) return true;
+        successors.push_back(k_p);
         open.push_back(k_p);
       }
 

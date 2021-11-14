@@ -34,15 +34,15 @@ class AStar : public GraphBase {
   ~AStar() override { ClearGraph(); };
 
  private:
-  double EuclideanDistance(const Coord &position);
-
-  /// finds Manhattan distance between position and closest finish point
-  double ManhattanDistance(const Coord &position);
+  //  double EuclideanDistance(const Coord &position);
+  //
+  //  /// finds Manhattan distance between position and closest finish point
+  //  double ManhattanDistance(const Coord &position);
 
   bool UpdateGs();
   bool UpdateGs(Window &window_handle, const ColorScheme &color_scheme);
 
-  Cell *PopSmallestH(std::vector<Cell *> &open_set);
+  Cell *PopSmallestF(std::vector<Cell *> &open_set);
 };
 
 #endif//COA_PATH_SEARCH_A_STAR_A_STAR_H_

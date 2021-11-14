@@ -166,3 +166,52 @@ void GraphBase::HighlightPositions(Window &window_handle, const ColorScheme &col
   highlights.HighlightCells(highlighted_positions);
   window_handle.PushFrame(highlights);
 }
+
+double GraphBase::EuclideanDistance(const Coord &position) {
+  if (final_points_.size() == 1)
+    return pow(position.x - final_points_.back().x, 2) + pow(position.y - final_points_.back().y, 2);
+
+  double smallest_distance = 100000000;
+
+  for (auto &f : final_points_) {
+    double distance = pow(position.x - f.x, 2) + pow(position.y - f.y, 2);
+    if (distance < smallest_distance) smallest_distance = distance;
+  }
+
+  return smallest_distance;
+}
+double GraphBase::ManhattanDistance(const Coord &position) {
+  if (final_points_.size() == 1)
+    return Abs(position.x - final_points_.back().x) + Abs(position.y - final_points_.back().y);
+
+  double smallest_distance = 100000000;
+
+  for (auto &f : final_points_) {
+    double distance = Abs(position.x - f.x) + Abs(position.y - f.y);
+    if (distance < smallest_distance) smallest_distance = distance;
+  }
+
+  return smallest_distance;
+}
+double GraphBase::PDistance(const Coord &position) {
+  if (final_points_.size() == 1) {
+
+    unsigned d_x = Abs(position.x - final_points_.back().x);
+    unsigned d_y = Abs(position.y - final_points_.back().y);
+
+    return d_x > d_y ? d_x : d_y;
+  }
+
+  unsigned smallest_distance = 100000000;
+
+  for (auto &f : final_points_) {
+    unsigned d_x = Abs(position.x - f.x);
+    unsigned d_y = Abs(position.y - f.y);
+
+    unsigned distance = d_x > d_y ? d_x : d_y;
+    if (distance < smallest_distance)
+      smallest_distance = distance;
+  }
+
+  return smallest_distance;
+}

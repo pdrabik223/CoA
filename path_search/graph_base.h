@@ -57,6 +57,11 @@ class GraphBase {
   Cell &GetCell(const Coord &position) { return this->copy_plane_[position.ToInt(width_)]; };
   void HighlightPositions(Window &window_handle, const ColorScheme &color_scheme, const std::vector<Cell *> &successors);
 
+  double EuclideanDistance(const Coord &position);
+
+  double ManhattanDistance(const Coord &position);
+
+  double PDistance(const Coord &position);
   /// x axis
   unsigned width_;
   /// y axis

@@ -94,8 +94,8 @@ int main() {
 
   //  MazeComplexityCorrelation(MazeType::SQUARE_MAZE);
   //  PlaneSizeCorrelation(MazeType::SNAIL_MAZE);
-  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE, Neighbourhood::MOORE);
-  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE, Neighbourhood::VON_NEUMAN);
+  PlaneSizeCorrelation(MazeType::SQUARE_MAZE, Neighbourhood::MOORE);
+  //  PlaneSizeCorrelation(MazeType::SQUARE_MAZE, Neighbourhood::VON_NEUMAN);
   //  PlaneSizeCorrelation(MazeType::CIRCUlAR_MAZE);
   return 1;
 }
@@ -165,9 +165,9 @@ void PlaneSizeCorrelation(MazeType maze_type, Neighbourhood neighbourhood) {
   PRFileFormat relative_path_lengths_file("Path length relative to DLS dependency on maze size for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Difference in path lengths", dataset_labels);
   PRFileFormat path_misses_file("Path misses dependency on maze size for " + ToString(maze_type) + " in " + ToString(neighbourhood) + " neighbourhood", "Maze area [j^2]", "Total sum of missed path", dataset_labels);
 
-  const int kMinMazeSize = 10;
-  const int kMaxMazeSize = 50;
-  const int kMazeSizeJump = 5;
+  const int kMinMazeSize = 15;
+  const int kMaxMazeSize = 100;
+  const int kMazeSizeJump = 10;
   const int kNoTests = 100;
 
   std::vector<std::vector<unsigned>> path_lengths;
@@ -187,7 +187,7 @@ void PlaneSizeCorrelation(MazeType maze_type, Neighbourhood neighbourhood) {
     }
 
     for (int i = 0; i < kNoTests; ++i) {
-      MazeGenerator maze_generator(maze_size, maze_size, maze_type);
+      MazeGenerator maze_generator(maze_size, maze_size, {1,  {10, 10},10*10});
 
       PlaneSizeCorrPerformTestsForGivenPlane(path_length, path_misses, times, maze_generator.GetPlane(), neighbourhood);
 
