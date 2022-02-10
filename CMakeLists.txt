@@ -5,7 +5,8 @@ if (MSVC)
     # warning level 4 and all warnings as errors
     add_compile_options(/DEBUG)
 endif ()
-
+find_package(ROOT REQUIRED COMPONENTS Core Gui)
+include_directories(ROOT_INCLUDE_DIRS)
 set(CMAKE_CXX_STANDARD 14)
 
 set(plane_dir
@@ -53,8 +54,6 @@ set(path_search_dir
 set(maze_painter_dir
         maze_painter/maze_painter.h maze_painter/maze_painter.cpp)
 
-set(clock_dir
-        )
 
 add_subdirectory(SFML)
 add_subdirectory(pm-stl)
@@ -71,6 +70,15 @@ add_executable(tests testing/testing.cpp
         testing/pr_file_format.h
         testing/pr_file_format.cpp)
 
+add_executable(root_enabled_exe root_enabled/root_enabled.cpp
+        ${plane_dir}
+        ${path_search_dir}
+        ${sfml_window_dir}
+        )
+
+#target_link_libraries(
+#        root_enabled_exe PUBLIC ROOT::Core ROOT::Gui)
+
 add_executable(plane_example plane/plane_example.cpp
         ${plane_dir})
 
@@ -85,6 +93,11 @@ add_executable(maze_painter maze_painter/painter_example.cpp
         ${maze_painter_dir}
         ${path_search_dir})
 
+#add_executable(number_painter maze_painter/number_painter_egzample.cpp
+#        ${plane_dir}
+#        ${sfml_window_dir}
+#        ${maze_painter_dir})
+
 add_executable(maze_generator maze_generator/maze_generator_example.cpp
         ${plane_dir}
         ${sfml_window_dir})
@@ -94,7 +107,7 @@ add_executable(graph_example sfml_window/graph_example.cpp
         ${sfml_window_dir})
 
 
-set(executables CoA maze_painter maze_generator graph_example saved_maze tests)
+set(executables root_enabled_exe CoA maze_generator graph_example saved_maze tests)
 
 foreach (executable IN LISTS executables)
     target_include_directories(${executable}
@@ -110,7 +123,10 @@ foreach (executable IN LISTS executables)
             sfml-system
             sfml-window
             pm_stl
+            ROOT::Core ROOT::Gui
             )
+
+
 endforeach ()
 
 set(debug_files_to_copy
